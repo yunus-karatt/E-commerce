@@ -1,0 +1,47 @@
+*{
+  margin: 0;
+  padding: 0;
+}
+/* Logo */
+.logo {
+  font-size: 36px; 
+}
+.header .navbar a {
+  color: white;
+}
+i{
+  margin-left: 10px;
+  margin-right: 10px;
+}
+.list-group :active {
+  background-color: #333333; 
+  color: white; 
+}
+.custom-alert {
+  display: none;
+  background-color: #f44336; /* Red background color */
+  color: white;
+  padding: 10px;
+  text-align: center;
+  z-index: 9999;
+}
+
+.alert-message {
+  font-size: 18px;
+}
+
+.close-alert {
+  background-color: transparent;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* Remove the spinners for number input fields */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
+}

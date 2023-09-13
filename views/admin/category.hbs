@@ -1,0 +1,36 @@
+<section class="d-flex">
+  {{>admin-aside}}
+  <div class="container mt-5">
+    <a href="/admin/addcategory" class="btn btn-dark me-5 float-end">Add new category</a>
+    <div class="container mt-5 ms-2">
+      <div class="col-8">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Category</th>
+              <th scope="col">List/Unlist</th>
+              <th scope="col">Update</th>
+            </tr>
+          </thead>
+          {{#each findCat}}
+          {{#each this}}
+          <tbody>
+            {{#if this.category}}
+            <tr>
+              <td>{{category}}</td>
+              {{#if this.list}}
+              <td><a href="/admin/listcategory/{{this._id}}" class="btn btn-danger">unlist</a> </td>
+              {{else}}
+              <td><a href="/admin/listcategory/{{this._id}}" class="btn btn-success">list</a></td>
+              {{/if}}
+              <td><a href="/admin/editcategory/{{this._id}}"><i class="fa fa-pencil"></i></a></td>
+            </tr>
+            {{/if}}
+          </tbody>
+          {{/each}}
+          {{/each}}
+        </table>
+      </div>
+    </div>
+  </div>
+</section>

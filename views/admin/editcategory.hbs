@@ -1,0 +1,16 @@
+<section class="d-flex ">
+{{>admin-aside}}
+  <div class="container mt-5 ms-5">
+    <div class="col-8">
+      <p class="h3">Update category</p>
+      <form method="post" action="/admin/editcategory/{{singleCat._id}}">
+        <div class="mb-3 mt-5">
+          <p>{{singleCat.category}}</p>
+          <label for="exampleInputSingleCategory" class="form-label">category</label>
+          <input name="singleCategory" value="{{{singleCat.category}}}" type="string" class="form-control" id="singleInputCategory">
+        </div>
+        <button type="submit" class="btn btn-primary mt-3 float-center">Submit</button>
+      </form>
+    </div>
+  </div>
+</section>

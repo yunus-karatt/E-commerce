@@ -1,0 +1,32 @@
+<section class="d-flex">
+  {{>admin-aside}}
+  <div class="container mt-5">
+    <div class="col-8">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Username</th>
+            <th scope="col">Email</th>
+            <th scope="col">mobile Number</th>
+            <th scope="col">Block/Unblock</th>
+          </tr>
+        </thead>
+        {{#each userList}}
+        <tbody>
+          <tr>
+            <td>{{this.Username}}</td>
+            <td>{{this.Email}}</td>
+            <td>{{this.Mobilenumber}}</td>
+            {{#if this.Isblocked}}
+            <td><a href="/admin/blockuser/{{this._id}}" class="btn btn-success">Unblock</a></td>
+            {{else}}
+            <td><a href="/admin/blockuser/{{this._id}}" class="btn btn-danger">Block</a></td>
+            {{/if}}
+          </tr>
+
+        </tbody>
+        {{/each}}
+      </table>
+    </div>
+  </div>
+</section>

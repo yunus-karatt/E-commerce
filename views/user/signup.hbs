@@ -1,0 +1,95 @@
+<section class="vh-100 gradient-custom" style="display: block;" id="login-section">
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+        <div class="card bg-dark text-white" style="border-radius: 1rem;">
+          <div class="card-body p-5 text-center">
+
+            <div class="mb-md-5 mt-md-4 pb-5">
+
+              <h2 class="fw-bold mb-2 text-uppercase" style="color: #FFD700;">Signup</h2>
+
+              <form name="submission" id="signup-form" class="mx-1 mx-md-4" action="/signup" method="POST">
+
+                <p class="text-white-50 mb-5">Please enter your Details Below</p>
+                <p class="text-danger passwordalert text-center"></p>
+                <div class="form-outline form-white mb-4">
+                  <input required type="text" name="Username" id="Username" class="form-control form-control-lg" />
+                  <label class="form-label">Username</label>
+                </div>
+
+
+                <div class="form-outline form-white mb-4" data-validate="please enter password">
+                  <input required minlength="8" type="password" name="Password" id="Password"
+                    class="form-control form-control-lg" />
+                  <label class="form-label">Password</label>
+                </div>
+
+
+                <div class="form-outline form-white mb-4">
+                  <input required minlength="8" type="password" name="Confirmpassword" id="Confirmpassword"
+                    class="form-control form-control-lg" />
+                  <label class="form-label">Confirm Password</label>
+                </div>
+
+
+
+                <div class="form-outline form-white mb-4">
+                  <input required type="number" name="Mobilenumber" id="Mobilenumber"
+                    class="form-control form-control-lg" />
+                  <label class="form-label">Mobile Number</label>
+                </div>
+                <p class="text-danger text-center"></p>
+                <div class="form-outline form-white mb-4">
+                  <input required type="email" name="Email" id="Email" class="form-control form-control-lg" />
+                  <label class="form-label">Email</label>
+                </div>
+                <p class="text-danger text-center"></p>
+                <button class="btn btn-outline-light btn-lg px-5" id="sign-in-button" style="color: #FFD700;"
+                  type="submit">Register</button>
+
+              </form>
+              {{!-- <div class="d-flex justify-content-center text-center mt-4 pt-1">
+                <a href="#!" class="text-white"><i class="fab fa-facebook-f fa-lg"></i></a>
+                <a href="#!" class="text-white"><i class="fab fa-twitter fa-lg mx-4 px-2"></i></a>
+                <a href="#!" class="text-white"><i class="fab fa-google fa-lg"></i></a>
+              </div> --}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="display: none;" id="otp-section">
+  <section>
+    <div class="container mt-5" style="height: 100vh">
+      <div class="row " style="height: 70%;">
+        <div class="col-md-4  offset-md-2 bg-dark text-white">
+          <div class="otp-text">
+
+            <div class="logo_img mt-5">
+              <img src="/images/Logo/Quantum Logo.png" class="mt-5 img-fluid" alt="">
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 border d-flex justify-content-center align-items-center">
+          <div>
+            <h6>Please enter your OTP</h6>
+            <p class="text-danger otpalert text-center"></p>
+            <form action="/signup" id="otp-form" method="post">
+              <div class="form-outline form-white mb-4 mt-5">
+                <input autocomplete="off" type="text" id="otp" class="form-control form-control-lg" placeholder="OTP"
+                  name="digit" />
+                <button class="btn btn-dark mt-5" type="submit">Verify OTP</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</section>
+<script src="/javascripts/javascript.js"></script>
+<script type="module" src="/javascripts/firebase.js"></script>

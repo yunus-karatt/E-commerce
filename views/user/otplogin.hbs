@@ -1,0 +1,59 @@
+<section  style="display: block;" id="mobile-login-section">
+  <section>
+    <div class="container mt-5" style="height: 100vh">
+      <div class="row " style="height: 70%;">
+        <div class="col-md-4  offset-md-2 bg-dark text-white">
+          <div class="mobile-login-text">
+
+            <div class="logo_img mt-5">
+              <img src="/images/Logo/Quantum Logo.png" class="mt-5 img-fluid" alt="">
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 border d-flex justify-content-center align-items-center">
+          <div>
+            <h3>Please enter your Number</h3>
+            <p class="text-danger badnumalert text-center"></p>
+            <form action="/otplogin" id="mobile-login-form" method="POST">
+              <div class="form-outline form-white mb-4 mt-5">
+                <input autocomplete="off" type="Number" id="mobile-login-input"  class="form-control form-control-lg" placeholder="Mobile Number"
+                  name="mobilelogininput" />
+                <button class="btn btn-dark mt-5" id="submitPhone" type="submit">Send OTP</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</section>
+<section style="display: none;" id="otp-login-section">
+  <section>
+    <div class="container mt-5" style="height: 100vh">
+      <div class="row " style="height: 70%;">
+        <div class="col-md-4  offset-md-2 bg-dark text-white">
+          <div class="otp-text">
+
+            <div class="logo_img mt-5">
+              <img src="/images/Logo/Quantum Logo.png" class="mt-5 img-fluid" alt="">
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 border d-flex justify-content-center align-items-center">
+          <div>
+            <h6>Please enter your OTP</h6>
+            <p class="text-danger loginotpalert text-center"></p>
+            <form action="/otplogin" id="otp-login-form" method="post">
+              <div class="form-outline form-white mb-4 mt-5">
+                <input autocomplete="off" type="text" id="logintp" class="form-control form-control-lg" placeholder="OTP"
+                  name="digit" />
+                <button name="otploginsubmit" id="otp-login-submit" class="btn btn-dark mt-5" type="submit">Verify OTP</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</section>
+<script type="module" src="/javascripts/firebase.js"></script>

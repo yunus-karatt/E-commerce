@@ -1,0 +1,29 @@
+
+<div class="container mt-5">
+  <div class="row" style="height:100vh;">
+    <div class="col-md-6 card offset-md-3 bg-dark text-light" style="height: 100%;">
+      <form method="post" action="/admin/login" class="mt-5 p-5 ">
+        <h2 style="color: #FFD700;" class="fw-bold mb-2 text-uppercase">admin login</h2>
+        {{#if logginErr}}
+        <div>
+          <p class="text-danger text-center fw-bold border border-danger">{{logginErr}}</p>
+        </div>
+        {{/if}}
+        <p class="text-white-50 mb-5">Please enter your Username and password!</p>
+        <div class="mb-3">
+          <label for="exampleInputEmail1" class="form-label ">Email address</label>
+          <input required name="Adminemail" type="email" class="form-control" id="exampleInputEmail1"
+            aria-describedby="emailHelp">
+        </div>
+        <div class="mb-3">
+          <label for="exampleInputPassword1" class="form-label">Password</label>
+          <input required name="Adminpassword" type="password" class="form-control" id="exampleInputPassword1">
+        </div>
+        <div class="text-center">
+          <button class="btn btn-outline-light btn-lg px-5 " type="submit">Login</button>
+        </div>
+      </form>
+      <a href="" class="fw-bold text-light text-decoration-none text-center">Forgot Password</a>
+    </div>
+  </div>
+</div>
