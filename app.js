@@ -11,8 +11,8 @@ const adminRouter = require('./routes/admin');
 const crypto = require('crypto');
 const nocache = require('nocache')
 require('dotenv').config()
-const app = express();
 
+const app = express();
 const randomSecretKey = crypto.randomBytes(32).toString('hex');
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -31,9 +31,17 @@ app.use(bodyParser.json());
 app.use(session({
   secret:randomSecretKey, 
   resave:false,
-  saveUninitialized:true
+  saveUninitialized:true,
+  cookie: {
+    maxAge: 7 * 24 * 60 * 60 * 1000
+  }
 }))
 app.use(nocache())
+
+app.use((req, res, next) => {
+  res.locals.user = req.session.user;
+  next();
+});
 
 app.use('/', userRouter);
 app.use('/admin', adminRouter);

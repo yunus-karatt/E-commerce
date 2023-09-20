@@ -1,0 +1,45 @@
+<section class="d-flex container">
+  <div class="col-3 align-items-center user-aside">
+    {{>user-aside}}
+  </div>
+  <div class="col  ms-5 address-manage">
+    <div class="mt-5 ">
+      <h5 class="h3 fw-bold">Profile</h5>
+
+    </div>
+
+    <form class="container-fluid g-3 " id="update-profile">
+
+      <div class="row p-3">
+
+        <div class="col-md-6 ">
+
+          <div>
+            <label for="updateUsername" class="form-label">User Name</label>
+            <input type="text" placeholder="{{userData.Username}}" value="{{userData.Username}}" class="form-control"
+              id="updateUsername" disabled>
+          </div>
+        </div>
+      </div>
+      <div class="row  p-3">
+        <div class="col-md-6">
+          <label for="updateEmail" class="form-label">Email</label>
+          <input value="{{userData.Email}}" type="email" class="form-control" id="updateEmail" disabled>
+        </div>
+      </div>
+
+      <div class="col-12">
+        <button id="profile-edit" class="btn btn-dark "><i class="fa fa-pencil"></i>Edit</button>
+        <button id="save-profile" type="submit" class="btn btn-primary" style="display: none;">Save Changes</button>
+      </div>
+
+    </form>
+  </div>
+
+
+</section>
+<div>
+  {{>user-footer}}
+</div>
+
+<script src="/javascripts/updateProfile.js"></script>

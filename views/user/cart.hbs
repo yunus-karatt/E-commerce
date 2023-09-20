@@ -1,0 +1,76 @@
+<div class="container">
+  <div class="row">
+    <div class="col-7 ms-5 ">
+      <div class="mt-5 ">
+        <h5 class="h3 fw-bold">Cart</h5>
+      </div>
+      <div class="wish-div ">
+        {{#if cartData.length}}
+        {{#each cartData}}
+        <dir class="wishlist-item">
+          <a class="d-flex justify-content-between wishlink mt-5" href="/viewproduct/{{productId}}">
+            <div class="">
+              <img src="/images/uploads/{{productImage}}" alt="">
+            </div>
+            <div class="d-flex justify-content-center flex-column ms-5">
+              <p class="h4">{{productName}}</p>
+              <p class="">
+                RAM:{{productFeature.RAM}}|ROM:{{productFeature.Storage}}|OS:{{productFeature.Operating_system}}</p>
+              <p class="float-end fw-bold fs-3">₹ {{totalPrice}}</p>
+              <p>{{count}}</p>
+            </div>
+            <div class="ms-5 mt-5">
+
+            </div>
+          </a>
+
+          <div class="float-end">
+            <button class="cart-remove btn"><i class="fa-solid fa-trash"></i></button>
+
+          </div>
+          <div class="popup-container">
+            <div class="popup-content">
+              {{!-- <span class="close-button">&times;</span> --}}
+              <p class="fs-4 fw-bold text-uppercase">Are you sure want to remove?</p>
+
+              <button onclick="deleteCartItem('{{productId}}')" class="btn btn-dark pop-button">Remove</button>
+              <button onclick="closePopup()" class="btn btn-dark pop-button">close</button>
+            </div>
+          </div>
+        </dir>
+        {{/each}}
+      </div>
+    </div>
+    <div class="col-3">
+      gfgofgoiiogjfkl;gjfilgjfigjiodfgjuiofjgklfjglk;fjkl;jLorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+      do
+      eiusmod tempor incididunt ut labore et dolore magna aliqua. Blandit libero volutpat sed cras ornare arcu dui. Diam
+      ut venenatis tellus in metus vulputate eu scelerisque. Aliquam ut porttitor leo a diam sollicitudin tempor. Rutrum
+      tellus pellentesque eu tincidunt tortor. Justo laoreet sit amet cursus sit amet dictum sit. Quisque egestas diam
+      in
+      arcu cursus. Dolor sit amet consectetur adipiscing elit. Gravida neque convallis a cras semper auctor neque vitae
+      tempus. Tellus molestie nunc non blandit massa enim nec dui. Sit amet commodo nulla facilisi nullam vehicula ipsum
+      a
+      arcu. Ultrices vitae auctor eu augue ut lectus arcu bibendum. A lacus vestibulum sed arcu non odio euismod lacinia
+      at. Aliquam vestibulum morbi blandit cursus risus at ultrices mi.
+
+    </div>
+    {{else}}
+    <div class="d-flex flex-column justify-content-center  align-items-center">
+      <div>
+        <img src="/images/Logo/cart empty.png" alt="">
+      </div>
+      <div>
+        <p class="fs-5">
+          You have no items in your cart. Start adding!
+        </p>
+      </div>
+    </div>
+    {{/if}}
+  </div>
+</div>
+
+<div>
+  {{>user-footer}}
+</div>
+<script src="/javascripts/cart.js"></script>

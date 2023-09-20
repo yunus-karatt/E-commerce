@@ -9,5 +9,7 @@ const categorySchema = new mongoose.Schema({
     require:true,
     default:true
   }
+},{
+  timestamps:true
 })
 module.exports = mongoose.model('Category', categorySchema);

@@ -1,0 +1,54 @@
+<section class="d-flex wish-section container">
+  {{!-- <div class="row"> --}}
+    <div class="col-3 align-items-center user-aside-div">
+      {{>user-aside}}
+    </div>
+    <div class="col  ms-5 ">
+      <div class="mt-5 ">
+        <h5 class="h3 fw-bold">My Wishlist</h5>
+      </div>
+      <div class="wish-div ">
+        {{#if wishListData.length}}
+        {{#each wishListData}}
+        <dir class="wishlist-item">
+          <a class="d-flex justify-content-between wishlink mt-5" href="/viewproduct/{{products._id}}">
+            <div class="">
+              <img src="/images/uploads/{{products.Images.[0]}}" alt="">
+            </div>
+            <div class="d-flex justify-content-center flex-column ms-5">
+              <p class="h4">{{products.Name}}</p>
+              <p class=""> RAM:{{features.RAM}}|ROM:{{features.Storage}}|OS:{{features.Operating_system}}</p>
+            </div>
+            <div class="ms-5 mt-5">
+              <p class="float-end fw-bold fs-3">₹ {{products.Price}}</p>
+            </div>
+          </a>
+          <div class="float-end wish-button-div">
+            <button class="wish-button btn" userId="{{../user._id}}" productId="{{products._id}}"><i
+                class="fa-solid fa-trash"></i></button>
+
+          </div>
+          
+        </dir>
+        {{/each}}
+        {{else}}
+        <div class="col ms-5">
+          <div class="d-flex flex-column justify-content-center align-items-center">
+            <img src="/images/Logo/no_wish_list.png" alt="">
+            <div>
+              <p class="fs-5">
+                You have no items in your wishlist. Start adding!
+              </p>
+            </div>
+          </div>
+
+        </div>
+        {{/if}}
+      </div>
+    </div>
+  {{!-- </div> --}}
+</section>
+<div>
+  {{>user-footer}}
+</div>
+<script src="/javascripts/deleteWishlist.js"></script>

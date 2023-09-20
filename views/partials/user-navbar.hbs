@@ -1,46 +1,57 @@
-<header class="header">
-  <nav class="navbar navbar-expand-lg bg-light p-0">
-  <div class="container-fluid" style="background-color: black;">
-    <a class="navbar-brand" href="/"><img src="/images/Logo/logo black.png" alt="" style="height: 50px;"></a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon navbar-dark"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent" >
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0" >
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#" style="color: #fff;">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">About Us</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Contact Us</a>
-        </li>
-        {{#if user}}
-        <li class="nav-item dropdown" >
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            {{user.Username}}
-          </a>
-          <ul class="dropdown-menu" style="background-color: black;">
-            <li><a class="dropdown-item" href="/logout" >Logout</a></li>
+<header class="header user-nav position-sticky top-0" >
+  <nav class="navbar navbar-expand-lg  bg-light p-0">
+    <div class="container-fluid" style="background-color: black;">
+      <a class="navbar-brand" href="/"><img class="ms-5" src="/images/Logo/logo black.png" alt="" style="height: 50px;"></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon navbar-dark"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+       
+          <ul class="navbar-nav m-0 mx-auto d-flex justify-content-between mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/" style="color: #fff;">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/aboutus">About Us</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/contactus">Contact Us</a>
+            </li>
+            {{#if user}}
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                <i class="fa-solid fa-user-tie"></i>{{user.Username}}
+              </a>
+              <ul class="dropdown-menu" style="background-color: black;">
+                <li><a class="dropdown-item" href="/myprofile"><i class="fa-solid fa-user-tie"></i>My Profile</a>
+                <li><a class="dropdown-item" href="/wishlist"><i class="fa-solid fa-heart"></i>Wishlist</a>
+                <li><a class="dropdown-item" href="/logout"><i class="fa-solid fa-arrow-right-from-bracket"></i>Logout</a></li>
+              </ul>
+            </li>
+            {{else}}
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+               <i class="fa-solid fa-user-tie"></i> Please Login
+              </a>
+              <ul class="dropdown-menu" style="background-color: black;">
+                
+                <li><a class="dropdown-item" href="/login"><i class="fa-solid fa-arrow-right-to-bracket"></i>Login</a>
+              </ul>
+            </li>
+            {{/if}}
+            <li class="nav-item">
+              <a class="nav-link" href="/viewcart"><i class="fa-solid fa-cart-shopping"></i>Cart</a>
+            </li>
           </ul>
-        </li>
-        {{else}}
-        <li class="nav-item dropdown" >
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-           Please Login
-          </a>
-          <ul class="dropdown-menu" style="background-color: black;">
-            <li><a class="dropdown-item" href="/login" >Login</a></li>
-          </ul>
-        </li>
-        {{/if}}
-      </ul>
-      <form class="d-flex" role="search">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
-      </form>
+          <form class="d-flex" role="search">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn search-btn btn-outline-success" type="submit">Search</button>
+          </form>
+        
+      </div>
     </div>
-  </div>
-</nav>
+  </nav>
 </header>

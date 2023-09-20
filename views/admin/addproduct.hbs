@@ -1,0 +1,79 @@
+<section class="d-flex">
+  <div style="width: 280px; ">
+    
+      {{>admin-aside}}
+   
+  </div>
+  <div class="container mt-5">
+    <div class="col-8">
+      <p class="productError text-danger text-uppercase fs-4 fw-bold "></p>
+      <form class="row g-3" method="post" action="/admin/addproduct" enctype="multipart/form-data">
+        <div class="col-md-6">
+          
+          <label for="productName" class="form-label">Product name</label>
+          <input name="productName" type="text" class="form-control" id="productName">
+        </div>
+        <div class="col-md-4">
+          
+          <label for="inputState" class="form-label">Category</label>
+          
+          <select name="productCategory" class="form-select" id="categorySelect" aria-label=".form-select-lg example">
+            <option selected>Category</option>
+            {{#each findCat}}
+            <option >{{category}}</option>
+            {{/each}}
+          </select>
+          
+        </div>
+        <div class="col-md-6">
+          <label for="productBrand" class="form-label">Brand name</label>
+          <input name="productBrand" type="text" class="form-control" id="productBrand" placeholder="">
+        </div>
+        <div class="col-12">
+          <label for="productDescription" class="form-label">Description</label>
+          <input name="productDescription" type="text" class="form-control" id="productDescription" placeholder="">
+        </div>
+        <div class="col-md-4" style="display: none;" id="processor">
+          <label for="productProcessor" class="form-label">Processor</label>
+          <input name="productProcessor"  type="text" class="form-control" id="processor">
+        </div>
+        <div class="col-md-4">
+          <label for="productRam" class="form-label">Ram</label>
+          <input name="productRam" type="text" class="form-control" id="productRam">
+        </div>
+        <div class="col-md-4">
+          <label for="productStorage" class="form-label">Storage</label>
+          <input name="productStorage" type="text" class="form-control" id="productStorage">
+        </div>
+        <div class="col-md-4">
+          <label for="productOs" class="form-label">Operating System</label>
+          <input name="productOs" type="text" class="form-control" id="productOs">
+        </div>
+        <div class="col-md-4">
+          <label for="productColor" class="form-label">Color</label>
+          <input name="productColor" type="text" class="form-control" id="productColor">
+        </div>
+        <div class="col-md-4">
+          <label for="productPrice" class="form-label">Price</label>
+          <input name="productPrice" type="number" class="form-control" id="productPrice">
+        </div>
+        <div class="col-md-4">
+          <label for="productQuantity" class="form-label">Quantity</label>
+          <input name="productQuantity" type="number" class="form-control" id="productQuantity">
+        </div>
+
+        <div class="mb-3">
+          
+          <label for="formFileMultiple" class="form-label">Select images of product</label>
+          <p class="text-danger fw-bold imageError"></p>
+          <input class="form-control" name="productImages"  type="file" accept="image/png, image/gif, image/jpeg" id="productImages" accept="image/png, image/gif, image/jpeg" multiple>
+        </div>
+        <div class="col-12">
+          <button type="submit" class="btn btn-primary">Add new Product </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+<script src="/javascripts/addProductValidation.js"></script>
+<script src="/javascripts/javascript.js"></script>

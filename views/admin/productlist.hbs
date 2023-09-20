@@ -1,0 +1,61 @@
+<section class="d-flex ">
+  <div style="width: 280px; ">
+    
+      {{>admin-aside}}
+   
+  </div>
+  <div class="container mt-5">
+    <a href="/admin/addproduct" class="btn btn-dark me-5 float-end">Add new Product</a>
+    <div class="col-8 mt-5">
+      <table class="table table-bordered">
+        <thead>
+          
+          <tr>
+            <th scope="col">Product name</th>
+            <th scope="col">Category</th>
+            <th scope="col">Brand</th>
+            {{!-- <th scope="col">Description</th> --}}
+            <th scope="col">Ram</th>
+            <th scope="col">Storage</th>
+            <th scope="col">Processor</th>
+            <th scope="col">OS</th>
+            <th scope="col">Color</th>
+            <th scope="col">Price</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Images</th>
+            <th scope="col">Edit</th>
+            <th scope="col">Delete</th>
+          </tr>
+        </thead>
+        {{!-- {{#each userList}} --}}
+        <tbody>
+          {{#each productData}}
+          <tr>
+            <td>{{this.Name}}</td>
+            <td>{{this.Category.category}}</td>
+            <td>{{this.Brand}}</td>
+            {{!-- <td>{{this.Description}}</td> --}}
+            <td>{{this.Features.RAM}}</td>
+            <td>{{this.Features.Storage}}</td>
+            <td>{{this.Features.Processor}}</td>
+            <td>{{this.Features.Operating_system}}</td>
+            <td>{{this.Features.Color}}</td>
+            <td>{{this.Price}}</td>
+            <td>{{this.Stock_quantity}}</td>
+            
+            <td>
+              <ul class="d-flex " style=" list-style:none;">
+                {{#each this.Images}}
+                <li><img class="ms-1" style="height:50px; list-style:none;" src="/images/uploads/{{this}}" alt=""></li>
+                {{/each}}
+              </ul>
+            </td>
+           <td><a href="/admin/editproduct/{{this._id}}"><i class="fa fa-pencil"></i></a></td>
+           <td><a href="/admin/deleteproduct/{{this._id}}"><i class="fa fa-trash"></i></a></td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

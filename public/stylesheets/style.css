@@ -1,25 +1,50 @@
-*{
+* {
   margin: 0;
   padding: 0;
 }
-/* Logo */
+/* NAVBAR  */
 .logo {
-  font-size: 36px; 
+  font-size: 36px;
 }
+
 .header .navbar a {
   color: white;
 }
-i{
+.user-nav{
+  z-index: 1;
+}
+.admin-nav{
+  z-index: 1;
+}
+i {
   margin-left: 10px;
   margin-right: 10px;
 }
-.list-group :active {
-  background-color: #333333; 
-  color: white; 
+
+.navbar-nav li {
+  margin: 20px;
 }
+
+.search-btn {
+  border: 1px solid #FFD700;
+  color: #FFD700;
+}
+.login-btn{
+  color: #FFD700;
+}
+.login-btn:hover{
+  background-color: #fff !important;
+  color:#000 !important;
+ 
+}
+.list-group :active {
+  background-color: #333333;
+  color: white;
+}
+
 .custom-alert {
   display: none;
-  background-color: #f44336; /* Red background color */
+  background-color: #f44336;
   color: white;
   padding: 10px;
   text-align: center;
@@ -38,10 +63,213 @@ i{
   font-size: 16px;
 }
 
+
 /* Remove the spinners for number input fields */
+
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   appearance: none;
   display: none;
+}
+
+/* footer */
+.user-footer {
+  background-color: #000;
+}
+
+.user-footer p {
+  color: #FFD700;
+}
+
+.user-footer ul li {
+  color: #fff;
+  background-color: #000;
+}
+
+/* product view */
+.image-preview{
+max-width: 150px;
+max-height: 200px;
+}
+.image-preview img {
+  max-width: 100%;
+  max-height: 100%;
+  height: auto;
+  border: 1px solid #333;
+  margin: 20px;
+}
+
+.sm-img-li {
+  /* border: 2px solid #333; */
+  padding: 6px;
+  box-shadow: 5px 7px 8px 4px #888888;
+}
+
+.image-view {
+  margin: 65px 45px;
+  padding: 20px;
+  /* flex-grow: 1; */
+  box-shadow: 5px 7px 8px 4px #888888;
+}
+
+.image-view img {
+  /* object-fit: contain; */
+  max-width: 100%;
+  max-height: 100%;
+  height: auto;
+
+}
+/* 
+.image-view-main {
+  padding: 50px;
+  margin-left: 50px;
+} */
+
+.card-image img {
+  max-width: 100%;
+  max-height: 100%;
+  height: auto;
+}
+
+.product-info {
+  margin-top: 65px;
+  padding: 50px;
+}
+.card{
+  /* box-shadow: 0px 0px 8px 0px #888888; */
+}
+.control-label{
+  text-align: left !important; 
+}
+/*  USER ASIDE */
+.user-aside{
+  position: sticky;
+  top: 30%;
+}
+
+/* Wish button */
+.love-button {
+  color: #000000; 
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.love-button.loved {
+  background-color: #f44336;
+  color: #fff7f7; 
+
+}
+.profile-img{
+  height: 50px;
+  width: 50px;
+}
+.user-name{
+  letter-spacing: 2px;
+}
+.profile-div{
+  border-bottom: 2px solid #fff;
+}
+.wishlink img{
+  width: 100px;
+}
+.wishlink{
+  text-decoration: none;
+  color: #000;
+}
+.wish-div a{
+  padding: 20px;
+  border-top: 1px solid #000;
+}
+/* Styling for the popup container */
+.popup-container {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 30%;
+  width: 25%;
+  height: 50%;
+  /* background-color: rgba(0, 0, 0, 0.5); */
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Styling for the popup content */
+.popup-content {
+  height: 50%;
+  background-color: rgb(33,37,41);
+  color:#fff;
+  padding: 20px;
+  border-radius: 5px;
+  text-align: center;
+  position: relative;
+}
+
+/* Styling for the close button */
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 20px;
+}
+.pop-button{
+  border:solid #FFD700;
+  color: #FFD700;
+}
+
+.side-link a{
+ background-color: rgb(33,37,41);
+}
+/* .active-link:active{
+  background-color: #fff;
+  color: #000;
+} */
+@media screen and (max-width: 768px) {
+  body {
+    font-size: 16px;
+  }
+  .sm-image-list{
+    display: flex;
+    justify-content: space-around;
+    margin: 0;
+    padding: 0;
+  }
+  .button-div-buy{
+    margin: auto;
+    max-width: 500px;
+  }
+  .image-section{
+    flex-direction: column;
+    align-items: center;
+  }
+  .user-aside-div{
+    display: none;
+    visibility: hidden;
+    position: absolute;
+  }
+  #update-profile{
+    width: 100%;
+    /* padding: 0; */
+  }
+  .address-manage{
+    padding: 0;
+  }
+  .wishlink{
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .wish-button-div{
+    text-align: center;
+  }
+  .wish-section{
+    justify-content: center;
+    align-items: center;
+  }
 }

@@ -1,0 +1,87 @@
+<section class="d-flex">
+  <div style="width: 280px;" >
+    {{>admin-aside}}
+  </div>
+  <div class="container mt-5">
+    <div class="col-8">
+      
+      <form class="row g-3" method="post" action="/admin/editproduct/{{productData._id}}" enctype="multipart/form-data">
+        <div class="col-md-6">
+          {{!-- {{#each productData}} --}}
+          <label for="editPrName" class="form-label">Product name</label>
+          <input name="editPrName" value="{{productData.Name}}" type="text" class="form-control" id="editPrName">
+        </div>
+        <div class="col-md-4">
+          <label for="inputState" class="form-label">Category</label>
+          <select name="editPrCat" class="form-select " id="categorySelect" aria-label=".form-select-lg example">
+           
+            <option selected>{{productCat.category}}</option>
+             {{#each findCat}}
+            <option>{{this.category}}</option>
+            {{/each}}
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label for="editPrBrand" class="form-label">Brand name</label>
+          <input name="editPrBrand" value="{{productData.Brand}}" type="text" class="form-control" id="editPrBrand"
+            placeholder="">
+        </div>
+        <div class="col-12">
+          <label for="editPrDes" class="form-label">Description</label>
+          <input name="editPrDes" value="{{productData.Description}}" type="text" class="form-control form-control-lg" id="editPrDes"
+            placeholder="">
+        </div>
+        {{#each productData.Features}}
+        <div class="col-md-4" style="display: none;" id="processor">
+          <label for="editPrProcessor" class="form-label">Processor</label>
+          <input name="editPrProcessor" value="{{this.Processor}}" type="text" class="form-control"
+            id="editPrProcessor">
+        </div>
+        <div class="col-md-4">
+          <label for="editPrRam" class="form-label">Ram</label>
+          <input name="editPrRam" value="{{this.RAM}}" type="text" class="form-control" id="editPrRam">
+        </div>
+        <div class="col-md-4">
+          <label for="editPrStorage" class="form-label">Storage</label>
+          <input name="editPrStorage" value="{{this.Storage}}" type="text" class="form-control"
+            id="editPrStorage">
+        </div>
+        <div class="col-md-4">
+          <label for="editPrOs" class="form-label">Operating System</label>
+          <input name="editPrOs" value="{{this.Operating_system}}" type="text" class="form-control"
+            id="editPrOs">
+        </div>
+        <div class="col-md-4">
+          <label for="editPrColor" class="form-label">Color</label>
+          <input name="editPrColor" value="{{this.Color}}" type="text" class="form-control" id="editPrColor">
+        </div>
+        {{/each}}
+        <div class="col-md-4">
+          <label for="editPrPrice" class="form-label">Price</label>
+          <input name="editPrPrice" value="{{productData.Price}}" type="number" class="form-control" id="editPrPrice">
+        </div>
+        <div class="col-md-4">
+          <label for="editPrQuant" class="form-label">Quantity</label>
+          <input name="editPrQuant" value="{{productData.Stock_quantity}}" type="number" class="form-control" id="editPrQuant">
+        </div>
+        <div class="mb-3">
+          <div id="image-previewE" style="display: block;" class="image-preview d-flex">
+            {{#each productData.Images}}
+            <img class="existingProduct" src="/images/uploads/{{this}}" alt="">
+            {{/each}}
+          </div>
+          <div class="image-preview" style="display: none;"></div>
+          <label for="formFileMultiple" class="form-label">Select images of product</label>
+          
+          <input class="form-control" value="" name="productImages" accept="image/png, image/gif, image/jpeg" type="file" id="productImages" multiple>
+         
+        </div>
+        <div class="col-12">
+          <button type="submit" class="btn btn-primary">Update Product </button>        
+        </div>
+      </form>     
+    </div>
+  </div>
+</section>
+<script src="/javascripts/javascript.js"></script>
+<script src="/javascripts/imagePreview.js"></script>

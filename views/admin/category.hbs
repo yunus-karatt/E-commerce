@@ -1,5 +1,9 @@
 <section class="d-flex">
-  {{>admin-aside}}
+  <div style="width: 280px; ">
+    
+      {{>admin-aside}}
+   
+  </div>
   <div class="container mt-5">
     <a href="/admin/addcategory" class="btn btn-dark me-5 float-end">Add new category</a>
     <div class="container mt-5 ms-2">
@@ -13,9 +17,7 @@
             </tr>
           </thead>
           {{#each findCat}}
-          {{#each this}}
           <tbody>
-            {{#if this.category}}
             <tr>
               <td>{{category}}</td>
               {{#if this.list}}
@@ -25,9 +27,7 @@
               {{/if}}
               <td><a href="/admin/editcategory/{{this._id}}"><i class="fa fa-pencil"></i></a></td>
             </tr>
-            {{/if}}
           </tbody>
-          {{/each}}
           {{/each}}
         </table>
       </div>

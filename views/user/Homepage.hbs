@@ -1,0 +1,55 @@
+<div class="container ">
+  <div class="d-flex justify-content-center align-items-center">
+    <a href="/mobiles"><button type="button"
+        class="btn btn-outline-secondary btn-lg m-5 me-3 fw-bolder">MOBILES</button></a>
+    <a href=""><button type="button" class="btn btn-outline-secondary btn-lg m-5 ms-3 fw-bolder">LAPTOPS</button></a>
+  </div>
+</div>
+<div class="container-fluid ">
+  <div class="row ms-2" style="width: 100%;">
+    {{#each prodData}}
+    {{!-- <div class="col-md-4"> --}}
+      <div class="card p-3 m-3 d-flex flex-column col-md-4" style="width: 18rem;">
+        <div class="card-image">
+          <a href="/viewproduct/{{_id}}"> <img style="width: auto; height:15rem; object-fit: contain;" src="/images/uploads/{{Images.[0]}}"
+              class="card-img-top" alt="..."></a>
+        </div>
+        <div class="card-body flex-grow-1">
+          <h5 class="card-title text-uppercase m-0 fw-bold">{{Name}}</h5>
+          <p class="card-text m-0 mt-1">
+            RAM:{{Features.RAM}}|ROM:{{Features.Storage}}|OS:{{Features.Operating_system}}
+          </p>
+        </div>
+        <div class="mt-auto">
+          <p class="card-text ms-3 fw-bold  fs-2">₹{{Price}}
+          </p>
+          {{#if ../user}}
+
+          <button class="btn float-end love-button" product-id="{{_id}}" user-id="{{../user._id}}">
+            <i class="mb-2 fa-regular fa-heart"></i>
+          </button>
+          {{/if}}
+        </div>
+        <div >
+          <a href="/viewproduct/{{_id}}" class="btn btn-dark me-1">View Product</a>
+          <button product-id="{{_id}}" class="btn addCart btn-dark" style="width: 119px;"> Add to cart</button>
+        </div>
+      </div>
+    <div class="popup-container">
+      <div class="popup-content">
+        {{!-- <span class="close-button" >&times;</span> --}}
+        <p class="fs-4 fw-bold text-uppercase">item added to cart!</p>
+       
+        <a href="/viewcart" class="btn btn-dark pop-button">go to cart</a> 
+        <button onclick="closePopup()" class="btn btn-dark pop-button">close</button>
+      </div>
+    </div>
+
+    {{/each}}
+
+  </div>
+</div>
+<div>
+  {{>user-footer}}
+</div>
+<script src="/javascripts/wishList.js"></script>

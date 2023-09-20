@@ -1,0 +1,31 @@
+<div class="container ">
+  <div class="d-flex justify-content-center align-items-center">
+    <button type="button" class="btn btn-outline-secondary btn-lg m-5 me-3 fw-bolder">MOBILES</button>
+    <button type="button" class="btn btn-outline-secondary btn-lg m-5 ms-3 fw-bolder">LAPTOPS</button>
+  </div>
+</div>
+<div class="container-fluid ms-5">
+  <div class="row">
+    {{#each prodData}}
+    <div class="card p-3 ms-0 m-3 d-flex flex-column" style="width: 18rem;">
+      <div class="card-image">
+     <a href="/viewproduct/{{_id}}"> <img style="width: auto; height:15rem;" src="/images/uploads/{{Images.[0]}}" class="card-img-top" alt="..."></a>
+      </div>
+      <div class="card-body flex-grow-1">
+        <h5 class="card-title text-uppercase m-0 fw-bold">{{Name}}</h5>
+        <p class="card-text m-0 fw-bold">RAM:{{Features.RAM}}|ROM:{{Features.Storage}}|OS:{{Features.Operating_system}}
+        </p>
+        <p class="card-text m-0 fw-bold">Price:{{Price}}
+        </p>
+      </div>
+      <div class="mt-auto">
+        <a href="/viewproduct/{{_id}}" class="btn btn-dark ms-5">View Product</a>
+      </div>
+
+    </div>
+    {{/each}}
+  </div>
+</div>
+  <div>
+    {{>user-footer}}
+  </div>

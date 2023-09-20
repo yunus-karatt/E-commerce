@@ -1,5 +1,5 @@
-const Admin= require('../model/adminmodel');
-const User = require('../model/usermodel');
+const Admin= require('../model/adminModel');
+const User = require('../model/userModel');
 const db = require('../config/connection');
 const bcrypt = require('bcrypt');
 module.exports={

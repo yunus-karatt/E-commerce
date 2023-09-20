@@ -1,0 +1,31 @@
+<section class="d-flex container">
+  <div class="col-3 align-items-center">
+    {{>user-aside}}
+  </div>
+  <div class="col p-5 ms-5 address-manage">
+    <div class="mt-5 ">
+      <h5 class="h3 fw-bold">Manage Address</h5>
+      <div class="d-grid gap-2 col-6 ">
+        <a class="btn btn-outline-dark text-start fw-semibold" href="/addaddress"><i class="fa-solid fa-plus"></i>Add
+          new Address</a>
+      </div>
+    </div>
+    {{#each userAddress}}
+    <div class="address p-4 border border-dark mt-5">
+      <a href="/updateaddress/{{_id}}"><i  class="fa fa-pencil fs-5 m-3 float-end text-primary edit-address"></i></a>
+      <i addressid="{{_id}}" class="fa delete-address fa-trash fs-5 m-3 text-danger float-end"></i>
+      <p class="fw-bold">{{firstName}} {{lastName}}</p>
+      <p>{{address}}</p>
+      <p>{{city}} {{state}} {{pincode}}</p>
+
+    </div>
+
+    {{/each}}
+  </div>
+  
+  </div>
+</section>
+<div>
+  {{>user-footer}}
+</div>
+<script src="/javascripts/manageAddress.js"></script>
