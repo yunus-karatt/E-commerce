@@ -1,8 +1,9 @@
-
+const Product = require('../model/productModel');
+const order = require('../model/orderModel')
 const User = require('../model/userModel');
 const wishList = require('../model/wishListModel');
 const cart = require('../model/cartModel');
-const address= require('../model/addressMode') 
+const address = require('../model/addressMode')
 const db = require('../config/connection');
 const bcrypt = require('bcrypt');
 const { ObjectId } = require('mongodb');
@@ -115,7 +116,6 @@ module.exports = {
   getWishListData: (user) => {
     const wishId = new ObjectId(user._id);
     return new Promise(async (resolve, reject) => {
-      //  console.log(wishId)
       const wishListDetails = await wishList.aggregate([{ $match: { userId: wishId } }, {
         $lookup: {
           from: 'products',
@@ -145,110 +145,264 @@ module.exports = {
       resolve()
     })
   },
-  addToCart: (userId, productId) => {
+  getRawCart: (userId) => {
     return new Promise(async (resolve, reject) => {
-      await cart.updateOne({ userId: userId }, { $push: { productId: productId } }, { upsert: true })
-      resolve()
+      const cartData = await cart.findOne({ userId: userId })
+      resolve(cartData)
+    })
+  },
+  addToCart: async (userId, productId) => {
+    // const productData = await Product.findOne({ _id: productId }).lean()
+    // console.log(productData)
+
+    // if (productData.Stock_quantity < 1) {
+    //       reject()
+    // }else{
+    return new Promise(async (resolve, reject) => {
+      const existUserCart = await cart.findOne({ userId: userId })
+      if (existUserCart) {
+        const index = existUserCart.product.findIndex((item) => item.productId.toString() === productId)
+        if (index === -1) {
+          await cart.updateOne({ userId: userId }, { $push: { product: { productId: productId } } })
+          resolve()
+        } else {
+          await cart.updateOne({ userId: userId, 'product.productId': productId }, { $inc: { 'product.$.count': 1 } })
+          resolve()
+        }
+
+      } else {
+        const cartData = {
+          userId: userId,
+          product: {
+            productId: productId
+          }
+        }
+        await cart.create(cartData)
+        resolve()
+      }
+      // }
+
+
+
     })
   },
   getCart: (userId) => {
     return new Promise(async (resolve, reject) => {
       const cartData = await cart.aggregate([{ $match: { userId: new ObjectId(userId) } }, {
-        $unwind: '$productId'
+        $unwind: '$product'
       }, {
         $lookup: {
           from: 'products',
-          localField: 'productId',
+          localField: 'product.productId',
           foreignField: '_id',
-          as: 'products'
+          as: 'productDetails'
         }
-      }, { $unwind: '$products' },
+      },
+      {
+        $unwind: '$productDetails'
+      },
+      { $sort: { 'productDetails.Name': 1 } }
+        ,
       {
         $group: {
-          _id: '$products._id',
-          productName: { $first: "$products.Name" },
-          productImage: { $first: { $arrayElemAt: ["$products.Images", 0] } },
-          productPrice: { $first: "$products.Price" },
-          productFeature:{$first:'$products.Features'},
-          count: { $sum: 1 },
-          totalPrice: { $sum: "$products.Price" }
+          _id: '$productDetails._id',
+          totalcount: { $sum: "$product.count" },
+          totalPrice: {
+            $sum: {
+              $multiply: ["$product.count", "$productDetails.Price"]
+            }
+          },
+          productName: { $first: "$productDetails.Name" },
+          productFeatures: { $first: "$productDetails.Features" },
+          productPrice: { $first: "$productDetails.Price" },
+          productImage: { $first: "$productDetails.Images" }
         }
-      },{$unwind:'$productFeature'},{
-        $project: {
-          _id: 0,
-          productId: "$_id",
-          productName: 1,
-          productImage: 1,
-          productPrice: 1,
-          count: 1,
-          totalPrice: 1,
-          productFeature:1
-        }
-      }])
+      },
+      {
+        $group: {
+          _id: null,
+          totalQuantity: { $sum: 1 },
+          totalPrice: { $sum: "$totalPrice" },
+          products: {
+            $push: {
+              _id: "$_id",
+              productName: "$productName",
+              productFeatures: "$productFeatures",
+              productPrice: "$productPrice",
+              productImage: "$productImage",
+              count: "$totalcount",
+              price: "$totalPrice"
+            },
+          },
+        },
+      },
+
+      ])
       resolve(cartData)
     })
   },
-  removeCartItem:(prodId,userId)=>{
-    return new Promise(async(resolve,reject)=>{
-       await cart.updateOne({userId:userId},{$pull:{'productId':prodId.productId}})
+  removeCartItem: (prodId, userId) => {
+    return new Promise(async (resolve, reject) => {
+      console.log(prodId)
+      await cart.updateOne({ userId: userId }, { $pull: { product: { productId: prodId.productId } } })
       resolve()
     })
   },
-  addAddress:(userId,userAddress)=>{
-    console.log(userAddress)
-    const usersAddress= new address({
-      userId:userId,
-      firstName:userAddress.firstName,
-      lastName:userAddress.lastName,
-      address:userAddress.inputAddress,
-      city:userAddress.inputCity,
-      state:userAddress.inputState,
-      pincode:userAddress.inputZip
-    })
-    return new Promise(async(resolve,reject)=>{
-      await usersAddress.save()
+  updateCart: (userId, productId, count,existCount) => {
+    return new Promise(async (resolve, reject) => {
+      const product= await Product.findOne({_id:productId})
+      console.log(product.Stock_quantity)
+      if(product.Stock_quantity==existCount&&count==1){
+          resolve({stock:false})
+      }else{
+         await cart.updateOne({ userId: userId, 'product.productId': productId }, { $inc: { 'product.$.count': count } })
+      resolve()
+      }
+     
     })
   },
-  getAddress:(userId)=>{
-    return new Promise(async(resolve,reject)=>{
-      const userAddress= await address.find({userId:userId}).lean()
+  addAddress: (userId, userAddress) => {
+    console.log(userAddress)
+    const usersAddress = new address({
+      userId: userId,
+      firstName: userAddress.firstName,
+      lastName: userAddress.lastName,
+      address: userAddress.inputAddress,
+      city: userAddress.inputCity,
+      state: userAddress.inputState,
+      pincode: userAddress.inputZip
+    })
+    return new Promise(async (resolve, reject) => {
+      const saveAddress = await usersAddress.save()
+      console.log(saveAddress._id)
+      resolve(saveAddress._id)
+
+
+    })
+  },
+  getAddress: (userId) => {
+    return new Promise(async (resolve, reject) => {
+      const userAddress = await address.find({ userId: userId }).lean()
       resolve(userAddress)
     })
   },
-  deleteAddress:(addressId)=>{
+  deleteAddress: (addressId) => {
     console.log(addressId)
-    return new Promise(async(resolve,reject)=>{
-      await address.deleteOne({_id:addressId.addressId})
+    return new Promise(async (resolve, reject) => {
+      await address.deleteOne({ _id: addressId.addressId })
       resolve()
     })
   },
-  singleAddress:(addressId)=>{
-    return new Promise(async(resolve,reject)=>{
-      const addressData= await address.findOne({_id:addressId}).lean()
+  singleAddress: (addressId) => {
+    return new Promise(async (resolve, reject) => {
+      const addressData = await address.findOne({ _id: addressId }).lean()
       resolve(addressData)
     })
   },
-  updateAddress:(addressId,addressData)=>{
-    return new Promise(async(resolve,reject)=>{
-      await address.updateOne({_id:addressId},{$set:{
-        firstName:addressData.firstName,
-        lastName:addressData.lastName,
-        address:addressData.inputAddress,
-        city:addressData.inputCity,
-        pincode:addressData.inputZip
-      }})
+  updateAddress: (addressId, addressData) => {
+    return new Promise(async (resolve, reject) => {
+      await address.updateOne({ _id: addressId }, {
+        $set: {
+          firstName: addressData.firstName,
+          lastName: addressData.lastName,
+          address: addressData.inputAddress,
+          city: addressData.inputCity,
+          pincode: addressData.inputZip
+        }
+      })
       resolve()
     })
   },
-  getUser:async(userId)=>{
-    const user=await User.findOne({_id:userId}).lean( )
-    return(user)
+  getUser: async (userId) => {
+    const user = await User.findOne({ _id: userId }).lean()
+    return (user)
   },
-  updateProfile:(userId,userData)=>{
-    const userName=userData.userName
-    const email= userData.email
+  updateProfile: (userId, userData) => {
+    const userName = userData.userName
+    const email = userData.email
+    return new Promise(async (resolve, reject) => {
+      await User.updateOne({ _id: userId }, { $set: { Username: userName, Email: email } })
+      resolve()
+    })
+  },
+  updateMobile: (userId, mobileNum) => {
+    return new Promise(async (resolve, reject) => {
+      await User.updateOne({ _id: userId }, { $set: { Mobilenumber: mobileNum } })
+      resolve()
+    })
+  },
+  checkMobileExist: (mobileNumber) => {
+    return new Promise(async (resolve, reject) => {
+      const user = await User.findOne({ Mobilenumber: mobileNumber }, { Mobilenumber: 1 })
+      resolve(user)
+    })
+  },
+  changePassword: (data) => {
+    const mobile = data.mobileNumber
+
+    return new Promise(async (resolve, reject) => {
+      password = await bcrypt.hash(data.passData.password, 10)
+      confirmPassword = await bcrypt.hash(data.passData.confirmPassword, 10)
+      await User.updateOne({ Mobilenumber: mobile }, { $set: { Password: password, Confirmpassword: confirmPassword } })
+      resolve()
+    })
+  },
+  placeOrder:async (userId, orderData) => {
+    const addressData= await address.findOne({_id:orderData.addressId})
+    console.log(addressData)
+    const orderDetails = {
+      userId: userId,
+      address: addressData,
+      products: orderData.product,
+      totalPrice: orderData.totalPrice,
+      paymentMethod: orderData.paymentMethod,
+      orderStatus: "confirm"
+    }
+    console.log(orderDetails.products)
+    return new Promise(async (resolve, reject) => {
+      const orderStatus = await order.create(orderDetails)
+      // Update the product stock quantities
+      const productUpdates = orderDetails.products.map((product) => ({
+        updateOne: {
+          filter: { _id: product.productId },
+          update: { $inc: { Stock_quantity: -product.quantity } }
+        }
+      }));
+      await Product.bulkWrite(productUpdates);
+      await cart.deleteOne({userId:userId})
+      resolve()
+    })
+  },
+  getOrder:async(userId)=>{
+    const orderData= await order.aggregate([{$match:{userId:new ObjectId(userId)}},
+        {
+          $unwind:'$products'
+        },
+        {
+      $lookup:{
+        from:'products',
+        localField:'products.productId',
+        foreignField:'_id',
+        as:'productDetails'
+      }
+    },
+    {
+      $unwind:'$productDetails'
+    }
+    ])
+    for(x in orderData){
+      orderData[x].orderDate= orderData[x].orderDate.toISOString().split('T')[0]
+    }
+    return orderData
+  },
+  cancelOrder:(orderId,productId)=>{
     return new Promise(async(resolve,reject)=>{
-      await User.updateOne({_id:userId},{$set:{Username:userName,Email:email}})
+      const orderData=await order.findOne({_id:orderId,'products.productId':productId})
+      const quantity= orderData.products.find(id=>id.productId.equals(new ObjectId(productId)))
+      await order.updateOne({_id:orderId,'products.productId':productId},{$set:{'products.$.itemStatus':"cancelled"}})
+      await order.updateOne({_id:orderId},{$inc:{totalPrice:-quantity.pricePerQnt}})
+      console.log(quantity)
+      await Product.updateOne({_id:productId},{$inc:{Stock_quantity:quantity.quantity}})
       resolve()
     })
   }

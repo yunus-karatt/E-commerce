@@ -7,6 +7,7 @@ const multerFunction = require('../helpers/helperFunction')
 const getAdmin = require('../controllers/adminController')
 const getProduct = require('../controllers/productController')
 
+
 let admin = 1;
 
 // session checking middlewar
@@ -40,9 +41,35 @@ router.get('/logout', (req, res) => {
 })
 
 // Get user
-router.get('/userslist',isValidate, (req, res) => {
+router.get('/userslist', (req, res) => {
   getAdmin.getUsersList().then((userList) => {
     res.render('admin/userlist', { admin, userList })
+
+  })
+})
+
+// router.get('/userslist/:skip',(req,res)=>{
+//   let skipLimit= req.params.skip
+//   skipLimit= parseInt(skipLimit)
+//   getAdmin.getUserOrderList(skipLimit)
+//   .then((userList)=>{
+//     res.render('admin/userlist', { admin, userList })
+//   })
+// })
+router.get('/get-limited-user/:skip',(req,res)=>{
+  const skip= req.params.skip;
+  getAdmin.getLimitedUser(skip).then((userList)=>{
+    console.log(userList)
+    res.json(userList)
+  })
+})
+
+router.get('/search-user/:search',(req,res)=>{
+  const searchQuery= req.params.search;
+  // console.log(req.params.search)
+  getAdmin.findUser(searchQuery).then((userList)=>{
+    console.log(userList)
+    res.json(userList)
 
   })
 })
@@ -104,6 +131,25 @@ router.get('/editproduct/:id',isValidate,async(req,res)=>{
   })
   
 })
+// orders
+
+router.get('/get-orders',(req,res)=>{
+  getAdmin.getOrderData()
+  .then((orderData)=>{
+      res.render('admin/orders',{admin,orderData})
+
+  })
+})
+
+router.get('/manage-order/:orderId/:productId',(req,res)=>{
+  const orderId= req.params.orderId;
+  const productId= req.params.productId;
+  getAdmin.getManageOrder(orderId,productId)
+  .then((data)=>{
+    res.render('admin/manageOrder',{admin,data})
+  })
+})
+
 // POST ROUTES
 router.post('/login', (req, res) => {
   getAdmin.doAdminLogin(req.body).then((response) => {
@@ -145,4 +191,12 @@ router.post('/editproduct/:id',multerFunction.upload.array('productImages',12),(
   })
   
 }) 
+
+router.post('/update-order-status',(req,res)=>{
+  const orderUpdate= req.body.mngOrderData;
+  getAdmin.updateOrderStatus(orderUpdate)
+  .then(()=>{
+    res.json({updated:true})
+  })
+})
 module.exports = router;

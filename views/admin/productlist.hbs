@@ -1,33 +1,29 @@
-<section class="d-flex ">
-  <div style="width: 280px; ">
-    
-      {{>admin-aside}}
-   
-  </div>
-  <div class="container mt-5">
-    <a href="/admin/addproduct" class="btn btn-dark me-5 float-end">Add new Product</a>
-    <div class="col-8 mt-5">
-      <table class="table table-bordered">
+ <link rel="stylesheet" href="/stylesheets/tableStyle.css">
+ {{>admin-aside}}
+  <div class=" content mt-5">
+    <div class="container">
+      <a href="/admin/addproduct" class="btn btn-dark mb-4  ms-auto">Add new Product</a>
+    </div>
+    <div class="col">
+      <table id="example" class="table table-striped mb-5" style="width:100%">
         <thead>
-          
           <tr>
-            <th scope="col">Product name</th>
-            <th scope="col">Category</th>
-            <th scope="col">Brand</th>
-            {{!-- <th scope="col">Description</th> --}}
-            <th scope="col">Ram</th>
-            <th scope="col">Storage</th>
-            <th scope="col">Processor</th>
-            <th scope="col">OS</th>
-            <th scope="col">Color</th>
-            <th scope="col">Price</th>
-            <th scope="col">Quantity</th>
-            <th scope="col">Images</th>
-            <th scope="col">Edit</th>
-            <th scope="col">Delete</th>
+             <th>Product name</th>
+            <th>Category</th>
+            <th>Brand</th>
+            {{!-- <th>Description</th> --}}
+            <th>Ram</th>
+            <th>Storage</th>
+            <th>Processor</th>
+            <th>OS</th>
+            <th>Color</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Images</th>
+            <th>Edit</th>
+            <th>Delete</th>
           </tr>
         </thead>
-        {{!-- {{#each userList}} --}}
         <tbody>
           {{#each productData}}
           <tr>
@@ -42,20 +38,74 @@
             <td>{{this.Features.Color}}</td>
             <td>{{this.Price}}</td>
             <td>{{this.Stock_quantity}}</td>
-            
+
             <td>
-              <ul class="d-flex " style=" list-style:none;">
+              <ul style=" list-style:none;">
                 {{#each this.Images}}
-                <li><img class="ms-1" style="height:50px; list-style:none;" src="/images/uploads/{{this}}" alt=""></li>
+                <li><img class="mt-1" style="height:50px; width: 50px; object-fit: contain; list-style:none;"
+                    src="/images/uploads/{{this}}" alt="">
+                </li>
                 {{/each}}
               </ul>
             </td>
-           <td><a href="/admin/editproduct/{{this._id}}"><i class="fa fa-pencil"></i></a></td>
-           <td><a href="/admin/deleteproduct/{{this._id}}"><i class="fa fa-trash"></i></a></td>
+            <td><a href="/admin/editproduct/{{this._id}}"><i class="fa fa-pencil"></i></a></td>
+            <td><a href="/admin/deleteproduct/{{this._id}}"><i class="fa fa-trash"></i></a></td>
           </tr>
           {{/each}}
         </tbody>
+        <tfoot>
+          <tr>
+            <th>Product name</th>
+            <th>Category</th>
+            <th>Brand</th>
+            {{!-- <th>Description</th> --}}
+            <th>Ram</th>
+            <th>Storage</th>
+            <th>Processor</th>
+            <th>OS</th>
+            <th>Color</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Images</th>
+            <th>Edit</th>
+            <th>Delete</th>
+          </tr>
+        </tfoot>
       </table>
+
     </div>
+
+
   </div>
-</section>
+<!-- jQuery -->
+<script src='https://code.jquery.com/jquery-3.7.0.js'></script>
+<!-- Data Table JS -->
+<script src='https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js'></script>
+<script src='https://cdn.datatables.net/responsive/2.1.0/js/dataTables.responsive.min.js'></script>
+<script src='https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js'></script>
+<script>
+  $(document).ready(function () {
+    $('#example').DataTable({
+      //disable sorting on last column
+      "columnDefs": [
+        { "orderable": false, "targets": 5 }
+      ],
+      language: {
+        //customize pagination prev and next buttons: use arrows instead of words
+        'paginate': {
+          'previous': '<span class="fa fa-chevron-left"></span>',
+          'next': '<span class="fa fa-chevron-right"></span>'
+        },
+        //customize number of elements to be displayed
+        "lengthMenu": 'Display <select class="form-control input-sm">' +
+          '<option value="10">10</option>' +
+          '<option value="20">20</option>' +
+          '<option value="30">30</option>' +
+          '<option value="40">40</option>' +
+          '<option value="50">50</option>' +
+          '<option value="-1">All</option>' +
+          '</select> results'
+      }
+    })
+  });
+</script>

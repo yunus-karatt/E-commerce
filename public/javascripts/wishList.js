@@ -1,8 +1,4 @@
 
-const popup = document.querySelector('.popup-container');
-function closePopup(){
-  popup.style.display='none'
-}
 async function getWishList() {
   try {
     const response = await fetch('/api/wishlist');
@@ -65,8 +61,28 @@ document.querySelectorAll('.addCart').forEach((button)=>{
     
   }).then((data)=>{
     if(data.loggedIn){
-        popup.style.display='block'
-    }else{
+        // popup.style.display='block'
+        // Swal.fire({
+        //   title: 'Added to cart',
+        //   text: "Go to cart for checkout",
+        //   icon: 'success',
+        //   showCancelButton: true,
+        //   confirmButtonColor: '#3085d6',
+        //   cancelButtonColor: '#008000',
+        //   confirmButtonText: 'Go to cart',
+        //   cancelButtonText:'Continue shopping'
+        // }).then((result) => {
+        //   if (result.isConfirmed) {
+        //     // Swal.fire(
+            //   'Deleted!',
+            //   'Your file has been deleted.',
+            //   'success'
+            // )
+            window.location.href='/viewcart'
+          // }
+        // })
+    }
+    else{
       window.location.href='/login'
     }
   })

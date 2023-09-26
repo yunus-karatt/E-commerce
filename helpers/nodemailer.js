@@ -28,5 +28,6 @@ function sentOtp(email){
       console.log('OTP email sent:', info.response);
     }
   })
+  return otp
 }
 module.exports = { sentOtp };

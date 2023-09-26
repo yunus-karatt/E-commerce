@@ -1,22 +1,25 @@
 {{#each product}}
-<section class="d-flex row">
+<section class="product-section d-flex row">
   <div class="image-view-main col-md-6 p-0">
-    <div class="image-section row d-flex ms-0">
+    <div class="image-section row d-flex ms-0" >
       <div class="image-list mt-5 col-md-2 ">
         <ul class="sm-image-list">
           {{#each this.Images}}
-          <li  class="mt-3  list-unstyled sm-img-li"><img class="imgSm" style="max-width: 60px; max-height:60px;"
+          <li  class="mt-3  list-unstyled sm-img-li"><img class="imgSm" style="width: 60px; height:60px;"
               src="/images/uploads/{{this}}" alt="">
           </li>
           {{/each}}
         </ul>
       </div>
       <div class="image-view col-6" >
+        <div class="center-image">
         <img class="imgLg" src="/images/uploads/{{this.Images.[0]}}" alt="">
+        </div>
       </div>
     </div>
     <div class="button-div-buy row d-flex justify-content-center">
-      <a class="btn btn-outline-secondary me-3  col-3" href=""><i class="fa-solid fa-cart-shopping"></i>Add to Cart</a>
+      <button product-id="{{_id}}" class="btn addCart btn-outline-secondary me-3  col-3" ><i class="fa-solid fa-cart-shopping"></i> Add to cart</button>
+      {{!-- <a class="btn btn-outline-secondary me-3  col-3" href="">Add to Cart</a> --}}
       <a href="" class="btn btn-dark   col-3"> <i class="fa-solid fa-bolt"></i>Buy Now</a>
     </div>
   </div>
@@ -60,4 +63,4 @@
 <div>
   {{>user-footer}}
 </div>
-<script src="/javascripts/product-view.js"></script>
+<script src="/javascripts/productView.js"></script>

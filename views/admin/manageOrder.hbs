@@ -1,0 +1,98 @@
+{{>admin-aside}}
+<div class="content">
+  <div class="container">
+    {{#each data}}
+    <form class="mt-5" id="orderStatus">
+      <!-- 2 column grid layout with text inputs for the first and last names -->
+      <div class="row mb-4">
+        <div class="col-md-4">
+          <div class="form-outline">
+            <label class="form-label" for="form6Example1">First name</label>
+            <input disabled type="text" id="form6Example1" class="form-control" value="{{address.firstName}}" />
+
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-outline">
+            <label class="form-label" for="form6Example2">Last name</label>
+
+            <input disabled type="text" id="form6Example2" class="form-control" value="{{address.lastName}}" />
+          </div>
+        </div>
+      </div>
+      <div class="form-outline col-8 mb-4">
+        <label class="form-label" for="form6Example7">Address</label>
+
+        <textarea disabled class="form-control" id="form6Example7" placeholder="{{address.address}}"
+          rows="4"></textarea>
+      </div>
+      <div class="row mb-4">
+        <div class="col-md-4">
+          <div class="form-outline">
+            <label class="form-label" for="form6Example1">state</label>
+            <input disabled type="text" id="form6Example1" class="form-control" value="{{address.state}}" />
+
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-outline">
+            <label class="form-label" for="form6Example2">city</label>
+
+            <input disabled type="text" id="form6Example2" class="form-control" value="{{address.city}}" />
+          </div>
+        </div>
+
+      </div>
+      <div class="col-md-4">
+        <div class="form-outline">
+          <label class="form-label" for="form6Example2">pincode</label>
+
+          <input disabled type="text" id="form6Example2" class="form-control" value="{{address.pincode}}" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-outline col-md-4 mb-4">
+          <label class="form-label" for="form6Example3">Product Id</label>
+
+          <input disabled type="text" name="productID" id="form6Example3" class="form-control" value="{{products.productId}}" />
+        </div>
+        <div class="form-outline col-md-4 mb-4">
+          <label class="form-label" for="form6Example3">Order Id</label>
+
+          <input disabled type="text" name="orderID" id="form6Example3" class="form-control" value="{{_id}}" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-outline col-md-4 mb-4">
+          <label class="form-label" for="form6Example4">Quantity</label>
+
+          <input disabled type="text" id="form6Example4" class="form-control" value="{{products.quantity}}" />
+        </div>
+        <div class="form-outline col-md-4 mb-4">
+          <label class="form-label" for="form6Example5">Price</label>
+
+          <input disabled type="" id="form6Example5" class="form-control" value="{{products.pricePerQnt}}" />
+        </div>
+      </div>
+      <!-- Number input -->
+      <div class="form-outline col-8 mb-4">
+        <label class="form-label" for="form6Example6">Order Date</label>
+
+        <input disabled type="text" id="form6Example6" class="form-control" value="{{orderDate}}" />
+      </div>
+      <div class="col-md-4">
+        <select class="form-select form-select-lg mb-3" name="status" aria-label="Large select example">
+          <option selected>{{orderStatus}}</option>
+          <option value="cancelled">cancelled</option>
+          <option value="shipped">shipped</option>
+          <option value="delivered">delivered</option>
+
+        </select>
+      </div>
+      <!-- Submit button -->
+      <button type="submit" class="btn btn-primary btn-block mb-4">change status</button>
+    </form>
+    {{/each}}
+  </div>
+</div>
+<script src="/javascripts/manageOrder.js"></script>

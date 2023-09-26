@@ -1,0 +1,54 @@
+{{>admin-aside}}
+<div class="content mt-5">
+  <div class="col">
+    <p class="searchErr text-danger fw-bold fs-4"></p>
+    <div class="table-responsive">
+      <table class="table table-striped" id="orderTable">
+        <thead>
+          <tr>
+            <th scope="col">Order ID</th>
+            <th scope="col">user ID</th>
+            <th scope="col">Address</th>
+            <th scope="col">Product</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Payment</th>
+            <th scope="col">orderDate</th>
+            <th scope="col">Status</th>
+            <th scope="col">Manage</th>
+          </tr>
+        </thead>
+        <tbody class="table-group-divider">
+
+          {{#each orderData}}
+          <tr>
+            <td>{{_id}}</td>
+            <td>{{userId}}</td>
+            <td><span class="fw-bold">{{address.firstName}} {{address.lastName}}</span>
+              {{address.state}},<br>{{address.city}},{{address.pincode}},{{address.address}}
+            </td>
+            <td>{{productDetails.Name}}</td>
+            <td> {{products.quantity}} </td>
+            <td>{{paymentMethod}}</td>
+            <td>{{orderDate}}</td>
+            <td>{{products.itemStatus}}</td>
+            <td><a href="/admin/manage-order/{{_id}}/{{products.productId}}" class="btn btn-primary " id=""
+                orderId="{{_id}}" productId="{{products.productId}}">Manage</a></td>
+          </tr>
+          {{/each}}
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<script src='https://code.jquery.com/jquery-3.7.0.js'></script>
+<!-- Data Table JS -->
+<script src='https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js'></script>
+<script src='https://cdn.datatables.net/responsive/2.1.0/js/dataTables.responsive.min.js'></script>
+<script src='https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js'></script>
+<script src="/javascripts/adminOrderList.js"></script>
+<script>
+  $(document).ready(()=>{
+  new DataTable('#orderTable');
+  })
+</script>

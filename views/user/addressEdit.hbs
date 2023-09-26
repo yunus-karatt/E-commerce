@@ -1,18 +1,19 @@
-<section class="d-flex container">
-  <div class="col-3 align-items-center">
+<section class="container user-aside-sec">
+  {{!-- <div class="col-3 align-items-center"> --}}
     {{>user-aside}}
-  </div>
-  <div class="col p-5 ms-5 address-manage">
+  {{!-- </div> --}}
+  <div class="col p-5 ms-5 user-main address-manage">
     <div class="mt-5 ">
       <h5 class="h3 fw-bold">Update Address</h5>
-        <form method="POST" action="/updateaddress/{{address._id}}" class="row p-5 g-3">
+      <p class="text text-danger fw bold fs-3" id="addressError"></p>
+        <form id="editAddressForm" method="POST" action="/updateaddress/{{address._id}}" class="row p-5 g-3">
           <div class="col-md-6">
             <label for="firstName" class="form-label">First Name</label>
-            <input placeholder="{{address.firstName}}" name="firstName" type="text" class="form-control" id="firstName">
+            <input value="{{address.firstName}}" name="firstName" type="text" class="form-control" id="firstName">
           </div>
           <div class="col-md-6">
             <label for="lastName" class="form-label">Last Name</label>
-            <input placeholder="{{address.lastName}}" name="lastName" type="text" class="form-control" id="lastName">
+            <input value="{{address.lastName}}" name="lastName" type="text" class="form-control" id="lastName">
           </div>
           <div class="col-12">
             <label class="form-label">Address</label>
@@ -22,7 +23,7 @@
           </div>
           <div class="col-md-6">
             <label for="inputCity" class="form-label">City</label>
-            <input placeholder="{{address.city}}" name="inputCity" type="text" class="form-control" id="inputCity">
+            <input value="{{address.city}}" name="inputCity" type="text" class="form-control" id="inputCity">
           </div>
           <div class="col-md-4">
             <label for="inputState" class="form-label">State</label>
@@ -60,7 +61,7 @@
           </div>
           <div class="col-md-2">
             <label for="inputZip" class="form-label">Zip</label>
-            <input placeholder="{{address.pincode}}" name="inputZip" type="number" class="form-control" id="inputZip">
+            <input value="{{address.pincode}}" name="inputZip" type="number" class="form-control" id="inputZip">
           </div>
           <div class="col-12">
             <button type="submit" class="btn btn-primary">Save</button>
@@ -72,3 +73,4 @@
 <div>
   {{>user-footer}}
 </div>
+<script src="/javascripts/editAddressValidation.js"></script>

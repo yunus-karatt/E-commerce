@@ -1,16 +1,17 @@
-<section class="d-flex container">
+<section class="container user-aside-sec">
   {{!-- <div class="row"> --}}
-    <div class="col-3 align-items-center">
+    {{!-- <div class="col-3 align-items-center"> --}}
       {{>user-aside}}
-    </div>
-    <div class="col p-5 ms-5 ">
+    {{!-- </div> --}}
+    <div class="col  user-main p-5 ms-5 ">
       <div class="mt-5 ">
         <h5 class="h3 fw-bold">Add a new Address</h5>
       </div>
-      <form method="POST" action="/addaddress" class="row p-5 g-3">
+      <form id="address-form" method="POST" action="/addaddress" class=" p-5 g-3">
+       <p class="text text-danger fw bold fs-3" id="addressError"></p>
         <div class="col-md-6">
           <label for="firstName" class="form-label">First Name</label>
-          <input name="firstName"  type="text" class="form-control" id="firstName">
+          <input name="firstName" type="text" class="form-control" id="firstName">
         </div>
         <div class="col-md-6">
           <label for="lastName" class="form-label">Last Name</label>
@@ -18,9 +19,9 @@
         </div>
         <div class="col-12">
           <label class="form-label">Address</label>
-          <textarea name="inputAddress" type="text" class="form-control" placeholder="Address(area,street,home number)" id="inputAddress"
-            style="height: 100px"></textarea>
-          
+          <textarea name="inputAddress" type="text" class="form-control" placeholder="Address(area,street,home number)"
+            id="inputAddress" style="height: 100px"></textarea>
+
         </div>
         <div class="col-md-6">
           <label for="inputCity" class="form-label">City</label>
@@ -29,7 +30,7 @@
         <div class="col-md-4">
           <label for="inputState" class="form-label">State</label>
           <select name="inputState" id="inputState" class="form-select">
-            <option selected>Choose...</option>
+            <option selected></option>
             <option value="Andhra Pradesh">Andhra Pradesh</option>
             <option value="Arunachal Pradesh">Arunachal Pradesh</option>
             <option value="Assam">Assam</option>
@@ -64,9 +65,10 @@
           <label for="inputZip" class="form-label">Zip</label>
           <input name="inputZip" type="number" class="form-control" id="inputZip">
         </div>
-        <div class="col-12">
-          <button type="submit" class="btn btn-primary">Save</button>
-        </div>
+        <input type="hidden" name="redirect" value="true">
+        {{!-- <div class="col-12"> --}}
+          <button type="submit" class="btn btn-primary mt-5">Save Address</button>
+        {{!-- </div> --}}
       </form>
     </div>
 
@@ -76,3 +78,4 @@
 <div>
   {{>user-footer}}
 </div>
+<script src="/javascripts/addressValidation.js"></script>

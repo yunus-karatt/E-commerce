@@ -1,29 +1,29 @@
-<section class="d-flex container">
-  <div class="col-3 align-items-center">
-    {{>user-aside}}
-  </div>
-  <div class="col p-5 ms-5 address-manage">
-    <div class="mt-5 ">
-      <h5 class="h3 fw-bold">Manage Address</h5>
-      <div class="d-grid gap-2 col-6 ">
-        <a class="btn btn-outline-dark text-start fw-semibold" href="/addaddress"><i class="fa-solid fa-plus"></i>Add
-          new Address</a>
+<section class="container user-aside-sec">
+  {{>user-aside}}
+    <div class="row p-5 ms-5 user-main address-manage">
+      <div class="col-md-12  ">
+        <h5 class="h3 fw-bold">Manage Address</h5>
+        <div class="d-grid gap-2 col-6 ">
+          <a class="btn btn-dark mt-3 text-start fw-semibold" href="/addaddress"><i class="fa-solid fa-plus"></i>Add
+            new Address</a>
+        </div>
       </div>
-    </div>
-    {{#each userAddress}}
-    <div class="address p-4 border border-dark mt-5">
-      <a href="/updateaddress/{{_id}}"><i  class="fa fa-pencil fs-5 m-3 float-end text-primary edit-address"></i></a>
-      <i addressid="{{_id}}" class="fa delete-address fa-trash fs-5 m-3 text-danger float-end"></i>
-      <p class="fw-bold">{{firstName}} {{lastName}}</p>
-      <p>{{address}}</p>
-      <p>{{city}} {{state}} {{pincode}}</p>
-
-    </div>
-
-    {{/each}}
-  </div>
-  
-  </div>
+      {{#each userAddress}}
+      <div class="col-md-12 mt-5">
+        <div class=" mb-3 address mt-5 mb-sm-0">
+          <div class="card ">
+            <div class="card-body">
+              <h5 class="card-title">{{firstName}} {{lastName}}</h5>
+              <p class="card-text">{{address}} <br>{{city}} {{state}} {{pincode}}</p>
+              <a class="btn btn-primary" href="/updateaddress/{{_id}}"><i class="fa fa-pencil edit-address"></i>Edit</a>
+              <button addressid="{{_id}}" class="btn btn-danger delete-address"><i
+                  class="fa fa-trash "></i>Remove</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      {{/each}}
+    </div> 
 </section>
 <div>
   {{>user-footer}}

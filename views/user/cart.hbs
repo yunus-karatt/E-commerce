@@ -1,76 +1,154 @@
-<div class="container">
-  <div class="row">
-    <div class="col-7 ms-5 ">
-      <div class="mt-5 ">
-        <h5 class="h3 fw-bold">Cart</h5>
-      </div>
-      <div class="wish-div ">
-        {{#if cartData.length}}
-        {{#each cartData}}
-        <dir class="wishlist-item">
-          <a class="d-flex justify-content-between wishlink mt-5" href="/viewproduct/{{productId}}">
-            <div class="">
-              <img src="/images/uploads/{{productImage}}" alt="">
-            </div>
-            <div class="d-flex justify-content-center flex-column ms-5">
-              <p class="h4">{{productName}}</p>
-              <p class="">
-                RAM:{{productFeature.RAM}}|ROM:{{productFeature.Storage}}|OS:{{productFeature.Operating_system}}</p>
-              <p class="float-end fw-bold fs-3">₹ {{totalPrice}}</p>
-              <p>{{count}}</p>
-            </div>
-            <div class="ms-5 mt-5">
+<section class="h-100 gradient-custom">
+  <div class="container py-5">
+    <div class="row d-flex justify-content-center my-4">
+      <div class="col-md-8">
+        <div class="card mb-4">
+          <div class="card-header py-3">
+            <h5 class="mb-0">Cart - {{cartData.[0].totalCount}} items</h5>
+          </div>
+          <div class="card-body">
+            <!-- Single item -->
+            {{#if cartData.length}}
+            {{#each cartData}}
+            {{#each this.products}}
+            <div class="row">
+              <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
+                <!-- Image -->
+                <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light" >
+                  <img src="/images/uploads/{{productImage.[0]}}" class="w-100 h-100" alt="quandum gadgets" style="object-fit: fill;"/>
+                  <a href="#!">
+                    <div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
+                  </a>
+                </div>
+                <!-- Image -->
+              </div>
+              <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
+                <!-- Data -->
+                
+                <p><strong>{{productName}}</strong></p>
+                <p>RAM:{{productFeatures.[0].RAM}}</p>
+                <p>{{productFeatures.[0].Storage}}</p>
+                <p>OS:{{productFeatures.[0].Operating_system}}</p>
+                <button productId="{{_id}}" type="button"
+                  class="deleteCart cart-remove btn btn-danger btn-sm me-1 mb-2" data-mdb-toggle="tooltip"
+                  title="Remove item">
+                  <i class="fas fa-trash"></i>
+                </button>
+                <a href="/viewproduct/{{_id}}" class="btn btn-primary btn-sm mb-2" data-mdb-toggle="tooltip"
+                  title="Move to the wish list">
+                  <i class="fas fa-eye"></i>
+                </a>
+                
+                <!-- Data -->
+              </div>
 
-            </div>
-          </a>
+              <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                <!-- Quantity -->
+                <div class="d-flex mb-4" style="max-width: 300px">
+                  <button count="{{count}}" onclick="updateCart('{{_id}}',-1,'{{count}}')" class="btn btn-dark cartBtn me-2" style="height: 40px;"
+                    >
+                    <i class="fas fa-minus"></i>
+                  </button>
 
-          <div class="float-end">
-            <button class="cart-remove btn"><i class="fa-solid fa-trash"></i></button>
+                  <div class="form-outline">
+                    <input id="form1" min="0" name="quantity" value="{{count}}" type="number" class="form-control" />
+                    <label class="form-label" for="form1">Quantity</label>
+                  </div>
+
+                  <button id="{{_id}}" onclick="updateCart('{{_id}}',1,'{{count}}', id)" class="btn btn-dark increaseBtn ms-2" style="height: 40px;"
+                  >
+                    <i class="fas fa-plus"></i>
+                  </button>
+                </div>
+                <!-- Quantity -->
+
+                <!-- Price -->
+                <p class="text-start text-md-center">
+                  <strong>₹ {{price}}</strong>
+                </p>
+                <!-- Price -->
+              </div>
+            </div>
+
+            <hr class="my-4" />
+              {{/each}}
+            {{/each}}
+            {{else}}
+            <div class="col-lg-7 col-md-12 mb-4 offset-lg-2 mb-lg-0">
+              <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
+                  <img src="/images/Logo/cart empty.png" class="w-100" alt="Blue Jeans Jacket" />
+                  <a href="#!">
+                    <div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
+                  </a>
+                </div>
+              <div>
+              </div>
+            </div>
+            {{/if}}
 
           </div>
-          <div class="popup-container">
-            <div class="popup-content">
-              {{!-- <span class="close-button">&times;</span> --}}
-              <p class="fs-4 fw-bold text-uppercase">Are you sure want to remove?</p>
-
-              <button onclick="deleteCartItem('{{productId}}')" class="btn btn-dark pop-button">Remove</button>
-              <button onclick="closePopup()" class="btn btn-dark pop-button">close</button>
-            </div>
+        </div>
+        {{!-- <div class="card mb-4">
+          <div class="card-body">
+            <p><strong>Expected shipping delivery</strong></p>
+            <p class="mb-0">12.10.2020 - 14.10.2020</p>
           </div>
-        </dir>
-        {{/each}}
-      </div>
-    </div>
-    <div class="col-3">
-      gfgofgoiiogjfkl;gjfilgjfigjiodfgjuiofjgklfjglk;fjkl;jLorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-      do
-      eiusmod tempor incididunt ut labore et dolore magna aliqua. Blandit libero volutpat sed cras ornare arcu dui. Diam
-      ut venenatis tellus in metus vulputate eu scelerisque. Aliquam ut porttitor leo a diam sollicitudin tempor. Rutrum
-      tellus pellentesque eu tincidunt tortor. Justo laoreet sit amet cursus sit amet dictum sit. Quisque egestas diam
-      in
-      arcu cursus. Dolor sit amet consectetur adipiscing elit. Gravida neque convallis a cras semper auctor neque vitae
-      tempus. Tellus molestie nunc non blandit massa enim nec dui. Sit amet commodo nulla facilisi nullam vehicula ipsum
-      a
-      arcu. Ultrices vitae auctor eu augue ut lectus arcu bibendum. A lacus vestibulum sed arcu non odio euismod lacinia
-      at. Aliquam vestibulum morbi blandit cursus risus at ultrices mi.
+        </div> --}}
+        <div class="card mb-4 mb-lg-0">
+          <div class="card-body">
+            <p><strong>We accept</strong></p>
+            <img class="me-2" width="45px"
+              src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/visa.svg"
+              alt="Visa" />
+            <img class="me-2" width="45px"
+              src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/amex.svg"
+              alt="American Express" />
+            <img class="me-2" width="45px"
+              src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/mastercard.svg"
+              alt="Mastercard" />
 
-    </div>
-    {{else}}
-    <div class="d-flex flex-column justify-content-center  align-items-center">
-      <div>
-        <img src="/images/Logo/cart empty.png" alt="">
+          </div>
+        </div>
       </div>
-      <div>
-        <p class="fs-5">
-          You have no items in your cart. Start adding!
-        </p>
+      {{#if cartData.length}}
+      <div class="col-md-4">
+        <div class="card mb-4">
+          <div class="card-header py-3">
+            <h5 class="mb-0">Summary</h5>
+          </div>
+          <div class="card-body">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+                Products
+                <span>₹{{cartData.[0].totalPrice}}</span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                Shipping
+                <span>Gratis</span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
+                <div>
+                  <strong>Total amount</strong>
+                  <strong>
+                    <p class="mb-0">(including VAT)</p>
+                  </strong>
+                </div>
+                <span><strong>₹{{cartData.[0].totalPrice}}</strong></span>
+              </li>
+            </ul>
+
+            <a href="/checkout" type="button" class="btn btn-dark btn-lg btn-block">
+              Go to checkout
+            </a>
+          </div>
+        </div>
       </div>
+      {{/if}}
     </div>
-    {{/if}}
+
   </div>
-</div>
-
+</section>
 <div>
   {{>user-footer}}
-</div>
+</div> 
 <script src="/javascripts/cart.js"></script>

@@ -1,12 +1,15 @@
-<section class="d-flex">
-   <div style="width: 280px; ">
-    
-      {{>admin-aside}}
-   
-  </div>
-  <div class="container mt-5">
-    <div class="col-8">
-      <table class="table">
+{{>admin-aside}}
+<div class="content mt-5">
+  <div class="col">
+    <div class=" m-2 col-md-5 ">
+      <form id="searchForm" class="d-flex" role="search">
+        <input class="form-control me-2" name="search" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success" id="searchButton" type="submit">Search</button>
+      </form>
+    </div>
+    <p class="searchErr text-danger fw-bold fs-4"></p>
+    <div class="table-responsive">
+      <table class="table table-striped" id="tableContainer">
         <thead>
           <tr>
             <th scope="col">Username</th>
@@ -15,8 +18,8 @@
             <th scope="col">Block/Unblock</th>
           </tr>
         </thead>
-        {{#each userList}}
-        <tbody>
+        <tbody class="table-group-divider">
+          {{#each userList}}
           <tr>
             <td>{{this.Username}}</td>
             <td>{{this.Email}}</td>
@@ -27,10 +30,15 @@
             <td><a href="/admin/blockuser/{{this._id}}" class="btn btn-danger">Block</a></td>
             {{/if}}
           </tr>
-
+          {{/each}}
         </tbody>
-        {{/each}}
+
       </table>
     </div>
+    <div class="d-flex justify-content-center ">
+      <button id="prev" class="btn btn-dark me-3">Prev</button>
+      <button id="next" class="btn btn-dark">Next</button>
+    </div>
   </div>
-</section>
+</div>
+<script src="/javascripts/userList.js"></script>

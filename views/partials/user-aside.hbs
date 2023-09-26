@@ -1,25 +1,23 @@
-<aside class=" mt-5 p-3 text-white bg-dark  user-aside">
-  <div class="user-div row  profile-div bg-dark ">
+<aside class="user-aside text-white bg-dark">
+  <div class="user-div row text-white profile-div bg-dark ">
     <div class="col d-flex justify-content-center align-items-center p-0">
       <img src="/images/Logo/avather.jpeg" class="rounded-circle profile-img" alt="...">
     </div>
     <div class=" col p-0 ">
-      <p class="m-0">Hello,</p>
+      <p class="m-0 mt-1">Hello,</p>
       <p class=" text-uppercase user-name fw-bold">{{user.Username}}</p>
     </div>
   </div>
-  <div class="container row bg-dark  mt-2 p-2">
-    <ul class="list-group side-link  list-group-flush">
-      <a ="account-link" href="" class="list-group-item list-group-item-action active-link text-white mt-4"><i
+  
+      <a class="bg-dark text-white" id="account-link" href="/myprofile" ><i
           class="fa-solid fa-user-tie"></i>ACCOUNT</a>
-      <a id="orders-link" href="/admin/category" class="list-group-item list-group-item-action  text-white mt-4"><i
+      <a class="bg-dark text-white" id="orders-link" href="/view-order" ><i
           class="fa-solid fa-border-all"></i>MY ORDERS</a>
-      <a id="wishlist-link" href="/wishlist" class="list-group-item list-group-item-action  text-white mt-4"><i
+      <a class="bg-dark text-white" id="wishlist-link" href="/wishlist" ><i
           class="fa-solid fa-heart"></i>WISHLIST</a>
-      <a id="address-link" href="/manageaddress" class="list-group-item list-group-item-action  text-white mt-4"><i
+      <a class="bg-dark text-white" id="address-link" href="/manageaddress" ><i
           class="fa-solid fa-address-book"></i></i>MANAGE ADDRESS</a>
-      <a id="logout-link" href="/admin/userslist" class="list-group-item list-group-item-action  text-white mt-4"><i
+      <a class="bg-dark text-white" id="logout-link" href="/logout" ><i
           class="fa-solid fa-power-off"></i></i>LOGOUT</a>
-    </ul>
-  </div>
+  
 </aside>

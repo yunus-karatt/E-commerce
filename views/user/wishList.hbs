@@ -1,9 +1,10 @@
-<section class="d-flex wish-section container">
+ 
+<section class="container user-aside-sec wish-section ">
   {{!-- <div class="row"> --}}
-    <div class="col-3 align-items-center user-aside-div">
-      {{>user-aside}}
-    </div>
-    <div class="col  ms-5 ">
+    {{!-- <div class="col-3 align-items-center user-aside-div"> --}}
+     {{>user-aside}}
+    {{!-- </div> --}}
+    <div class="col user-main ms-5 ">
       <div class="mt-5 ">
         <h5 class="h3 fw-bold">My Wishlist</h5>
       </div>
@@ -24,8 +25,8 @@
             </div>
           </a>
           <div class="float-end wish-button-div">
-            <button class="wish-button btn" userId="{{../user._id}}" productId="{{products._id}}"><i
-                class="fa-solid fa-trash"></i></button>
+            <button class="wish-button btn btn-danger" userId="{{../user._id}}" productId="{{products._id}}"><i
+                class="fa-solid fa-trash"></i>Remove</button>
 
           </div>
           
