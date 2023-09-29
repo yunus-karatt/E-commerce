@@ -1,5 +1,5 @@
 {{>admin-aside}}
-<div class="content">
+{{!-- <div class="content">
   <div class="container">
     {{#each data}}
     <form class="mt-5" id="orderStatus">
@@ -54,7 +54,8 @@
         <div class="form-outline col-md-4 mb-4">
           <label class="form-label" for="form6Example3">Product Id</label>
 
-          <input disabled type="text" name="productID" id="form6Example3" class="form-control" value="{{products.productId}}" />
+          <input disabled type="text" name="productID" id="form6Example3" class="form-control"
+            value="{{products.productId}}" />
         </div>
         <div class="form-outline col-md-4 mb-4">
           <label class="form-label" for="form6Example3">Order Id</label>
@@ -94,5 +95,116 @@
     </form>
     {{/each}}
   </div>
+</div> --}}
+
+<div class="content ">
+  <div class="container ">
+    {{#notEqual data.[0].orderStatus 'cancelled'}}
+    <div class="btn-group dropend mt-5">
+      <button type="button" class="btn btn-primary btn-lg dropdown-toggle" data-bs-toggle="dropdown"
+        aria-expanded="false">
+        Manage Order
+      </button>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="/admin/update-order-status?orderId={{data.[0]._id}}&status=shipped">Shipped</admin/a></admin/li>
+        <li><a class="dropdown-item" href="/admin/update-order-status?orderId={{data.[0]._id}}&status=delivered">Delivered</a></li>
+      </ul>
+    </div>
+    {{/notEqual}}
+    <div class="card text-center mt-5">
+      <div class="card-header text-start d-flex justify-content-between">
+        <div>
+          <p class="text-muted mb-0"> Place On: <span class="fw-bold text-body">
+              {{data.[0].orderDate}}</span>
+          </p>
+          <p class="text-muted mb-0"> Order ID: <span class="fw-bold text-body"> {{data.[0]._id}} </span>
+          </p>
+        </div>
+        <div>
+          {{#equal data.[0].orderStatus 'cancelled'}}
+          <p class="text-muted mb-0 "> Order Status: <span class="fw-bold  text-danger"><i class="fa fa-circle"></i>
+              {{data.[0].orderStatus}}</span>
+          </p>
+          {{else}}
+          <p class="text-muted mb-0 "> Order Status: <span class="fw-bold  text-success"><i class="fa fa-circle"></i>
+              {{data.[0].orderStatus}}</span>
+            {{/equal}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="card-body text-start">
+            <h5 class="card-title">Payment Info</h5>
+            <p class="text-muted mb-0"> Total item: <span class="fw-bold text-body">
+                {{data.[0].totalProduct}}</span>
+            <p class="text-muted mb-0"> Total Payable: <span class="fw-bold text-body">
+                ₹{{data.[0].totalPrice}}</span>
+            </p>
+            <p class="text-muted mb-0"> Payment method: <span class="fw-bold text-body">
+                {{data.[0].paymentMethod}}</span>
+            </p>
+            {{!-- <a href="#" class="btn btn-primary">Go somewhere</a> --}}
+          </div>
+
+        </div>
+        <div class="col-sm-6">
+          <div class="card-body text-start">
+            <h5 class="card-title">Delivery Address</h5>
+            <p class="card-text ms-2"><span class="fw-semibold">{{data.[0].address.firstName}}
+                {{data.[0].address.lastName}} </span><br>
+
+              <span>{{data.[0].address.address}}<br>{{data.[0].address.city}}<br>{{data.[0].address.state}}<br>{{data.[0].address.pincode}}
+            </p>
+            {{!-- <a href="#" class="btn btn-primary">Go somewhere</a> --}}
+          </div>
+
+        </div>
+        {{!-- <div class="card-footer text-muted">
+
+        </div> --}}
+      </div>
+    </div>
+    <div class="row ">
+      {{#each data}}
+      {{#each products}}
+      <div class="col-sm-6 mt-5 ">
+        <div class="card mb-3" style="max-width: 540px;">
+          <div class="row g-0">
+            <div class="col-md-4">
+              <img src="/images/uploads/{{productDetails.[0].Images.[0]}}" class="img-fluid rounded-start" alt="..."
+                style="object-fit: contain;">
+            </div>
+            <div class="col-md-8">
+              <div class="card-body">
+                <h5 class="card-title">{{productDetails.[0].Name}}</h5>
+                <p class="card-text"><span class="text-muted">RAM:</span>{{productDetails.[0].Features.[0].RAM}}||<span
+                    class="text-muted">ROM:</span>{{productDetails.[0].Features.[0].Storage}}
+                  <br><span class="text-muted">COLOR:</span>{{productDetails.[0].Features.[0].Color}}
+                </p>
+                <p class="text-muted mb-0"> Quantity: <span class="fw-bold text-body">
+                    {{quantity}}</span>
+                <p class="text-muted mb-0"> Price: <span class="fw-bold text-body">
+                    ₹{{pricePerQnt}}</span>
+                  {{#equal itemStatus 'cancelled'}}
+                <p class="text-muted mb-0 "> Product Status: <span class="fw-bold  text-danger"><i
+                      class="fa fa-circle"></i>
+                    {{itemStatus}}</span>
+                </p>
+                {{else}}
+                <p class="text-muted mb-0 "> Product Status: <span class="fw-bold  text-success"><i
+                      class="fa fa-circle"></i>
+                    {{itemStatus}}</span>
+                  {{/equal}}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {{/each}}
+      {{/each}}
+    </div>
+
+  </div>
 </div>
+
 <script src="/javascripts/manageOrder.js"></script>

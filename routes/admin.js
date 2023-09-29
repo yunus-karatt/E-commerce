@@ -1,31 +1,24 @@
 var express = require('express');
 var router = express.Router();
-const multer = require('multer')
-const multerFunction = require('../helpers/helperFunction')
+const multer = require('multer');
+const multerFunction = require('../helpers/helperFunction');
 // const upload = multer({dest:"./public/images/uploads"})
-
-const getAdmin = require('../controllers/adminController')
-const getProduct = require('../controllers/productController')
+const getAdmin = require('../controllers/adminController');
+const getProduct = require('../controllers/productController');
+const adminAuth = require('../middle ware/adminAuthMiddleware');
 
 
 let admin = 1;
 
-// session checking middlewar
-function isValidate(req, res, next) {
-  if (req.session.adminLoggedIn) {
-    next()
-  } else {
-    res.redirect('/admin/login')
-  }
-}
+
 
 /* GET Admin listing. */
-router.get('/', isValidate, function (req, res, next) {
+router.get('/', adminAuth.isValidate, function (req, res, next) {
   let adminData = req.session.admin
   res.render('admin/Dashboard', { admin, adminData });
 });
 
-router.get('/login',(req, res) => {
+router.get('/login', (req, res) => {
   if (req.session.adminLoggedIn) {
     res.redirect('/admin/')
   } else {
@@ -41,11 +34,14 @@ router.get('/logout', (req, res) => {
 })
 
 // Get user
-router.get('/userslist', (req, res) => {
-  getAdmin.getUsersList().then((userList) => {
-    res.render('admin/userlist', { admin, userList })
-
-  })
+router.get('/userslist', adminAuth.isValidate, (req, res) => {
+  getAdmin.getUsersList()
+    .then((userList) => {
+      res.render('admin/userlist', { admin, userList })
+    })
+    .catch((error) => {
+      res.status(500).send('An error occurred: ' + error.message);
+    })
 })
 
 // router.get('/userslist/:skip',(req,res)=>{
@@ -56,100 +52,155 @@ router.get('/userslist', (req, res) => {
 //     res.render('admin/userlist', { admin, userList })
 //   })
 // })
-router.get('/get-limited-user/:skip',(req,res)=>{
-  const skip= req.params.skip;
-  getAdmin.getLimitedUser(skip).then((userList)=>{
-    console.log(userList)
-    res.json(userList)
-  })
+
+router.get('/get-limited-user/:skip', (req, res) => {
+  const skip = req.params.skip;
+  getAdmin.getLimitedUser(skip)
+    .then((userList) => {
+      res.json(userList)
+    })
+    .catch((error) => {
+      res.status(500).send('An error occurred: ' + error.message);
+    })
 })
 
-router.get('/search-user/:search',(req,res)=>{
-  const searchQuery= req.params.search;
+router.get('/search-user/:search', (req, res) => {
+  const searchQuery = req.params.search;
   // console.log(req.params.search)
-  getAdmin.findUser(searchQuery).then((userList)=>{
-    console.log(userList)
-    res.json(userList)
-
-  })
+  getAdmin.findUser(searchQuery)
+    .then((userList) => {
+      console.log(userList)
+      res.json(userList)
+    })
+    .catch((error) => {
+      res.status(500).send('An error occurred: ' + error.message);
+    })
 })
 
-router.get('/blockuser/:id',isValidate, (req, res) => {
-  getAdmin.blockUser(req.params.id).then(() => {
-    res.redirect('/admin/userslist')
-  })
+router.get('/blockuser/:id', adminAuth.isValidate, (req, res) => {
+  getAdmin.blockUser(req.params.id)
+    .then(() => {
+      res.redirect('/admin/userslist')
+    })
+    .catch((error) => {
+      res.status(500).send('An error occurred: ' + error.message);
+    })
 })
 
 // Get Category
-router.get('/category', isValidate,(req, res) => {
-  getProduct.getAllCategory().then((findCat) => {
-    res.render('admin/category', { admin, findCat })
-  })
+router.get('/category', adminAuth.isValidate, (req, res) => {
+  getProduct.getAllCategory()
+    .then((findCat) => {
+      res.render('admin/category', { admin, findCat })
+    })
+    .catch((error) => {
+      res.status(500).send('An error occurred: ' + error.message);
+    })
 })
 
-router.get('/addcategory/',isValidate, (req, res) => {
+router.get('/addcategory/', adminAuth.isValidate, (req, res) => {
   res.render('admin/addcategory', { admin })
 })
 
-router.get('/editcategory/:id',isValidate, (req, res) => {
+router.get('/editcategory/:id', adminAuth.isValidate, (req, res) => {
   getProduct.getSinleCat(req.params.id).then((singleCat) => {
     res.render('admin/editcategory', { admin, singleCat })
   })
 })
 
-router.get('/listcategory/:id',isValidate, (req, res) => {
-  getProduct.listCategory(req.params.id).then(() => {
-    res.redirect('/admin/category')
-  })
+router.get('/listcategory/:id', adminAuth.isValidate, (req, res) => {
+  getProduct.listCategory(req.params.id)
+    .then(() => {
+      res.redirect('/admin/category')
+    })
+    .catch((error) => {
+      res.status(500).send('An error occurred: ' + error.message);
+    })
 })
 
 // GET Products
-router.get('/products',isValidate, (req, res) => {
-  getProduct.listProduct().then((productData)=>{
-    res.render('admin/productlist', { admin,productData})
-  })
+router.get('/products', adminAuth.isValidate, (req, res) => {
+  getProduct.listProduct()
+    .then((productData) => {
+      res.render('admin/productlist', { admin, productData })
+    })
+    .catch((error) => {
+      res.status(500).send('An error occurred: ' + error.message);
+    })
+})
 
+router.get('/addproduct', (req, res) => {
+  getProduct.getCategory()
+    .then((findCat) => {
+      res.render('admin/addproduct', { admin, findCat })
+    })
+    .catch((error) => {
+      res.status(500).send('An error occurred: ' + error.message);
+    })
+})
+
+router.get('/deleteproduct/:id', adminAuth.isValidate, (req, res) => {
+  getProduct.deleteProduct(req.params.id)
+    .then(() => {
+      res.redirect('/admin/products')
+    })
+    .catch((error) => {
+      res.status(500).send('An error occurred: ' + error.message);
+    })
+})
+
+router.get('/editproduct/:id', async (req, res) => {
+  try {
+    const productData = await getProduct.getSinglePr(req.params.id)
+    const productCat = await getProduct.getSinleCat(productData.Category)
+    getProduct.getProductEditCategory(productCat)
+    .then((findCat) => {
+      res.render('admin/editproduct', { admin, productData, findCat, productCat })
+    })
+    .catch((error)=>{
+      res.status(500).send('An error occurred: ' + error.message);
+    })
+  }
+  catch (err) {
+//     const productData= await getProduct.getSinglePr(req.params.id)
+//  const productCat = await getProduct.getSinleCat(productData.Category)
+//   getProduct.getProductEditCategory(productCat).then((findCat)=>{
+//     res.render('admin/editproduct',{admin,productData,findCat,productCat})
+//   })
+  }
 
 })
 
-router.get('/addproduct',isValidate, (req, res) => {
-  getProduct.getCategory().then((findCat) => {
-    res.render('admin/addproduct', { admin, findCat })
-  })
-})
-
-router.get('/deleteproduct/:id',isValidate,(req,res)=>{
-  getProduct.deleteProduct(req.params.id).then(()=>{
-    res.redirect('/admin/products')
-  })
-})
-router.get('/editproduct/:id',isValidate,async(req,res)=>{
- const productData= await getProduct.getSinglePr(req.params.id)
- const productCat = await getProduct.getSinleCat(productData.Category)
-  getProduct.getProductEditCategory(productCat).then((findCat)=>{
-    res.render('admin/editproduct',{admin,productData,findCat,productCat})
-  })
-  
-})
 // orders
-
-router.get('/get-orders',(req,res)=>{
+router.get('/get-orders', adminAuth.isValidate, (req, res) => {
   getAdmin.getOrderData()
-  .then((orderData)=>{
-      res.render('admin/orders',{admin,orderData})
-
-  })
+    .then((orderData) => {
+      res.render('admin/orders', { admin, orderData })
+    })
+    .catch((error) => {
+      res.status(500).send('An error occurred: ' + error.message);
+    })
 })
 
-router.get('/manage-order/:orderId/:productId',(req,res)=>{
-  const orderId= req.params.orderId;
-  const productId= req.params.productId;
-  getAdmin.getManageOrder(orderId,productId)
-  .then((data)=>{
-    res.render('admin/manageOrder',{admin,data})
-  })
+router.get('/manage-order/:orderId', adminAuth.isValidate, (req, res) => {
+  const orderId = req.params.orderId;
+  getAdmin.getManageOrder(orderId)
+    .then((data) => {
+      res.render('admin/manageOrder', { admin, data })
+    })
+    .catch((error) => {
+      res.status(500).send('An error occurred: ' + error.message);
+    })
 })
 
+router.get('/update-order-status',(req,res)=>{
+  const orderId= req.query.orderId
+  const status= req.query.status
+  getAdmin.updateOrderStatus(orderId,status)
+  .then(()=>{
+    res.redirect(`/admin/manage-order/${orderId}`)
+  })
+})
 // POST ROUTES
 router.post('/login', (req, res) => {
   getAdmin.doAdminLogin(req.body).then((response) => {
@@ -166,37 +217,57 @@ router.post('/login', (req, res) => {
 
 //post category
 router.post('/addcategory', (req, res) => {
-  getProduct.addCategory(req.body).then(() => {
-    res.redirect('/admin/category')
-  })
+  getProduct.addCategory(req.body)
+    .then(() => {
+      res.redirect('/admin/category')
+    })
+    .catch((error) => {
+      if(error.message=='category exist'){
+        res.render('admin/addcategory',{err:'category already exist'})
+      }else{
+        res.status(500).send('An error occurred: ' + error.message);
+      }
+     
+    })
 })
 
 router.post('/editcategory/:id', (req, res) => {
-  getProduct.updateCategory(req.params.id, req.body).then(() => {
-    res.redirect('/admin/category')
-  })
+  getProduct.updateCategory(req.params.id, req.body)
+    .then(() => {
+      res.redirect('/admin/category')
+    })
+    .catch((error) => {
+      res.status(500).send('An error occurred: ' + error.message);
+    })
 })
 
 // post products
-router.post('/addproduct',multerFunction.upload.array('productImages',12), (req, res) => {
-  getProduct.addProduct(req.body,req.files).then(()=>{
-    
-    res.redirect('/admin/products')
-  })  
+router.post('/addproduct', multerFunction.upload.array('productImages', 12), (req, res) => {
+  console.log(req.files)
+  getProduct.addProduct(req.body, req.files)
+    .then(() => {
+      res.redirect('/admin/products')
+    })
+    .catch((error) => {
+      res.status(500).send('An error occurred: ' + error.message);
+    })
 })
 
-router.post('/editproduct/:id',multerFunction.upload.array('productImages',12),(req,res)=>{
-  getProduct.updateProduct(req.params.id,req.body,req.files).then(()=>{
+router.post('/editproduct/:id', multerFunction.upload.array('productImages', 12), (req, res) => {
+  getProduct.updateProduct(req.params.id, req.body, req.files).then(() => {
     res.redirect('/admin/products')
   })
-  
-}) 
-
-router.post('/update-order-status',(req,res)=>{
-  const orderUpdate= req.body.mngOrderData;
-  getAdmin.updateOrderStatus(orderUpdate)
-  .then(()=>{
-    res.json({updated:true})
-  })
 })
+
+// router.post('/update-order-status', (req, res) => {
+//   const orderUpdate = req.body.mngOrderData;
+//   getAdmin.updateOrderStatus(orderUpdate)
+//     .then(() => {
+//       res.json({ updated: true })
+//     })
+//     .catch((error) => {
+//       res.status(500).send('An error occurred: ' + error.message);
+//     })
+// })
+
 module.exports = router;

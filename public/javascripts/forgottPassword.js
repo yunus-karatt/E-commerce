@@ -7,12 +7,13 @@ const mobileLoginForm = document.getElementById('mobile-login-form');
 const otpLoginSection = document.getElementById('otp-login-section');
 const otpLoginForm = document.getElementById('otp-login-form');
 const badNumAlert = document.querySelector('.badnumalert');
-const badOtpAlert= document.querySelector('.loginotpalert')
-const passwordSection= document.querySelector('#change-ps-section')
-const passwordForm= document.querySelector('#change-ps-form')
-const badPasswordAlert= document.querySelector('.badPasswordAlert')
+const badOtpAlert = document.querySelector('.loginotpalert')
+const passwordSection = document.querySelector('#change-ps-section')
+const passwordForm = document.querySelector('#change-ps-form')
+const badPasswordAlert = document.querySelector('.badPasswordAlert')
 
 let mobileNumber;
+
 //  fire base
 const firebaseConfig = {
   apiKey: "AIzaSyAYbmkCfbyyY7hWKKsbTxWTZqH8EwEAWTs",
@@ -32,7 +33,6 @@ window.recaptchaVerifier = new RecaptchaVerifier(auth, 'submitPhone', {
   'size': 'invisible',
   'callback': (response) => {
     // reCAPTCHA solved, allow signInWithPhoneNumber.
-    console.log('captcha verified')
   }
 })
 
@@ -56,11 +56,9 @@ mobileLoginForm.addEventListener('submit', (e) => {
       body: JSON.stringify({ mobileNumber })
     }).then((response) => {
       response.json().then((response) => {
-        console.log(response)
         if (response.user.Mobilenumber) {
           const fmobileNumber = '+91' + mobileNumber
           const appVerifier = window.recaptchaVerifier;
-          console.log(mobileNumber)
           signInWithPhoneNumber(auth, fmobileNumber, appVerifier)
             .then((confirmationResult) => {
               // SMS sent. Prompt user to type the code from the message, then sign the
@@ -73,58 +71,57 @@ mobileLoginForm.addEventListener('submit', (e) => {
               // Error; SMS not sent
 
               badNumAlert.innerHTML = "Sorry, Can't send otp. Please check your mobile number"
-              console.log(error)
             });
         } else {
-            badNumAlert.innerHTML="cannot find your number, please signup first"
+          badNumAlert.innerHTML = "cannot find your number, please signup first"
         }
       })
     })
-
-
   }
 })
+
 // OTP submition
 otpLoginForm.addEventListener('submit', (e) => {
   e.preventDefault()
   let otp_number = otpLoginForm.digit.value
-    console.log(otp_number)
-    confirmationResult.confirm(otp_number).then(async (result) => {
+  confirmationResult.confirm(otp_number)
+    .then(async (result) => {
       // User signed in successfully.
       const user = result;
       otpLoginSection.style.display = 'none';
-      passwordSection.style.display='block'
-    }).catch((err)=>{
-      badOtpAlert.innerHTML="OTP doesn't match"
+      passwordSection.style.display = 'block'
+    }).catch((err) => {
+      badOtpAlert.innerHTML = "OTP doesn't match"
     })
 })
+
 // update Password
-passwordForm.addEventListener('submit',async(e)=>{
+passwordForm.addEventListener('submit', async (e) => {
   e.preventDefault()
-  const passData={
-    password:passwordForm.password.value,
-    confirmPassword:passwordForm.confirmPassword.value
+  const passData = {
+    password: passwordForm.password.value,
+    confirmPassword: passwordForm.confirmPassword.value
   }
   // VALIDATE PASSWORD
-  if(passData.password==''){
-    badPasswordAlert.innerHTML='Please Enter Passwod'
-  }else if(passData.confirmPassword==''){
-    badPasswordAlert.innerHTML='Please Enter confirm Passwod'
-  }else if(passData.password.length<8){
-    badPasswordAlert.innerHTML='Password minimum length should be eight'
-  }else if(passData.password!==passData.confirmPassword){
-    badPasswordAlert.innerHTML="Your password doesn't match"
-  }else{
-    await fetch('/change-password',{
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json'
+  if (passData.password == '') {
+    badPasswordAlert.innerHTML = 'Please Enter Passwod'
+  } else if (passData.confirmPassword == '') {
+    badPasswordAlert.innerHTML = 'Please Enter confirm Passwod'
+  } else if (passData.password.length < 8) {
+    badPasswordAlert.innerHTML = 'Password minimum length should be eight'
+  } else if (passData.password !== passData.confirmPassword) {
+    badPasswordAlert.innerHTML = "Your password doesn't match"
+  } else {
+    await fetch('/change-password', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
       },
-      body:JSON.stringify({mobileNumber,passData})
-    }).then((response)=>{
-      response.json().then((response)=>{
-        if(response.updated){
-          window.location.href='/login'
+      body: JSON.stringify({ mobileNumber, passData })
+    }).then((response) => {
+      response.json().then((response) => {
+        if (response.updated) {
+          window.location.href = '/login'
         }
       })
     })

@@ -10,55 +10,99 @@
         <div class="row d-flex justify-content-center align-items-center h-100">
           {{#each orderData}}
 
-          <div class="col-md-10 col-lg-8 col-xl-12 mt-3">
+          <div class="col-md-10 col-lg-8 col-xl-12 mt-5">
             <div class="card card-stepper" style="border-radius: 16px;">
               <div class="card-header p-4">
                 <div class="d-flex justify-content-between align-items-center">
                   <div>
-                    {{!-- <p class="text-muted mb-2"> Order ID <span class="fw-bold text-body">{{_id}}</span></p> --}}
                     <p class="text-muted mb-0"> Place On <span class="fw-bold text-body">{{orderDate}}</span> </p>
+                    <p class="text-muted mb-0"> Order ID <span class="fw-bold text-body">{{_id}}</span> </p>
+
+                    </span>
                   </div>
                   <div>
-                    <h6 class="mb-0"> <a href="/viewproduct/{{productDetails._id}}">View Details</a> </h6>
+                    <h6 class="mb-0"> <a href="/view-order-details/{{_id}}">View Details</a> </h6>
                   </div>
                 </div>
               </div>
+              {{#each this.products}}
+              {{#each this.productDetails}}
               <div class="card-body p-4">
-                <div class="d-flex flex-row mb-4 pb-2">
+                <div class="d-flex flex-row  pb-2">
                   <div class="flex-fill">
-                    <h5 class="bold">{{productDetails.Name}}</h5>
-                    <p class="text-muted"> Qt: {{products.quantity}} item</p>
-                    <h4 class="mb-3"> ₹ {{products.pricePerQnt}} <span class="small text-muted"> via ({{paymentMethod}})
-                      </span></h4>
-                    <p class="text-muted">Tracking Status on: <span class="text-body">11:30pm, Today</span></p>
-                    <p class="text-muted">order Status : <span
-                        class="text-body fw-semibold itemStatus">{{products.itemStatus}}</span></p>
+                    <h5 class="bold">{{Name}}</h5>
+                    <p class="text-muted"> Quantity: {{../quantity}} item</p>
+                    <h5 class="mb-3"> ₹ {{../pricePerQnt}} </h4>
                   </div>
                   <div>
-                    <img class="align-self-center img-fluid" src="/images/uploads/{{productDetails.Images.[0]}}"
-                      style="width: 200px; height: 200px; object-fit: contain;">
+                    <img class="align-self-center img-fluid" src="/images/uploads/{{Images.[0]}}"
+                      style="width: 100px; height: 100px; object-fit: contain;">
                   </div>
                 </div>
-                  {{!-- <ul id="progressbar-1" class="mx-0 mt-0 mb-5 px-0 pt-0 pb-4">
-                    <li class="step0 active" id="step1"><span style="margin-left: 22px; margin-top: 12px;">PLACED</span>
-                    </li>
-                    <li class="step0 active text-center" id="step2"><span>SHIPPED</span></li>
-                    <li class="step0 text-muted text-end" id="step3"><span style="margin-right: 22px;">DELIVERED</span>
-                    </li>
-                  </ul> --}}
+
               </div>
+              {{/each}}
+              {{/each}}
+              <div class="d-flex justify-content-between border-top p-4">
+                <div>
+                  <span class="text-muted ms-2">order status</span>
+                  {{#equal orderStatus 'cancelled'}}
+                  <h6 class="mt-1 text-danger"><i class="fa-solid fa-circle"></i>{{orderStatus}}</h6>
+                  {{else}}
+                  <h6 class="mt-1 text-success"><i class="fa-solid fa-circle"></i>{{orderStatus}}</h6>
+                  {{/equal}}
+                </div>
+                {{#if totalPrice}}
+                <div>
+
+                  <span class="text-muted">payment method</span>
+                  <h5>{{paymentMethod}}</h5>
+                </div>
+                <div class=" ">
+                  <p class="text-muted"> Total Items: {{totalProduct}} item</p>
+                  <h5 class="mb-3"> ₹ {{totalPrice}} </h4>
+                </div>
+                {{/if}}
+              </div>
+              {{#if totalPrice}}
               <div class="card-footer p-4">
                 <div class="d-flex justify-content-between card-footer-div">
-                  <h5 class="fw-normal mb-0"><a href="/viewproduct/{{productDetails._id}}">Track</a></h5>
+                  <h5 class="fw-normal mb-0"><a order-id="{{_id}}" status="{{orderStatus}}" href=""
+                      class="track">Track</a></h5>
+
                   <div class="border-start h-100"></div>
-                  <h5 class="fw-normal mb-0"><a href="/cancel-order/{{_id}}/{{productDetails._id}}">Cancel</a></h5>
+                  {{#notEqual orderStatus 'delivered'}}
+                  {{#notEqual paymentMethod 'online'}}
+                  <h5 class="fw-normal mb-0"><a class="order-cancel" order-id="{{_id}}"
+                      href="/cancel-order/{{_id}}">Cancel</a></h5>
+
                   <div class="border-start h-100"></div>
                   <h5 class="fw-normal mb-0"><a href="#!">Pre-pay</a></h5>
+                  {{/notEqual}}
+                  {{/notEqual}}
                   <div class="border-start h-100"></div>
                   <h5 class="fw-normal mb-0"><a href="#!" class="text-muted"><i class="fas fa-ellipsis-v"></i></a>
                   </h5>
                 </div>
+                <ul id="progressbar-{{_id}}" class="mx-0 mt-5 mb-5 px-0 pt-0 pb-4 progressbar-1">
+                  <li class="step0 active step1" id="step1-{{_id}}"><span
+                      style="margin-left: 22px; margin-top: 12px;">PLACED </span>
+                    <br>on {{orderDate}}
+                  </li>
+                  <li class="step0  text-center step2" id="step2-{{_id}}"><span>SHIPPED</span>
+                    <br> {{#if shipmentDate}}
+                    on {{shipmentDate}}
+                    {{/if}}
+                  </li>
+                  <li class="step0 text-muted text-end step3" id="step3-{{_id}}"><span
+                      style="margin-right: 22px;">DELIVERED</span>
+                    <br> {{#if deleveredDate}}
+                    on {{deleveredDate}}
+                    {{/if}}
+                  </li>
+                </ul>
               </div>
+              {{/if}}
             </div>
           </div>
           {{/each}}

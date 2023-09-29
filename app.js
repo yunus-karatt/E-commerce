@@ -4,6 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const hbs = require('express-handlebars')
+const handlebarHelpers= require('./helpers/handleBarsHelpers')
 const bodyParser = require('body-parser')
 const session = require('express-session')
 const userRouter = require('./routes/user');
@@ -18,8 +19,8 @@ const randomSecretKey = crypto.randomBytes(32).toString('hex');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 app.engine('hbs', hbs.engine({ extname: 'hbs', defaultLayout: 'layout', layoutsDir: __dirname + '/views/layout/', partialsDir: __dirname + '/views/partials/' ,runtimeOptions:{
-  allowedProtoPropertiesBydefault:true,allowProtoMethodsByDefault:true,
-},}))
+  allowedProtoPropertiesBydefault:false,allowProtoMethodsByDefault:false,
+},helpers:handlebarHelpers,}))
 
 app.use(logger('dev'));
 app.use(express.json());

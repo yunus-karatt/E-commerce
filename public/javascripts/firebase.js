@@ -23,16 +23,16 @@ const otpform = document.querySelector('#otp-form')
 const errorP = document.querySelector('.passwordalert')
 const otpalert = document.querySelector('.otpalert')
 const currentURL = window.location.href;
-const emailRegex= /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
 
 if (currentURL.includes('/signup')) {
   window.recaptchaVerifier = new RecaptchaVerifier(auth, 'sign-in-button', {
     'size': 'invisible',
     'callback': (response) => {
       // reCAPTCHA solved, allow signInWithPhoneNumber.
-      console.log('captcha verified')
     }
   });
+
   loginform.addEventListener('submit', async (e) => {
     e.preventDefault()
     userData = {
@@ -52,9 +52,9 @@ if (currentURL.includes('/signup')) {
         // setTimeout(() => {
         //   window.location.reload()
         // }, 1000)
-      }else if(userData.Mobilenumber.length!==10){
+      } else if (userData.Mobilenumber.length !== 10) {
         errorP.innerHTML = "Please check entered number"
-      }else if(emailRegex.test(userData.Email)===false){
+      } else if (emailRegex.test(userData.Email) === false) {
         errorP.innerHTML = "Please check your entered email"
       } else {
         const mobilenumber = '+91' + loginform.Mobilenumber.value
@@ -80,22 +80,22 @@ if (currentURL.includes('/signup')) {
                 // ...
               }).catch((error) => {
                 // Error; SMS not sent
-              
+
                 errorP.innerHTML = "Sorry, Can't send otp. Please check your mobile number"
                 setTimeout(() => {
                   window.location.reload()
                 }, 1000)
-                console.log(error)
               });
           }
         })
       }
     }
   })
+
+
   otpform.addEventListener('submit', (e) => {
     e.preventDefault()
     let otp_number = otpform.otp.value
-    console.log(otp_number)
     confirmationResult.confirm(otp_number).then(async (result) => {
       // User signed in successfully.
       const user = result;
@@ -112,9 +112,6 @@ if (currentURL.includes('/signup')) {
       }).catch((err) => {
         console.log(err)
       })
-
-      // console.log(user)
-      // ...
     }).catch((error) => {
       // User couldn't sign in (bad verification code?)
       // ...
@@ -135,14 +132,13 @@ if (currentURL.includes('/signup')) {
     'size': 'invisible',
     'callback': (response) => {
       // reCAPTCHA solved, allow signInWithPhoneNumber.
-      console.log('captcha verified')
     }
   });
+  
   mobileLoginForm.addEventListener('submit', (e) => {
 
     e.preventDefault();
     mobilenumber = mobileLoginForm.mobilelogininput.value;
-    console.log(mobilenumber)
     const appVerifier = window.recaptchaVerifiers;
     fetch('/otplogin', {
       method: 'post',

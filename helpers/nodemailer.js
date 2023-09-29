@@ -1,23 +1,23 @@
-const nodeMailer= require('nodemailer')
+const nodeMailer = require('nodemailer')
 
-function generateOtp(){
-  return Math.floor(1000+Math.random()*9000)
+function generateOtp() {
+  return Math.floor(1000 + Math.random() * 9000)
 }
 
 
-function sentOtp(email){
-  const otp= generateOtp()
+function sentOtp(email) {
+  const otp = generateOtp()
 
-  const transporter= nodeMailer.createTransport({
-    service:'Gmail',
-    auth:{
-      user:process.env.EMAIL,
-      pass:process.env.EMAIL_PASSWORD
+  const transporter = nodeMailer.createTransport({
+    service: 'Gmail',
+    auth: {
+      user: process.env.EMAIL,
+      pass: process.env.EMAIL_PASSWORD
     }
   });
-  const mailOptions={
-    from:process.env.EMAIL,
-    to:email,
+  const mailOptions = {
+    from: process.env.EMAIL,
+    to: email,
     subject: 'OTP Verification',
     text: `Your OTP is: ${otp}`
   }

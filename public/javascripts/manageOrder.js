@@ -1,25 +1,25 @@
-const orderStatus= document.getElementById('orderStatus');
+const orderStatus = document.getElementById('orderStatus');
 
-orderStatus.addEventListener('submit',async(e)=>{
+orderStatus.addEventListener('submit', async (e) => {
   e.preventDefault()
-  const mngOrderData={
+  const mngOrderData = {
     orderId: orderStatus.orderID.value,
-   productId: orderStatus.productID.value,
-     status: orderStatus.status.value
+    productId: orderStatus.productID.value,
+    status: orderStatus.status.value
   }
-  
-     fetch('/admin/update-order-status', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ mngOrderData }),
-    }).then((response)=>{
-      response.json()
-      .then((response)=>{
-          if(response.updated){
-            window.location.href = '/admin/get-orders';
-          }
+
+  fetch('/admin/update-order-status', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ mngOrderData }),
+  }).then((response) => {
+    response.json()
+      .then((response) => {
+        if (response.updated) {
+          window.location.href = '/admin/get-orders';
+        }
       })
-    })
+  })
 })

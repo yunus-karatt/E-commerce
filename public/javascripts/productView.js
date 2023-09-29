@@ -14,7 +14,6 @@ document.addEventListener('DOMContentLoaded', function() {
 document.querySelectorAll('.addCart').forEach((button)=>{
   const productId= button.getAttribute('product-id');
   button.addEventListener('click',async(e)=>{
-   console.log(productId)
   await fetch('/api/addcart',{
      method:'POST',
      headers:{

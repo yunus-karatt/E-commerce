@@ -1,0 +1,120 @@
+<section class="container ">
+  <div class="row user-aside-sec">
+    {{>user-aside}}
+    <section class=" col-8  gradient-custom-2">
+
+      <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+          <div class="card text-center" style="border-radius: 16px;">
+            <div class="card-header text-start d-flex justify-content-between">
+              <div>
+                <p class="text-muted mb-0"> Place On: <span class="fw-bold text-body">
+                    {{orderData.[0].orderDate}}</span>
+                </p>
+                <p class="text-muted mb-0"> Order ID: <span class="fw-bold text-body"> {{orderData.[0]._id}} </span>
+                </p>
+              </div>
+              <div>
+                {{#equal orderData.[0].orderStatus 'cancelled'}}
+                <p class="text-muted mb-0"> Order status: <span class="fw-bold text-danger">
+                    {{orderData.[0].orderStatus}}
+                  </span> </p>
+                {{else}}
+                <p class="text-muted mb-0"> Order status: <span class="fw-bold text-success">
+                    {{orderData.[0].orderStatus}}
+                  </span> </p>
+                {{/equal}}
+              </div>
+            </div>
+            <div class="card-body text-start">
+              <h5 class="card-title">Delivery Address</h5>
+              <p class="card-text  mt-3"><span class="fw-semibold">{{orderData.[0].address.firstName}}
+                  {{orderData.[0].address.lastName}}</span><br>
+                <span class="">{{orderData.[0].address.address}}<br>{{orderData.[0].address.city}}
+                  <br>{{orderData.[0].address.state}}
+                  <br>{{orderData.[0].address.pincode}}
+                </span>
+              </p>
+              {{!-- <ul id="progressbar-1" class="mx-0 mt-0 mb-5 px-0 pt-0 pb-4">
+                <li class="step0 active" id="step1"><span style="margin-left: 22px; margin-top: 12px;">PLACED</span>
+                </li>
+                <li class="step0 active text-center" id="step2"><span>SHIPPED</span></li>
+                <li class="step0 text-muted text-end" id="step3"><span style="margin-right: 22px;">DELIVERED</span></li>
+              </ul> --}}
+            </div>
+            {{#if orderData.[0].totalPrice}}
+            <div class="card-footer">
+              <div class="d-flex justify-content-between p-4">
+                <div>
+                  {{#notEqual orderData.[0].orderStatus 'delivered'}}
+                  <span class="text-muted"><a class="text-danger cancel-order" order-id="{{orderData.[0]._id}}"
+                      href="/cancel-order/{{orderData.[0]._id}}">Cancel Order</a></span>
+                  {{/notEqual}}
+                  <h5></h5>
+                </div>
+                <div>
+                  <p class="text-muted">Total payable</p>
+                  <h5 class="">{{orderData.[0].totalPrice}}</h5>
+                </div>
+                <div>
+                  <p class="text-muted">payment method</p>
+                  <h5>{{orderData.[0].paymentMethod}}</h5>
+                </div>
+              </div>
+            </div>
+            {{/if}}
+          </div>
+          {{#each orderData}}
+          <div class="col-md-10 col-lg-8 col-xl-12 mt-3">
+            <div class="card card-stepper" style="border-radius: 16px;">
+
+              <div class="card-body p-4">
+                <div class="d-flex flex-row  pb-2">
+                  <div class="flex-fill">
+                    <h5 class="bold">{{productDetails.Name}}</h5>
+                    <p class="text-muted">RAM: {{productDetails.Features.[0].RAM}} ||
+                      Storage:{{productDetails.Features.[0].Storage}}
+                      <br>Color:{{productDetails.Features.[0].Color}}
+                      <br>Quantity: {{products.quantity}} item
+                    </p>
+                    <p class=""> <span class="text-mutes">Product Status:</span>{{products.itemStatus}}</p>
+                    <h5 class="mb-3"> ₹ {{products.pricePerQnt}} </h4>
+                  </div>
+                  <div>
+                    <img class="align-self-center img-fluid" src="/images/uploads/{{productDetails.Images.[0]}}"
+                      style="width: 200px; height: 200px; object-fit: contain;">
+                  </div>
+                </div>
+
+              </div>
+              {{!-- {{#if totalPrice}} --}}
+              {{#notEqual products.itemStatus 'cancelled'}}
+              <div class="card-footer remove-product p-4">
+                <div class="d-flex justify-content-between card-footer-div">
+                  {{#notEqual orderStatus 'delivered'}}
+                  <h5 class="fw-normal mb-0"><a class="text-danger product-remove" product-id="{{productDetails._id}}"
+                      order-id="{{_id}}" href="/cancel-single-order/{{_id}}/{{productDetails._id}}">Remove
+                      {{productDetails.Name}} from the
+                      order</a></h5>
+                  {{/notEqual}}
+                  <div class="border-start h-100"></div>
+                  <h5 class="fw-normal mb-0"><a href="#!" class="text-muted"><i class="fas fa-ellipsis-v"></i></a>
+                  </h5>
+                </div>
+              </div>
+              {{/notEqual}}
+              {{!-- {{/if}} --}}
+            </div>
+          </div>
+          {{/each}}
+
+        </div>
+      </div>
+    </section>
+
+  </div>
+</section>
+<div>
+  {{>user-footer}}
+</div>
+<script src="/javascripts/orderDetails.js"></script>

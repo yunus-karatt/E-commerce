@@ -1,4 +1,3 @@
-console.log('connected')
 document.querySelectorAll('.deleteCart').forEach((button) => {
   button.addEventListener('click', async (e) => {
     const productId = button.getAttribute('productId');
@@ -25,36 +24,35 @@ document.querySelectorAll('.deleteCart').forEach((button) => {
   })
 })
 
-async function updateCart(productId, count , existCount, butid) {
-  const button= document.getElementById(butid)
+async function updateCart(productId, count, existCount, butid) {
+  const button = document.getElementById(butid)
   await fetch('/update-cart', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ productId, count,existCount })
+    body: JSON.stringify({ productId, count, existCount })
   })
     .then((response) => {
       response.json()
         .then((response) => {
           if (response.updated) {
             window.location.reload()
-          }else{
+          } else {
             Swal.fire(
               'SORRY!',
               "We didn't have enough stock",
               'info'
             )
-              button.disabled=true
-            
+            button.disabled = true
           }
         })
     })
 }
 
-document.querySelectorAll('.cartBtn').forEach((button)=>{
-  const count= button.getAttribute('count')
-  if(count==1){
-    button.disabled=true
+document.querySelectorAll('.cartBtn').forEach((button) => {
+  const count = button.getAttribute('count')
+  if (count == 1) {
+    button.disabled = true
   }
 })

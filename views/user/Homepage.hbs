@@ -6,10 +6,10 @@
   </div>
 </div>
 <div class="container-fluid ">
-  <div class="row ms-2" style="width: 100%;">
+  <div class="row ms-3" style="width: 100%;">
     {{#each prodData}}
     {{!-- <div class="col-md-4"> --}}
-      <div class="card p-3 m-3 d-flex flex-column col-md-4" style="max-width: 18rem;">
+      <div class="card p-3 m-2 d-flex flex-column" style="max-width: 17rem;">
         <div class="card-image">
           <a href="/viewproduct/{{_id}}"> <img style="width: auto; height:15rem; object-fit: contain;" src="/images/uploads/{{Images.[0]}}"
               class="card-img-top" alt="..."></a>
@@ -21,7 +21,7 @@
           </p>
         </div>
         <div class="mt-auto">
-          <p class="card-text ms-3 fw-bold  fs-2">₹{{Price}}
+          <p class="card-text ms-3 fw-bold fs-2">₹{{Price}}
           </p>
           {{#if ../user}}
 
@@ -33,7 +33,7 @@
         <div class="card-btn">
           <a href="/viewproduct/{{_id}}" class="btn btn-dark me-1">View Product</a>
           {{#if Stock_quantity}}
-          <button product-id="{{_id}}" class="btn addCart btn-dark" style="width: 119px;"> Add to cart</button>
+          <button product-id="{{_id}}" class="btn addCart btn-dark" > Add to cart</button>
           {{else}}
           <button class="btn btn-danger disabled">out of stock</button>
           {{/if}}

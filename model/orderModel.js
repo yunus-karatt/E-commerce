@@ -36,6 +36,15 @@ const orderSchema= new mongoose.Schema({
     type:Date,
     default:Date.now
   },
+  shippedDate:{
+    type:Date,
+  },
+  deliveredDate:{
+    type:Date,
+  },
+  cancelDate:{
+    type:Date
+  },
   paymentMethod:{
     type:String,
     require:true

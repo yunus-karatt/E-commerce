@@ -20,10 +20,11 @@ const passwordOtpdiv = document.querySelector('.password-otp');
 const emailOtpForm = document.querySelector('#emial-otp-form');
 const savePassDiv = document.querySelector('.change-ps');
 const changePassForm = document.querySelector('#change-ps-form');
-const changePassErr= document.querySelector('#change-ps-err');
-const maileOtpErr= document.querySelector('#mail-otp-error');
-const profileErr= document.querySelector('.profileErr');
-const emailRegex= /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+const changePassErr = document.querySelector('#change-ps-err');
+const maileOtpErr = document.querySelector('#mail-otp-error');
+const profileErr = document.querySelector('.profileErr');
+
+const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
 let mobileNumber;
 
 const firebaseConfig = {
@@ -40,41 +41,39 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth();
 
-savePofile.addEventListener('click', async(e) => {
+savePofile.addEventListener('click', async (e) => {
   e.preventDefault()
 
   const updateData = {
     userName: updateForm.updateUsername.value,
     email: updateForm.updateEmail.value
   }
-  if(updateData.userName==''||updateData.email==''){
-    profileErr.innerHTML='Please fill all fields'
-  }else if(emailRegex.test(updateData.email)==false){
-    profileErr.innerHTML='Please check your mail'
-  }else{
- await fetch('/update-profile', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ updateData })
-  }).then((response) => {
-    response.json().then((response) => {
-      console.log(response)
-      if (response.update) {
-        updateEmail.disabled = true
-        updateUsername.disabled = true
-        profileEdit.style.display = 'block'
-        savePofile.style.display = 'none'
-        updateForm.updateUsername.value = updateData.userName
-        updateForm.updateEmail.value = updateData.email
-        profileErr.innerHTML=''
-      }
+
+  if (updateData.userName == '' || updateData.email == '') {
+    profileErr.innerHTML = 'Please fill all fields'
+  } else if (emailRegex.test(updateData.email) == false) {
+    profileErr.innerHTML = 'Please check your mail'
+  } else {
+    await fetch('/update-profile', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ updateData })
+    }).then((response) => {
+      response.json().then((response) => {
+        if (response.update) {
+          updateEmail.disabled = true
+          updateUsername.disabled = true
+          profileEdit.style.display = 'block'
+          savePofile.style.display = 'none'
+          updateForm.updateUsername.value = updateData.userName
+          updateForm.updateEmail.value = updateData.email
+          profileErr.innerHTML = ''
+        }
+      })
     })
-
-
-  })
-}
+  }
 })
 
 profileEdit.addEventListener('click', (e) => {
@@ -84,13 +83,13 @@ profileEdit.addEventListener('click', (e) => {
   profileEdit.style.display = 'none'
   savePofile.style.display = 'block'
 })
+
 // EDIT MOBILE NUMBER
 mobileEdit.addEventListener('click', (e) => {
   e.preventDefault()
   updateMobile.disabled = false
   mobileEdit.style.display = 'none'
   saveMobile.style.display = 'block'
-
 })
 
 
@@ -98,14 +97,12 @@ window.recaptchaVerifier = new RecaptchaVerifier(auth, 'save-mobile', {
   'size': 'invisible',
   'callback': (response) => {
     // reCAPTCHA solved, allow signInWithPhoneNumber.
-    console.log('captcha verified')
   }
 })
 
 saveMobile.addEventListener('click', async (e) => {
   e.preventDefault()
   mobileNumber = updateMobile.value
-  console.log(mobileNumber)
   if (mobileNumber === '') {
     mobileErr.innerHTML = 'Please enter number  '
   } else if (mobileNumber.length != 10) {
@@ -113,7 +110,7 @@ saveMobile.addEventListener('click', async (e) => {
   } else {
     const fmobileNumber = '+91' + mobileNumber
     const appVerifier = window.recaptchaVerifier;
-    console.log(mobileNumber)
+
     signInWithPhoneNumber(auth, fmobileNumber, appVerifier)
       .then((confirmationResult) => {
         // SMS sent. Prompt user to type the code from the message, then sign the
@@ -124,16 +121,14 @@ saveMobile.addEventListener('click', async (e) => {
         // ...
       }).catch((error) => {
         // Error; SMS not sent
-
         mobileErr.innerHTML = "Sorry, Can't send otp. Please check your mobile number"
-        console.log(error)
       });
   }
 })
+
 saveotp.addEventListener('click', (e) => {
   e.preventDefault()
   let otp_number = otp.value
-  console.log(otp_number)
   confirmationResult.confirm(otp_number).then(async (result) => {
     // User signed in successfully.
     const user = result;
@@ -150,11 +145,7 @@ saveotp.addEventListener('click', (e) => {
         }
       })
     }).catch((err) => {
-      console.log(err)
     })
-
-    // console.log(user)
-    // ...
   })
 })
 
@@ -170,34 +161,33 @@ changePass.addEventListener('click', (e) => {
     passwordOtpdiv.style.display = 'block';
     changePass.style.display = 'none';
   })
-
-
 })
+
 emailOtpForm.addEventListener('submit', async (e) => {
   e.preventDefault()
   const otp = emailOtpForm.emailOtp.value
-  if(otp==''){
-    maileOtpErr.innerHTML='Please enter OTP'
-  }else{
-  await fetch('/confirm-otp', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ otp })
-  }).then((response) => {
-    response.json().then((response) => {
-      if (response.otpVerified) {
-        console.log('verified')
-        savePassDiv.style.display = 'block';
-        passwordOtpdiv.style.display = 'none'
-      } else {
-        console.log('otp not matched')
-      }
+  if (otp == '') {
+    maileOtpErr.innerHTML = 'Please enter OTP'
+  } else {
+    await fetch('/confirm-otp', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ otp })
+    }).then((response) => {
+      response.json().then((response) => {
+        if (response.otpVerified) {
+          savePassDiv.style.display = 'block';
+          passwordOtpdiv.style.display = 'none'
+        } else {
+          console.log('otp not matched')
+        }
+      })
     })
-  })
-}
+  }
 })
+
 changePassForm.addEventListener('submit', async (e) => {
   e.preventDefault()
   const mobileNumber = changePassForm.getAttribute('mobile')

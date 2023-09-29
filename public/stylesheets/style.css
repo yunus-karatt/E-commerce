@@ -3,6 +3,9 @@
   margin: 0;
   padding: 0;
 }
+a{
+  text-decoration: none;
+}
 
 /* NAVBAR  */
 body {
@@ -334,11 +337,12 @@ div.content {
 }
 /*  order view */
   
-  #progressbar-1 {
+  .progressbar-1 {
   color: #455A64;
+  display: none;
   }
   
-  #progressbar-1 li {
+  .progressbar-1 li {
   list-style-type: none;
   font-size: 13px;
   width: 33.33%;
@@ -346,7 +350,7 @@ div.content {
   position: relative;
   }
   
-  #progressbar-1 #step1:before {
+  .progressbar-1 .step1:before {
   content: "1";
   color: #fff;
   width: 29px;
@@ -354,13 +358,13 @@ div.content {
   padding-left: 11px;
   }
   
-  #progressbar-1 #step2:before {
+  .progressbar-1 .step2:before {
   content: "2";
   color: #fff;
   width: 29px;
   }
   
-  #progressbar-1 #step3:before {
+  .progressbar-1 .step3:before {
   content: "3";
   color: #fff;
   width: 29px;
@@ -368,7 +372,7 @@ div.content {
   text-align: center;
   }
   
-  #progressbar-1 li:before {
+  .progressbar-1 li:before {
   line-height: 29px;
   display: block;
   font-size: 12px;
@@ -377,7 +381,7 @@ div.content {
   margin: auto;
   }
   
-  #progressbar-1 li:after {
+  .progressbar-1 li:after {
   content: '';
   width: 121%;
   height: 2px;
@@ -389,22 +393,22 @@ div.content {
   z-index: -1;
   }
   
-  #progressbar-1 li:nth-child(2):after {
+  .progressbar-1 li:nth-child(2):after {
   left: 50%
   }
   
-  #progressbar-1 li:nth-child(1):after {
+  .progressbar-1 li:nth-child(1):after {
   left: 25%;
   width: 121%
   }
   
-  #progressbar-1 li:nth-child(3):after {
+  .progressbar-1 li:nth-child(3):after {
   left: 25%;
   width: 50%;
   }
   
-  #progressbar-1 li.active:before,
-  #progressbar-1 li.active:after {
+  .progressbar-1 li.active:before,
+  .progressbar-1 li.active:after {
   background: #1266f1;
   }
   
@@ -416,7 +420,34 @@ div.content {
   }
 
 
-
+/* Filter and sort */
+/* .continents-wrap {
+  float:left;
+  width:20%;
+  margin:0 5% 0 0;
+  padding:0;
+}		
+.flowers-wrap {
+  float:left;
+  width:20%;
+  margin:0 5% 0 0;
+  padding:0;
+  position:relative;
+}	
+.flowers {
+  float:left;
+  width:50%;
+}
+.flowers div {
+  float:left;
+  width:90%;
+  height:68px;
+  line-height:68px;
+  padding:0 5%;
+  background:#eee;
+  margin:0 0 1px;
+  position:relative;
+}	 */
 
 @media screen and (max-width: 400px) {
   .user-aside-sec{
