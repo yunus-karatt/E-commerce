@@ -3,6 +3,7 @@ const Product = require('../model/productModel')
 const db = require('../config/connection')
 const { ObjectId } = require('mongodb')
 const { trusted } = require('mongoose')
+const fs = require('fs')
 module.exports = {
   // CATEGORY
   getAllCategory: () => {
@@ -119,8 +120,10 @@ module.exports = {
   addProduct: (product, image) => {
     return new Promise(async (resolve, reject) => {
       try {
-        const images = image.map((file) => {
-          return file.filename
+        let images = [];
+        images[0] = image.productMainImages[0].filename
+        image.productImages.map((file) => {
+          images.push(file.filename)
         })
         let categId = await Category.findOne({ category: product.productCategory }, { _id: 1 });
         if (product.productCategory === 'Laptop') {
@@ -190,12 +193,14 @@ module.exports = {
     }
   },
 
-  updateProduct: (id, updateData, updateImage) => {
-    const images = updateImage.map((file) => {
-      return file.filename
-    })
+  updateProduct: (id, updateData) => {
+    // const images = updateImage.map((file) => {
+    //   return file.filename
+    // })
+    console.log(updateData)
     return new Promise(async (resolve, reject) => {
       const catId = await Category.findOne({ category: updateData.editPrCat })
+      console.log(catId)
       if (updateData.editPrCat === 'Laptop') {
         await Product.updateOne({ _id: id }, {
           $set: {
@@ -212,7 +217,6 @@ module.exports = {
             }],
             Price: updateData.editPrPrice,
             Stock_quantity: updateData.editPrQuant,
-            Images: images
 
           }
         })
@@ -231,7 +235,6 @@ module.exports = {
             }],
             Price: updateData.editPrPrice,
             Stock_quantity: updateData.editPrQuant,
-            Images: images
 
           }
         })
@@ -268,6 +271,77 @@ module.exports = {
       catch (err) {
         reject(err)
       }
+    })
+  },
+  deleteImage: (productId, imageData) => {
+    const imagePath = './public/images/uploads/' + imageData;
+    fs.unlink(imagePath, (err) => {
+      if (err) {
+        console.log(err)
+      } else {
+        console.log('deleted')
+      }
+    })
+    try {
+      return new Promise(async (resolve, reject) => {
+        await Product.updateOne({ _id: productId }, { $pull: { Images: imageData } })
+        resolve()
+      })
+    } catch (err) {
+      throw error
+    }
+  },
+  changeMainImage: (existFileName, newImage) => {
+    const imagePath = './public/images/uploads/' + existFileName.existMainImage;
+    const productId = existFileName.productId;
+    const newFileName = newImage.mainIMageChange[0].filename
+    fs.unlink(imagePath, (err) => {
+      if (err) {
+        console.log(err)
+      } else {
+        console.log('deleted')
+      }
+    })
+    return new Promise(async (resolve, reject) => {
+      try {
+        await Product.updateOne({ _id: productId }, { $set: { 'Images.0': newFileName } })
+        resolve()
+      } catch (err) {
+        reject(err)
+      }
+
+    })
+  },
+  addNewImage:(productId,image)=>{
+    const file= image.addNewImageInput[0].filename
+    return new Promise(async(resolve,reject)=>{
+      try{
+        console.log(productId)
+        await Product.updateOne({_id:productId},{$push:{Images:file}})
+        resolve()
+      }
+      catch(err){
+        reject(err)
+      }
+    })
+  },
+  getProductByCat:(category)=>{
+    return new Promise(async(resolve,reject)=>{
+      const catId= await Category.findOne({category:category},{_id:1})
+      const productData = await Product.aggregate([{
+        $match: {
+          Category:catId._id,
+          Isdeleted: false
+        }
+      }, {
+        $lookup: {
+          from: 'categories',
+          localField: 'Category',
+          foreignField: '_id',
+          as: 'Category'
+        }
+      }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } }])
+      resolve(productData)
     })
   }
 }

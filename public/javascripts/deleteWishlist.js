@@ -23,7 +23,7 @@ document.querySelectorAll('.wish-button').forEach((button) => {
           },
           body: JSON.stringify(wishData)
         }).then((response) => {
-    
+
           if (response.ok) {
             const wishlistItem = button.closest('.wishlist-item');
             wishlistItem.remove();
@@ -35,6 +35,6 @@ document.querySelectorAll('.wish-button').forEach((button) => {
         }).catch((err) => console.log(err))
       }
     })
-    
+
   })
 })

@@ -129,7 +129,7 @@ checkOutForm.addEventListener('submit', async (e) => {
                     window.location.href = '/view-order'
                   }
                 });
-              } else if(response.status.method==='online'){
+              } else if (response.status.method === 'online') {
                 razorPayPayment(response)
               }
             })
@@ -138,8 +138,8 @@ checkOutForm.addEventListener('submit', async (e) => {
   }
 })
 
-function razorPayPayment(order){
-  console.log('..........',order)
+function razorPayPayment(order) {
+  console.log('..........', order)
   var options = {
     "key": "rzp_test_ZAyPL2XD7S33Zs", // Enter the Key ID generated from the Dashboard
     "amount": order.status.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
@@ -149,16 +149,16 @@ function razorPayPayment(order){
     "image": "https://example.com/your_logo",
     "order_id": order.status.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
     "handler": function (response) {
-      verifyPayment(response,order)
+      verifyPayment(response, order)
     },
     "prefill": {
       "name": "Gaurav Kumar",
       "email": "gaurav.kumar@example.com",
       "contact": "9000090000"
-  },
-  "notes": {
+    },
+    "notes": {
       "address": "Razorpay Corporate Office"
-  },
+    },
     "theme": {
       "color": "#212529"
     }
@@ -176,19 +176,19 @@ function razorPayPayment(order){
   rzp1.open();
 }
 
-function verifyPayment(response,order){
-  fetch('/verify-payment',{
-    method:'POST',
-    headers:{
-      'Content-Type':'application/json'
+function verifyPayment(response, order) {
+  fetch('/verify-payment', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
     },
-    body:JSON.stringify({response,order})
-  }).then((response)=>{
+    body: JSON.stringify({ response, order })
+  }).then((response) => {
     response.json()
-    .then(response=>{
-      if(response.updated){
-        window.location.href='/view-order'
-      }
-    })
+      .then(response => {
+        if (response.updated) {
+          window.location.href = '/view-order'
+        }
+      })
   })
 }

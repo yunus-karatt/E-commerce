@@ -53,7 +53,7 @@ router.get('/userslist', adminAuth.isValidate, (req, res) => {
 //   })
 // })
 
-router.get('/get-limited-user/:skip', (req, res) => {
+router.get('/get-limited-user/:skip',adminAuth.isValidate, (req, res) => {
   const skip = req.params.skip;
   getAdmin.getLimitedUser(skip)
     .then((userList) => {
@@ -64,7 +64,7 @@ router.get('/get-limited-user/:skip', (req, res) => {
     })
 })
 
-router.get('/search-user/:search', (req, res) => {
+router.get('/search-user/:search',adminAuth.isValidate,(req, res) => {
   const searchQuery = req.params.search;
   // console.log(req.params.search)
   getAdmin.findUser(searchQuery)
@@ -129,7 +129,7 @@ router.get('/products', adminAuth.isValidate, (req, res) => {
     })
 })
 
-router.get('/addproduct', (req, res) => {
+router.get('/addproduct',adminAuth.isValidate, (req, res) => {
   getProduct.getCategory()
     .then((findCat) => {
       res.render('admin/addproduct', { admin, findCat })
@@ -149,24 +149,24 @@ router.get('/deleteproduct/:id', adminAuth.isValidate, (req, res) => {
     })
 })
 
-router.get('/editproduct/:id', async (req, res) => {
+router.get('/editproduct/:id',adminAuth.isValidate, async (req, res) => {
   try {
     const productData = await getProduct.getSinglePr(req.params.id)
     const productCat = await getProduct.getSinleCat(productData.Category)
     getProduct.getProductEditCategory(productCat)
-    .then((findCat) => {
-      res.render('admin/editproduct', { admin, productData, findCat, productCat })
-    })
-    .catch((error)=>{
-      res.status(500).send('An error occurred: ' + error.message);
-    })
+      .then((findCat) => {
+        res.render('admin/editproduct', { admin, productData, findCat, productCat })
+      })
+      .catch((error) => {
+        res.status(500).send('An error occurred: ' + error.message);
+      })
   }
   catch (err) {
-//     const productData= await getProduct.getSinglePr(req.params.id)
-//  const productCat = await getProduct.getSinleCat(productData.Category)
-//   getProduct.getProductEditCategory(productCat).then((findCat)=>{
-//     res.render('admin/editproduct',{admin,productData,findCat,productCat})
-//   })
+    //     const productData= await getProduct.getSinglePr(req.params.id)
+    //  const productCat = await getProduct.getSinleCat(productData.Category)
+    //   getProduct.getProductEditCategory(productCat).then((findCat)=>{
+    //     res.render('admin/editproduct',{admin,productData,findCat,productCat})
+    //   })
   }
 
 })
@@ -193,12 +193,37 @@ router.get('/manage-order/:orderId', adminAuth.isValidate, (req, res) => {
     })
 })
 
-router.get('/update-order-status',(req,res)=>{
-  const orderId= req.query.orderId
-  const status= req.query.status
-  getAdmin.updateOrderStatus(orderId,status)
-  .then(()=>{
-    res.redirect(`/admin/manage-order/${orderId}`)
+router.get('/update-order-status',adminAuth.isValidate, (req, res) => {
+  const orderId = req.query.orderId
+  const status = req.query.status
+  getAdmin.updateOrderStatus(orderId, status)
+    .then(() => {
+      res.redirect(`/admin/manage-order/${orderId}`)
+    })
+})
+// get sales report
+router.get('/salesreport',adminAuth.isValidate,(req,res)=>{
+  getAdmin.getSalesReport()
+  .then((salesReport)=>{
+    res.render('admin/salesReport',{admin,salesReport})
+  })
+  
+})
+
+router.get('/sales-report/:payment',adminAuth.isValidate,(req,res)=>{
+  const paymentMethod= req.params.payment;
+  getAdmin.getFilterSalesReport(paymentMethod)
+  .then((salesReport)=>{
+    res.json(salesReport)
+  })
+})
+
+router.get('/dated-sales-report',adminAuth.isValidate,(req,res)=>{
+  const startDate=req.query.startDate
+  const endDate=req.query.endDate
+  getAdmin.getDatedReport(startDate,endDate)
+  .then((salesReport)=>{
+    res.json(salesReport)
   })
 })
 // POST ROUTES
@@ -222,12 +247,12 @@ router.post('/addcategory', (req, res) => {
       res.redirect('/admin/category')
     })
     .catch((error) => {
-      if(error.message=='category exist'){
-        res.render('admin/addcategory',{err:'category already exist'})
-      }else{
+      if (error.message == 'category exist') {
+        res.render('admin/addcategory', { err: 'category already exist' })
+      } else {
         res.status(500).send('An error occurred: ' + error.message);
       }
-     
+
     })
 })
 
@@ -242,23 +267,48 @@ router.post('/editcategory/:id', (req, res) => {
 })
 
 // post products
-router.post('/addproduct', multerFunction.upload.array('productImages', 12), (req, res) => {
-  console.log(req.files)
+router.post('/addproduct', multerFunction.upload.fields([
+  { name: 'productMainImages' },
+  { name: 'productImages' }
+]), (req, res) => {
   getProduct.addProduct(req.body, req.files)
     .then(() => {
-      res.redirect('/admin/products')
+      res.json({ success: true })
     })
     .catch((error) => {
+      console.log(error)
       res.status(500).send('An error occurred: ' + error.message);
     })
 })
 
-router.post('/editproduct/:id', multerFunction.upload.array('productImages', 12), (req, res) => {
-  getProduct.updateProduct(req.params.id, req.body, req.files).then(() => {
+router.post('/editproduct/:id', (req, res) => {
+  getProduct.updateProduct(req.params.id, req.body).then(() => {
     res.redirect('/admin/products')
   })
 })
 
+router.post('/change-main-image', multerFunction.upload.fields([{ name: 'mainIMageChange' }]), (req, res) => {
+  const existFileName = req.body;
+  const newImage = req.files
+  getProduct.changeMainImage(existFileName,newImage)
+  .then(()=>{
+    res.json({updated:true})
+  })
+  .catch((err)=>{
+    console.log(err)
+  })
+})
+
+router.post('/add-image', multerFunction.upload.fields([{ name: 'addNewImageInput' }]),(req,res)=>{
+  console.log(req.body)
+  const productId=req.body.addProductId
+  const newImage=req.files
+  getProduct.addNewImage(productId,newImage)
+  .then((resolve)=>{
+    res.json({updated:true})
+  })
+  .catch(err=>console.log(err))
+})
 // router.post('/update-order-status', (req, res) => {
 //   const orderUpdate = req.body.mngOrderData;
 //   getAdmin.updateOrderStatus(orderUpdate)
@@ -269,5 +319,12 @@ router.post('/editproduct/:id', multerFunction.upload.array('productImages', 12)
 //       res.status(500).send('An error occurred: ' + error.message);
 //     })
 // })
+
+router.put('/delete-product-image/:productId/:ImageData', (req, res) => {
+  const productId = req.params.productId
+  const imageData = req.params.ImageData
+  getProduct.deleteImage(productId, imageData)
+    .then(() => res.json({ updated: true }))
+})
 
 module.exports = router;

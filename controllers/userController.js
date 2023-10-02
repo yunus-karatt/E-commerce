@@ -9,6 +9,8 @@ const bcrypt = require('bcrypt');
 const crypto = require('crypto')
 const { ObjectId } = require('mongodb');
 const Razorpay = require('razorpay');
+const { resolve } = require('path');
+const Category = require('../model/categoryModel')
 
 var instance = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
@@ -744,5 +746,6 @@ module.exports = {
         reject(err)
       }
     })
-  }
+  },
+ 
 } 

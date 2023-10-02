@@ -1,29 +1,29 @@
-<section >
-  
-    
-      {{>admin-aside}}
-   
-  
+<section>
+
+
+  {{>admin-aside}}
+
+
   <div class="container content mt-5">
     <div class="col-8">
       <p class="productError text-danger text-uppercase fs-4 fw-bold "></p>
-      <form class="row g-3" method="post" action="/admin/addproduct" enctype="multipart/form-data">
+      <form class="row g-3" method="post" action="" enctype="multipart/form-data" id="form">
         <div class="col-md-6">
-          
+
           <label for="productName" class="form-label">Product name</label>
           <input name="productName" type="text" class="form-control" id="productName">
         </div>
         <div class="col-md-4">
-          
+          {{!-- <input type="hidden" id="croppedImageData" name="croppedImageData"> --}}
           <label for="inputState" class="form-label">Category</label>
-          
+
           <select name="productCategory" class="form-select" id="categorySelect" aria-label=".form-select-lg example">
             <option selected>Category</option>
             {{#each findCat}}
-            <option >{{category}}</option>
+            <option>{{category}}</option>
             {{/each}}
           </select>
-          
+
         </div>
         <div class="col-md-6">
           <label for="productBrand" class="form-label">Brand name</label>
@@ -35,7 +35,7 @@
         </div>
         <div class="col-md-4" style="display: none;" id="processor">
           <label for="productProcessor" class="form-label">Processor</label>
-          <input name="productProcessor"  type="text" class="form-control" id="processor">
+          <input name="productProcessor" type="text" class="form-control" id="processor">
         </div>
         <div class="col-md-4">
           <label for="productRam" class="form-label">Ram</label>
@@ -63,22 +63,58 @@
         </div>
 
         <div class="mb-3">
-          
-          <label for="formFileMultiple" class="form-label">Select images of product</label>
+          <div class="cropped-image"></div>
+          <label for="formFileMultiple" class="form-label">Select Primary image</label>
           <p class="text-danger fw-bold imageError"></p>
-          <input class="form-control" name="productMainImages"  type="file" accept="image/png, image/gif, image/jpeg" id="productMainImages" accept="image/png, image/gif, image/jpeg" multiple>
+          <input class="form-control" type="file" accept="image/png, image/gif, image/jpeg" id="cropImage"
+            accept="image/png, image/gif, image/jpeg">
+          {{!-- <input type="hidden" id="productMainImages" name="productMainImages"  > --}}
+        </div>
+        <div class="modal fade " id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">  
+          <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel">Crop image</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div class="img-container">
+                  <div class="row">
+                    <div class="col-md-8">
+                      <!--  default image where we will set the src via jquery-->
+                      <img id="image" style="display: block; max-width: 100%;">
+                    </div>
+                    <div class="col-md-4">
+                      <div class="preview"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="crop">Crop</button>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="mb-3">
-          
+
           <label for="formFileMultiple" class="form-label">Select images of product</label>
           <p class="text-danger fw-bold imageError"></p>
-          <input class="form-control" name="productImages"  type="file" accept="image/png, image/gif, image/jpeg" id="productImages" accept="image/png, image/gif, image/jpeg" multiple>
+          <input class="form-control" name="productImages" type="file" accept="image/png, image/gif, image/jpeg"
+            id="productImages" accept="image/png, image/gif, image/jpeg" multiple>
         </div>
         <div class="col-12">
           <button type="submit" class="btn btn-primary">Add new Product </button>
         </div>
       </form>
     </div>
+  </div>
+
+
+  </div>
   </div>
 </section>
 <script src="/javascripts/addProductValidation.js"></script>

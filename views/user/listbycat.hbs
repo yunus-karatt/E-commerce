@@ -1,148 +1,123 @@
 <div class="container-fluid overflow-hidden">
-  <div class="row vh-100 overflow-auto">
-    <div class="col-12 col-sm-3 col-xl-2 px-sm-2 px-0  d-flex sticky-top" style="background-color: #F1F1F1;">
-
-
-
+  <div class="row vh-100 overflow-auto position-fixed">
+    <div class="col-12 col-sm-3 col-xl-2 px-sm-2 px-0 d-flex bg-dark">
       <div
         class="d-flex flex-sm-column flex-row flex-grow-1 align-items-center align-items-sm-start px-3 pt-2 text-white">
-        <a href="/" class="d-flex align-items-center pb-sm-3 mb-md-0 me-md-auto text-white text-decoration-none">
-          <span class="fs-5">F<span class="d-none d-sm-inline">ilter</span></span>
+        <a href="/"
+          class="d-flex align-items-center pb-sm-3 mb-md-0 me-md-auto text-white text-decoration-none d-none d-sm-inline">
+          <span class="fs-5">Q<span class="d-none d-sm-inline">uandum</span></span>
+          <span class="fs-5">G<span class="d-none d-sm-inline">adgets</span></span>
         </a>
         <ul
           class="nav nav-pills flex-sm-column flex-row flex-nowrap flex-shrink-1 flex-sm-grow-0 flex-grow-1 mb-sm-auto mb-0 justify-content-center align-items-center align-items-sm-start"
           id="menu">
           <li class="nav-item">
-            <a href="#" class="nav-link px-sm-0 px-2">
-              <i class="fa fa-pencil"></i><span class="ms-1 d-none d-sm-inline">Home</span>
-            </a>
+            <button id="brandBtn" class="nav-link px-sm-0 px-2">
+              <span class="ms-1  d-sm-inline">Brands</span>
+            </button>
+            <form id="brandForm" style="display: none;">
+              <label><input type="checkbox" name="fl-colour" value="Poco" id="red" /> Poco</label><br>
+              <label><input type="checkbox" name="fl-colour" value="Samsung" id="yellow" /> Samsung</label><br>
+              <label><input type="checkbox" name="fl-colour" value="Apple" id="pink" /> Apple</label><br>
+              <label><input type="checkbox" name="fl-colour" value="Redmi" id="purple" /> Redmi</label><br>
+              <label><input type="checkbox" name="fl-colour" value="Vivo" id="green" /> Vivo</label><br>
+              <label><input type="checkbox" name="fl-colour" value="Oppo" id="other" /> Oppo</label>
+            </form>
+
           </li>
           <li>
-            <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-sm-0 px-2">
-              <i class="fs-5 bi-speedometer2"></i><span class="ms-1 d-none d-sm-inline">Dashboard</span> </a>
+            <button id="ramBtn" data-bs-toggle="collapse" class="nav-link px-sm-0 px-2">
+              <span class="ms-1  d-sm-inline">Ram</span> </button>
+            <form id="ramForm" style="display: none;">
+              <label><input type="checkbox" name="fl-colour" value="4 GB" id="red" /> 4 GB</label><br>
+              <label><input type="checkbox" name="fl-colour" value="8 GB" id="yellow" /> 8 GB</label><br>
+              <label><input type="checkbox" name="fl-colour" value="6 GB" id="pink" /> 6 GB</label><br>
+            </form>
           </li>
           <li>
-            <a href="#" class="nav-link px-sm-0 px-2">
-              <i class="fs-5 bi-table"></i><span class="ms-1 d-none d-sm-inline">Orders</span></a>
-          </li>
-          <li class="dropdown">
-            <a href="#" class="nav-link dropdown-toggle px-sm-0 px-1" id="dropdown" data-bs-toggle="dropdown"
-              aria-expanded="false">
-              {{!-- <i class="fs-5 bi-bootstrap"></i><span class="ms-1 d-none d-sm-inline">Bootstrap</span> --}}
-            </a>
-            <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdown">
-              {{!-- <li><a class="dropdown-item" href="#">New project...</a></li>
-              <li><a class="dropdown-item" href="#">Settings</a></li>
-              <li><a class="dropdown-item" href="#">Profile</a></li> --}}
-              <li>
-                <hr class="dropdown-divider">
-              </li>
-              {{!-- <li><a class="dropdown-item" href="#">Sign out</a></li> --}}
-            </ul>
+            <button id="romBtn" data-bs-toggle="collapse" class="nav-link px-sm-0 px-2">
+              <span class="ms-1  d-sm-inline">Storage</span> </button>
+            <form id="romForm" style="display: none;">
+              <label><input type="checkbox" name="fl-colour" value="128 GB" id="red" /> 128 GB</label><br>
+              <label><input type="checkbox" name="fl-colour" value="256 GB" id="yellow" /> 256 GB</label><br>
+              <label><input type="checkbox" name="fl-colour" value="512 GB" id="pink" /> 512 GB</label><br>
+            </form>
           </li>
           <li>
-            <a href="#" class="nav-link px-sm-0 px-2">
-              {{!-- <i class="fs-5 bi-grid"></i><span class="ms-1 d-none d-sm-inline">Products</span></a> --}}
+            <button id="osBtn" data-bs-toggle="collapse" class="nav-link px-sm-0 px-2">
+              <span class="ms-1  d-sm-inline">Color</span> </button>
+            <form id="osForm" style="display: none;">
+              <label><input type="checkbox" name="fl-colour" value="Black" id="Black" /> Black</label><br>
+              <label><input type="checkbox" name="fl-colour" value="Red" id="Red" /> Red</label><br>
+              <label><input type="checkbox" name="fl-colour" value="Blue" id="Blue" /> Blue</label><br>
+            </form>
           </li>
           <li>
-            <a href="#" class="nav-link px-sm-0 px-2">
-              {{!-- <i class="fs-5 bi-people"></i><span class="ms-1 d-none d-sm-inline">Customers</span> </a> --}}
+            <button id="processorBtn" data-bs-toggle="collapse" class="nav-link px-sm-0 px-2">
+              <span class="ms-1  d-sm-inline">Processor</span> </button>
+            <form id="processorForm" style="display: none;">
+              <label><input type="checkbox" name="fl-colour" value="Core i5" id="Corei5" />Core i5 </label><br>
+              <label><input type="checkbox" name="fl-colour" value="Core i7" id="Corei7" /> Core i7</label><br>
+              <label><input type="checkbox" name="fl-colour" value="Ryzen" id="Ryzen" /> Ryzen</label><br>
+              <label><input type="checkbox" name="fl-colour" value="Mac" id="Mac" /> Mac</label><br>
+
+            </form>
           </li>
         </ul>
-        {{!-- <div class="dropdown py-sm-4 mt-sm-auto ms-auto ms-sm-0 flex-shrink-1">
-          <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
-            id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="https://github.com/mdo.png" alt="hugenerd" width="28" height="28" class="rounded-circle">
-            <span class="d-none d-sm-inline mx-1">Joe</span>
-          </a>
-          <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-            <li><a class="dropdown-item" href="#">New project...</a></li>
-            <li><a class="dropdown-item" href="#">Settings</a></li>
-            <li><a class="dropdown-item" href="#">Profile</a></li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-            <li><a class="dropdown-item" href="#">Sign out</a></li>
-          </ul>
-        </div> --}}
       </div>
     </div>
     <div class="col d-flex flex-column h-sm-100">
       <main class="row overflow-auto">
-
         <div class="col pt-4">
-          {{!-- <div class="flowers">
-            <div class="flower" data-id="aloe" data-category="green small medium africa">Aloe</div>
-            <div class="flower" data-id="lavendar" data-category="purple green medium africa europe">Lavender</div>
-            <div class="flower" data-id="stinging-nettle" data-category="green large africa europe asia">Stinging Nettle
+          <div class="container-fluid ">
+            <div class="row ms-3" style="width: 100%;">
+              {{#each prodData}}
+              {{!-- <div class="col-md-4"> --}}
+                <div class="card p-3 m-2 d-flex flex-column" style="max-width: 17rem;">
+                  <div class="card-image">
+                    <a href="/viewproduct/{{_id}}"> <img style="width: auto; height:15rem; object-fit: contain;"
+                        src="/images/uploads/{{Images.[0]}}" class="card-img-top" alt="..."></a>
+                  </div>
+                  <div class="card-body flex-grow-1">
+                    <h5 class="card-title text-uppercase m-0 fw-bold">{{Name}}</h5>
+                    <p class="card-text m-0 mt-1">
+                      RAM:{{Features.RAM}}|ROM:{{Features.Storage}}|OS:{{Features.Operating_system}}
+                    </p>
+                  </div>
+                  <div class="mt-auto">
+                    <p class="card-text ms-3 fw-bold fs-2">₹{{Price}}
+                    </p>
+                    {{#if ../user}}
+
+                    <button class="btn float-end love-button mb-2" product-id="{{_id}}" user-id="{{../user._id}}">
+                      <i class=" fa-regular fa-heart"></i>
+                    </button>
+                    {{/if}}
+                  </div>
+                  <div class="card-btn">
+                    <a href="/viewproduct/{{_id}}" class="btn btn-dark me-1">View Product</a>
+                    {{#if Stock_quantity}}
+                    <button product-id="{{_id}}" class="btn addCart btn-dark"> Add to cart</button>
+                    {{else}}
+                    <button class="btn btn-danger disabled">out of stock</button>
+                    {{/if}}
+                  </div>
+                </div>
+
+
+                {{/each}}
+
+              </div>
             </div>
-            <div class="flower" data-id="gorse" data-category="green yellow large europe">Gorse</div>
-            <div class="flower" data-id="hemp" data-category="green large asia">Hemp</div>
-            <div class="flower" data-id="titan-arum" data-category="purple other giant asia">Titan Arum</div>
-            <div class="flower" data-id="golden-wattle" data-category="green yellow large australasia">Golden Wattle
-            </div>
-            <div class="flower" data-id="purple-prairie-clover" data-category="purple green other medium north-america">
-              Purple Prairie Clover</div>
-            <div class="flower" data-id="camellia" data-category="pink other large north-america">Camellia</div>
-            <div class="flower" data-id="scarlet-carnation" data-category="red medium north-america">Scarlet Carnation
-            </div>
-            <div class="flower" data-id="indian-paintbrush" data-category="red medium north-america">Indian Paintbrush
-            </div>
-            <div class="flower" data-id="moss-verbena" data-category="purple other small south-america">Moss Verbena
-            </div>
-            <div class="flower" data-id="climbing-dayflower" data-category="blue tiny south-america">Climbing Dayflower
-            </div>
-            <div class="flower" data-id="antarctic-pearlwort" data-category="green yellow large antarctica">Antarctic
-              Pearlwort</div>
-          </div> --}}
-          <h3>Vertical Sidebar that switches to Horizontal Navbar</h3>
-          <p class="lead">An example multi-level sidebar with collasible menu items. The menu functions like an
-            "accordion" where only a single menu is be open at a time.</p>
-          <hr />
-          <h3>More content...</h3>
-          <p>Sriracha biodiesel taxidermy organic post-ironic, Intelligentsia salvia mustache 90's code editing brunch.
-            Butcher polaroid VHS art party, hashtag Brooklyn deep v PBR narwhal sustainable mixtape swag wolf squid tote
-            bag. Tote bag cronut semiotics, raw denim deep v taxidermy messenger bag. Tofu YOLO Etsy, direct trade
-            ethical Odd Future jean shorts paleo. Forage Shoreditch tousled aesthetic irony, street art organic Bushwick
-            artisan cliche semiotics ugh synth chillwave meditation. Shabby chic lomo plaid vinyl chambray Vice. Vice
-            sustainable cardigan, Williamsburg master cleanse hella DIY 90's blog.</p>
-          <p>Ethical Kickstarter PBR asymmetrical lo-fi. Dreamcatcher street art Carles, stumptown gluten-free
-            Kickstarter artisan Wes Anderson wolf pug. Godard sustainable you probably haven't heard of them, vegan
-            farm-to-table Williamsburg slow-carb readymade disrupt deep v. Meggings seitan Wes Anderson semiotics,
-            cliche American Apparel whatever. Helvetica cray plaid, vegan brunch Banksy leggings +1 direct trade.
-            Wayfarers codeply PBR selfies. Banh mi McSweeney's Shoreditch selfies, forage fingerstache food truck occupy
-            YOLO Pitchfork fixie iPhone fanny pack art party Portland.</p>
-        </div>
+
+
+          </div>
       </main>
-      <footer class="row bg-light py-4 mt-auto">
-        <div class="col"> Footer content here... </div>
-      </footer>
-    </div>
-  </div>
-</div>
-{{!-- <div class="container-fluid ms-5">
-  <div class="row">
-    {{#each prodData}}
-    <div class="card p-3 ms-0 m-3 d-flex flex-column" style="width: 18rem;">
-      <div class="card-image">
-        <a href="/viewproduct/{{_id}}"> <img style="width: auto; height:15rem;" src="/images/uploads/{{Images.[0]}}"
-            class="card-img-top" alt="..."></a>
-      </div>
-      <div class="card-body flex-grow-1">
-        <h5 class="card-title text-uppercase m-0 fw-bold">{{Name}}</h5>
-        <p class="card-text m-0 fw-bold">RAM:{{Features.RAM}}|ROM:{{Features.Storage}}|OS:{{Features.Operating_system}}
-        </p>
-        <p class="card-text m-0 fw-bold">Price:{{Price}}
-        </p>
-      </div>
-      <div class="mt-auto">
-        <a href="/viewproduct/{{_id}}" class="btn btn-dark ms-5">View Product</a>
-      </div>
 
     </div>
-    {{/each}}
+    {{>user-footer}}
   </div>
-</div> --}}
-<div>
-  {{>user-footer}}
+
 </div>
+<script src="/javascripts/category.js"></script>
+<script src="/javascripts/wishList.js"></script>

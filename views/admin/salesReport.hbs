@@ -1,0 +1,108 @@
+{{>admin-aside}}
+<div class="content mt-5">
+
+  <div class="col">
+    <h5 class="mb-3 fw-bold">Filter Sales Report</h5>
+    <div class="d-flex mb-3">
+      <div class="dropdown me-3 mb-5">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          Payment Method
+        </button>
+        <ul class="dropdown-menu">
+          <li><button id="cod" class="dropdown-item" href="#">COD</button id=""></li>
+          <li><button id="online" class="dropdown-item" href="#">online</button id=""></li>
+          <li><a id="all" class="dropdown-item" href="/admin/salesreport">All</a id=""></li>
+
+        </ul>
+      </div>
+      <div class="dropdown me-3 mb-5">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          Order Time
+        </button>
+        <ul class="dropdown-menu">
+          <li><button id="today" class="dropdown-item" href="#">Today</button id=""></li>
+          <li><button id="week" class="dropdown-item" href="#">Last 7 days</button id=""></li>
+          <li><button id="month" class="dropdown-item">Last 30 days</button> </li>
+          <li><button id="year" class="dropdown-item">Last 365 days</button> </li>
+
+        </ul>
+      </div>
+      <div>
+        <div class="dropdown mb-5">
+          <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+            aria-expanded="false">
+            Select Date
+          </button>
+          <ul class="dropdown-menu">
+            <form action="" id="dateForm">
+              <li class="dropdown-item text-muted" href="#">From</li>
+
+              <li> <input type="date" name="startDate" id="EndDate" class="mb-3 dropdown-item">
+              </li>
+              <li class="dropdown-item text-muted" href="#">To</li>
+
+              <li> <input type="date" name="endDate" id="endDate" class="mb-3 dropdown-item">
+              </li>
+              <li class="dropdown-item"><button type="submit" class="btn btn-dark ">Get Report</button></li>
+            </form>
+          </ul>
+          <p id="dateErr" class="mb-3 text-danger"></p>
+        </div>
+      </div>
+      <div class="ms-auto">
+      <button class="btn btn-success" id="downloadPdf">Download PDF</button>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-striped" id="salesReport">
+        <thead>
+          <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Order ID</th>
+            <th scope="col">Buyer</th>
+            <th scope="col">Product Name</th>
+            <th scope="col">Category</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Total</th>
+            <th scope="col">payment Method</th>
+          </tr>
+        </thead>
+        <tbody class="table-group-divider">
+          {{#each salesReport}}
+
+          <tr>
+            <td>{{orderDate}}</td>
+            <td>{{_id}}</td>
+            <td>{{address.firstName}}</td>
+            <td>{{productDetails.Name}}</td>
+
+            <td>{{productDetails.Category.[0].category}}</td>
+
+            <td>{{products.quantity}}</td>
+            <td>{{products.pricePerQnt}}</td>
+            <td>{{paymentMethod}}</td>
+          </tr>
+          {{/each}}
+
+        </tbody>
+
+      </table>
+    </div>
+  </div>
+</div>
+{{!-- pdf --}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.min.js"></script>
+<!-- Data Table JS -->
+<script src='https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js'></script>
+<script src='https://cdn.datatables.net/responsive/2.1.0/js/dataTables.responsive.min.js'></script>
+<script src='https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js'></script>
+<script src="/javascripts/salesReport.js"></script>
+
+
+{{!--
+<script>
+  $(document).ready(() => {
+    new DataTable('#salesReport');
+  })
+</script> --}}

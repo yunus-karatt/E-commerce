@@ -134,7 +134,7 @@ if (currentURL.includes('/signup')) {
       // reCAPTCHA solved, allow signInWithPhoneNumber.
     }
   });
-  
+
   mobileLoginForm.addEventListener('submit', (e) => {
 
     e.preventDefault();

@@ -216,8 +216,14 @@ router.get('/cancel-order/:id',userAuth.isUserValid,(req,res)=>{
   })
 })
 
-router.get('/category/:cat', (req, res) => {
-  res.render('user/listbycat')
+router.get('/category', (req, res) => {
+  const category = req.query.category
+  getProduct.getProductByCat(category)
+  .then((prodData)=>{
+    console.log(prodData)
+    res.render('user/listbycat',{prodData,user:req.session.user})
+
+  })
 })
 // POST
 router.post('/signup', (req, res) => {

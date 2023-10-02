@@ -1,84 +1,150 @@
-
-    {{>admin-aside}}
-  <div class="container content mt-5">
-    <div class="col-8">
-      
-      <form class="row g-3" method="post" action="/admin/editproduct/{{productData._id}}" enctype="multipart/form-data">
-        <div class="col-md-6">
-          {{!-- {{#each productData}} --}}
-          <label for="editPrName" class="form-label">Product name</label>
-          <input name="editPrName" value="{{productData.Name}}" type="text" class="form-control" id="editPrName">
-        </div>
-        <div class="col-md-4">
-          <label for="inputState" class="form-label">Category</label>
-          <select name="editPrCat" class="form-select " id="categorySelect" aria-label=".form-select-lg example">
-           
-            <option selected>{{productCat.category}}</option>
-             {{#each findCat}}
-            <option>{{this.category}}</option>
-            {{/each}}
-          </select>
-        </div>
-        <div class="col-md-6">
-          <label for="editPrBrand" class="form-label">Brand name</label>
-          <input name="editPrBrand" value="{{productData.Brand}}" type="text" class="form-control" id="editPrBrand"
-            placeholder="">
-        </div>
-        <div class="col-12">
-          <label for="editPrDes" class="form-label">Description</label>
-          <input name="editPrDes" value="{{productData.Description}}" type="text" class="form-control form-control-lg" id="editPrDes"
-            placeholder="">
-        </div>
-        {{#each productData.Features}}
-        <div class="col-md-4" style="display: none;" id="processor">
-          <label for="editPrProcessor" class="form-label">Processor</label>
-          <input name="editPrProcessor" value="{{this.Processor}}" type="text" class="form-control"
-            id="editPrProcessor">
-        </div>
-        <div class="col-md-4">
-          <label for="editPrRam" class="form-label">Ram</label>
-          <input name="editPrRam" value="{{this.RAM}}" type="text" class="form-control" id="editPrRam">
-        </div>
-        <div class="col-md-4">
-          <label for="editPrStorage" class="form-label">Storage</label>
-          <input name="editPrStorage" value="{{this.Storage}}" type="text" class="form-control"
-            id="editPrStorage">
-        </div>
-        <div class="col-md-4">
-          <label for="editPrOs" class="form-label">Operating System</label>
-          <input name="editPrOs" value="{{this.Operating_system}}" type="text" class="form-control"
-            id="editPrOs">
-        </div>
-        <div class="col-md-4">
-          <label for="editPrColor" class="form-label">Color</label>
-          <input name="editPrColor" value="{{this.Color}}" type="text" class="form-control" id="editPrColor">
-        </div>
-        {{/each}}
-        <div class="col-md-4">
-          <label for="editPrPrice" class="form-label">Price</label>
-          <input name="editPrPrice" value="{{productData.Price}}" type="number" class="form-control" id="editPrPrice">
-        </div>
-        <div class="col-md-4">
-          <label for="editPrQuant" class="form-label">Quantity</label>
-          <input name="editPrQuant" value="{{productData.Stock_quantity}}" type="number" class="form-control" id="editPrQuant">
-        </div>
-        <div class="mb-3">
-          <div id="image-previewE" style="display: block;" class="image-preview d-flex">
-            {{#each productData.Images}}
-            <img class="existingProduct" src="/images/uploads/{{this}}" alt="">
-            {{/each}}
-          </div>
-          <div class="image-preview" style="display: none;"></div>
-          <label for="formFileMultiple" class="form-label">Select images of product</label>
-          
-          <input class="form-control" value="" name="productImages" accept="image/png, image/gif, image/jpeg" type="file" id="productImages" multiple>
-         
-        </div>
-        <div class="col-12">
-          <button type="submit" class="btn btn-primary">Update Product </button>        
-        </div>
-      </form>     
+{{>admin-aside}}
+<div class="content mt-5">
+  {{!-- <div class="col"> --}}
+    <div>
+      <button class="btn btn-dark mb-5" id="imageEdit">Edit/Remove Images</button>
     </div>
-  </div>
-<script src="/javascripts/javascript.js"></script>
+    <div id="imgChangediv" style="display: none;">
+      <form class="row" action="" method="post" enctype="multipart/form-data" id="imgChangeForm">
+        <h4 class="mb-5 fw-bold text-start text-uppercase">Update your Featured Image</h4>
+        
+        <div class="d-flex justify-content-center">
+          <div class="me-5">
+            <img class="mt-3 mb-3 border " src="/images/uploads/{{productData.Images.[0]}}" alt=""
+              style="width: auto; height:15rem; object-fit: contain;" id="mainImage">
+            <input type="hidden" value="{{productData.Images.[0]}}" name="existMainImage">
+            <input type="hidden" value="{{productData._id}}" name="productId">
+          </div>
+          <div class="text-center">
+            <label for="formFileLg" class="form-label">Change main image</label>
+            <input class="form-control " name="mainIMageChange" id="mainIMageChange" type="file">
+            <p class="text-danger fw-bold mainImgErr"></p>
+            <button class="btn btn-dark mt-5 float-end" type="submit">change</button>
+          </div>
+        </div>
+      </form>
+      <h4 class="my-5 fw-bold text-start text-uppercase">Add new product Image</h4>
+      <form action="" id="addNewImageForm">
+        <div class="d-flex justify-content-center">
+          
+          <div class="text-center my-5">
+            <input class="form-control " name="addNewImageInput" id="addNewImageInput" type="file">
+            <p class="text-danger fw-bold newImgErr"></p>
+            <button class="btn btn-dark mt-5 float-end" type="submit">ADD</button>
+          </div>
+          <div class="ms-5 my-5">
+            <img class="mt-3 mb-3" src="" alt=""
+              style="width: auto; height:15rem; object-fit: contain;" id="newImage">
+            <input type="hidden" value="{{productData._id}}" name="addProductId">
+            
+          </div>
+          
+        </div>
+      </form>
+      <h4 class="my-5 fw-bold text-start text-uppercase">Remove product Image</h4>
+      <div class="d-flex justify-content-evenly">
+        {{#each productData.Images}}
+        {{#notEqual @index 0}}
+        <div class="card m-3 mt-5" style="width: 18rem;" id="{{this}}">
+          <img src="/images/uploads/{{this}}" class="card-img-top p-2" alt="..."
+            style="width: auto; height:15rem; object-fit: contain;">
+          <div class="card-body text-center">
+            {{!-- <h5 class="card-title">Card title</h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
+              content.</p> --}}
+            <button class="btn btn-danger deleteImage" productId="{{../productData._id}}" imageData="{{this}}">Delete
+              image</button>
+          </div>
+        </div>
+        {{/notEqual}}
+        {{/each}}
+      </div>
+    </div>
+
+    <form class="row g-3" method="post" action="/admin/editproduct/{{productData._id}}" id="basic-form">
+      <div class="col-md-6">
+        {{!-- {{#each productData}} --}}
+        <label for="editPrName" class="form-label">Product name</label>
+        <input name="editPrName" value="{{productData.Name}}" type="text" class="form-control" id="editPrName" required>
+      </div>
+      <div class="col-md-4">
+        <label for="inputState" class="form-label">Category</label>
+        <select name="editPrCat" class="form-select " id="categorySelect" aria-label=".form-select-lg example" required>
+
+          <option selected>{{productCat.category}}</option>
+          {{#each findCat}}
+          <option>{{this.category}}</option>
+          {{/each}}
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label for="editPrBrand" class="form-label">Brand name</label>
+        <input name="editPrBrand" value="{{productData.Brand}}" type="text" class="form-control" id="editPrBrand"
+          placeholder="" required>
+      </div>
+      <div class="col-12">
+        <label for="editPrDes" class="form-label">Description</label>
+        <input name="editPrDes" value="{{productData.Description}}" type="text" class="form-control " id="editPrDes"
+          placeholder="" required>
+      </div>
+      {{#each productData.Features}}
+      {{#equal ../productCat.category 'Laptop'}}
+      <div class="col-md-4" id="processor">
+        <label for="editPrProcessor" class="form-label">Processor</label>
+        <input name="editPrProcessor" value="{{this.Processor}}" type="text" class="form-control" id="editPrProcessor"
+          required>
+      </div>
+      {{/equal}}
+      <div class="col-md-4">
+        <label for="editPrRam" class="form-label">Ram</label>
+        <input name="editPrRam" value="{{this.RAM}}" type="text" class="form-control" id="editPrRam" required>
+      </div>
+      <div class="col-md-4">
+        <label for="editPrStorage" class="form-label">Storage</label>
+        <input name="editPrStorage" value="{{this.Storage}}" type="text" class="form-control" id="editPrStorage"
+          required>
+      </div>
+      <div class="col-md-4">
+        <label for="editPrOs" class="form-label">Operating System</label>
+        <input name="editPrOs" value="{{this.Operating_system}}" type="text" class="form-control" id="editPrOs"
+          required>
+      </div>
+      <div class="col-md-4">
+        <label for="editPrColor" class="form-label">Color</label>
+        <input name="editPrColor" value="{{this.Color}}" type="text" class="form-control" id="editPrColor" required>
+      </div>
+      {{/each}}
+      <div class="col-md-4">
+        <label for="editPrPrice" class="form-label">Price</label>
+        <input name="editPrPrice" value="{{productData.Price}}" type="number" class="form-control" id="editPrPrice"
+          required>
+      </div>
+      <div class="col-md-4">
+        <label for="editPrQuant" class="form-label">Quantity</label>
+        <input name="editPrQuant" value="{{productData.Stock_quantity}}" type="number" class="form-control"
+          id="editPrQuant" required>
+      </div>
+      {{!-- <div class="mb-3">
+        <div id="image-previewE" style="display: block;" class="image-preview d-flex">
+          {{#each productData.Images}}
+          <img class="existingProduct" src="/images/uploads/{{this}}" alt="">
+          {{/each}}
+        </div>
+        <div class="image-preview" style="display: none;"></div>
+        <label for="formFileMultiple" class="form-label">Select images of product</label>
+
+        <input class="form-control" value="" name="productImages" accept="image/png, image/gif, image/jpeg" type="file"
+          id="productImages" multiple>
+
+      </div> --}}
+      <div class="col-12">
+        <button type="submit" class="btn btn-primary">Update Product </button>
+      </div>
+    </form>
+
+    {{!--
+  </div> --}}
+
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"> </script>
 <script src="/javascripts/imagePreview.js"></script>
