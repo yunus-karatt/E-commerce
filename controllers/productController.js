@@ -288,7 +288,7 @@ module.exports = {
         resolve()
       })
     } catch (err) {
-      throw error
+      throw err
     }
   },
   changeMainImage: (existFileName, newImage) => {
@@ -312,25 +312,25 @@ module.exports = {
 
     })
   },
-  addNewImage:(productId,image)=>{
-    const file= image.addNewImageInput[0].filename
-    return new Promise(async(resolve,reject)=>{
-      try{
+  addNewImage: (productId, image) => {
+    const file = image.addNewImageInput[0].filename
+    return new Promise(async (resolve, reject) => {
+      try {
         console.log(productId)
-        await Product.updateOne({_id:productId},{$push:{Images:file}})
+        await Product.updateOne({ _id: productId }, { $push: { Images: file } })
         resolve()
       }
-      catch(err){
+      catch (err) {
         reject(err)
       }
     })
   },
-  getProductByCat:(category)=>{
-    return new Promise(async(resolve,reject)=>{
-      const catId= await Category.findOne({category:category},{_id:1})
+  getProductByCat: (category) => {
+    return new Promise(async (resolve, reject) => {
+      const catId = await Category.findOne({ category: category }, { _id: 1 })
       const productData = await Product.aggregate([{
         $match: {
-          Category:catId._id,
+          Category: catId._id,
           Isdeleted: false
         }
       }, {
@@ -343,5 +343,166 @@ module.exports = {
       }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } }])
       resolve(productData)
     })
+  },
+  getFilteredProd: (catId, filterValues) => {
+    console.log(filterValues)
+    return new Promise(async (resolve, reject) => {
+      const ramValues = filterValues.filter((value) => value.startsWith('Ram:'));
+      const brandValues = filterValues.filter((value) => value.startsWith('Brand:'));
+      const romValues = filterValues.filter((value) => value.startsWith('Rom:'));
+      const colorValues = filterValues.filter((value) => value.startsWith('Color:'));
+      const processorValues = filterValues.filter((value) => value.startsWith('Processor'))
+      const filterConditions = [];
+      if (ramValues.length > 0) {
+        const ramCondition = {
+          $or: ramValues.map((ram) => ({
+            'Features.RAM': ram.replace('Ram:', ''),
+          })),
+        };
+        filterConditions.push(ramCondition);
+      }
+
+      if (brandValues.length > 0) {
+        const brandCondition = {
+          Brand: { $in: brandValues.map((brand) => brand.replace('Brand:', '')) },
+        };
+        filterConditions.push(brandCondition);
+      }
+      if (romValues.length > 0) {
+        const romConditions = {
+          'Features.Storage': { $in: romValues.map((rom) => rom.replace('Rom:', '')) },
+
+        };
+        filterConditions.push(romConditions)
+      }
+      if (colorValues.length > 0) {
+        const colorConditions = {
+          'Features.Color': {
+            $in: colorValues.map((color) => {
+              const cleanedColor = color.replace('Color:', '')
+              return new RegExp(cleanedColor, 'i');
+            })
+          }
+
+        }
+        filterConditions.push(colorConditions)
+      }
+      if (processorValues.length > 0) {
+        const processorConditions = {
+          'Features.Processor': {
+            $in: processorValues.map((porcessor) => {
+              const cleanedProcessor = porcessor.replace('Processor:', '')
+              return new RegExp(cleanedProcessor, 'i');
+            })
+          }
+        }
+        filterConditions.push(processorConditions)
+      }
+      try {
+        if (filterValues.length == 1) {
+          const productData = await Product.aggregate([{
+            $match: {
+              Category: new ObjectId(catId),
+              Isdeleted: false,
+              $or: filterConditions
+            }
+          }, {
+            $lookup: {
+              from: 'categories',
+              localField: 'Category',
+              foreignField: '_id',
+              as: 'Category'
+            }
+          }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } }])
+          console.log(productData)
+          resolve(productData)
+
+        } else {
+
+          console.log(filterConditions)
+          const productData = await Product.aggregate([
+            {
+              $match: {
+                Category: new ObjectId(catId),
+                Isdeleted: false,
+                $and: filterConditions
+              },
+            }, {
+              $lookup: {
+                from: 'categories',
+                localField: 'Category',
+                foreignField: '_id',
+                as: 'Category'
+              }
+            }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } }])
+          resolve(productData)
+        }
+      } catch (err) {
+        console.log(err)
+      }
+    })
+  },
+  getSortedProduct: (catId, minmPrice, maxmPrice) => {
+    return new Promise(async (resolve, reject) => {
+      if(maxmPrice==='above:50000'){
+        const productData = await Product.aggregate([{
+          $match: {
+            Category: new ObjectId(catId),
+            Isdeleted: false,
+            Price:{$gte:50000}
+          }
+        }, {
+          $lookup: {
+            from: 'categories',
+            localField: 'Category',
+            foreignField: '_id',
+            as: 'Category'
+          }
+        }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } }])
+        resolve(productData)
+      }else{
+      const minPrice = parseInt(minmPrice)
+      const maxPrice = parseInt(maxmPrice)
+      if(isNaN(minPrice)){
+        const productData = await Product.aggregate([{
+          $match: {
+            Category: new ObjectId(catId),
+            Isdeleted: false,
+            Price:{$lte:maxPrice}
+          }
+        }, {
+          $lookup: {
+            from: 'categories',
+            localField: 'Category',
+            foreignField: '_id',
+            as: 'Category'
+          }
+        }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } }])
+        resolve(productData)
+      }else{
+        try {
+        const productData = await Product.aggregate([{
+          $match: {
+            Category: new ObjectId(catId),
+            Isdeleted: false,
+            Price:{$gte:minPrice,$lte:maxPrice}
+          }
+        }, {
+          $lookup: {
+            from: 'categories',
+            localField: 'Category',
+            foreignField: '_id',
+            as: 'Category'
+          }
+        }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } }])
+        resolve(productData)
+      } catch (err) {
+        console.log(err)
+      }
+      }
+      
+    }
+    })
   }
+
 }

@@ -3,7 +3,8 @@ var router = express.Router();
 const userget = require('../controllers/userController');
 const getProduct = require('../controllers/productController');
 const otp = require('../helpers/nodemailer');
-const userAuth = require('../middle ware/userAuthMiddleware')
+const userAuth = require('../middle ware/userAuthMiddleware');
+const nocache = require('nocache');
 
 /* GET login,signup */
 router.get('/', async function (req, res, next) {
@@ -220,9 +221,27 @@ router.get('/category', (req, res) => {
   const category = req.query.category
   getProduct.getProductByCat(category)
   .then((prodData)=>{
-    console.log(prodData)
     res.render('user/listbycat',{prodData,user:req.session.user})
 
+  })
+})
+
+router.get('/categroy-filter',(req,res)=>{
+  const catId= req.query.category
+  const filterValues=req.query.values.split(',')
+  getProduct.getFilteredProd(catId,filterValues)
+  .then((prodData)=>{
+    res.json(prodData)
+  })
+})
+
+router.get('/sort-by-price',(req,res)=>{
+  const catId= req.query.category
+  const minPrice= req.query.minprice
+  const maxPrice=req.query.maxprice
+  getProduct.getSortedProduct(catId,minPrice,maxPrice)
+  .then((response)=>{
+    res.json(response)
   })
 })
 // POST

@@ -8,7 +8,6 @@
 <div class="container-fluid ">
   <div class="row ms-3" style="width: 100%;">
     {{#each prodData}}
-    {{!-- <div class="col-md-4"> --}}
       <div class="card p-3 m-2 d-flex flex-column" style="max-width: 17rem;">
         <div class="card-image">
           <a href="/viewproduct/{{_id}}"> <img style="width: auto; height:15rem; object-fit: contain;" src="/images/uploads/{{Images.[0]}}"
@@ -17,7 +16,7 @@
         <div class="card-body flex-grow-1">
           <h5 class="card-title text-uppercase m-0 fw-bold">{{Name}}</h5>
           <p class="card-text m-0 mt-1">
-            RAM:{{Features.RAM}}|ROM:{{Features.Storage}}|OS:{{Features.Operating_system}}
+            {{Features.RAM}}|ROM:{{Features.Storage}}|OS:{{Features.Operating_system}}
           </p>
         </div>
         <div class="mt-auto">

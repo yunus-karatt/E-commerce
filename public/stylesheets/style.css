@@ -405,6 +405,9 @@ div.content {
   margin: 10px;
   border: 1px solid red;
 }
+select{
+  border: none;
+}
 
 @media screen and (max-width: 400px) {
   .user-aside-sec{
