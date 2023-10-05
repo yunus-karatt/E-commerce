@@ -46,8 +46,8 @@
               <a class="nav-link" href="/viewcart"><i class="fa-solid fa-cart-shopping"></i>Cart</a>
             </li>
           </ul>
-          <form class="d-flex" role="search">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+          <form method="post" action="/search" class="d-flex" id="search" role="search">
+            <input class="form-control me-2" type="search" name="searchInput" placeholder="Search" aria-label="Search">
             <button class="btn search-btn btn-outline-success" type="submit">Search</button>
           </form>
         
@@ -55,4 +55,4 @@
     </div>
   </nav>
 </header>
-<script src="javascripts/userNavbar.js"></script>
+{{!-- <script src="javascripts/userNavbar.js"></script> --}}

@@ -349,17 +349,17 @@ module.exports = {
   getDatedReport: (startDate, endDate) => {
     return new Promise(async (resolve, reject) => {
       if (startDate === endDate) {
-        const today = new Date(); 
+        const today = new Date();
         const startTime = new Date(today);
-        startTime.setUTCHours(0, 0, 0, 0); 
+        startTime.setUTCHours(0, 0, 0, 0);
         const endTime = new Date(today);
         endTime.setUTCHours(23, 59, 59, 999);
         const salesReport = await order.aggregate([{
           $match: {
             orderStatus: 'delivered',
-            orderDate:{
-              $gte:startTime,
-              $lte:endTime
+            orderDate: {
+              $gte: startTime,
+              $lte: endTime
             }
           }
         },
@@ -394,7 +394,7 @@ module.exports = {
             'products.pricePerQnt': 1,
             'products.quantity': 1,
             paymentMethod: 1
-  
+
           }
         }
         ])
@@ -403,14 +403,14 @@ module.exports = {
         }
         resolve(salesReport)
       } else {
-        startDate=new Date(startDate)
-        endDate=new Date()
+        startDate = new Date(startDate)
+        endDate = new Date()
         const salesReport = await order.aggregate([{
           $match: {
             orderStatus: 'delivered',
-            orderDate:{
-              $gte:startDate,
-              $lte:endDate
+            orderDate: {
+              $gte: startDate,
+              $lte: endDate
             }
           }
         },
@@ -445,7 +445,7 @@ module.exports = {
             'products.pricePerQnt': 1,
             'products.quantity': 1,
             paymentMethod: 1
-  
+
           }
         }
         ])
@@ -457,7 +457,77 @@ module.exports = {
       }
 
     })
+  },
+  getDashboardData: () => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const userCount = await User.find({}).count()
+        const blockedUsers = await User.find({ Isblocked: true }).count()
+        const salesCount = await order.find({ orderStatus: 'delivered' }).count()
+        const revenue = await order.aggregate([{
+          $match: {
+            orderStatus: 'delivered'
+          }
+        }, {
+          $group: {
+            _id: null,
+            revenue: { $sum: '$totalPrice' }
+          }
+        }, {
+          $project: {
+            _id: 0
+          }
+        }
+        ])
+        const placedOrder=await order.find({ orderStatus: 'placed' }).count()
+        const monthlySales=await order.aggregate([
+          {
+            $match:{
+              orderStatus: 'delivered'
+            }
+          },
+          {
+            $project:{
+              month:{$month:'$orderDate'},
+              year:{$year:'$orderDate'},
+              totalAmount:'$totalPrice'
+            }
+          },
+          {
+            $group:{
+              _id:{
+                year:'$year',
+                month:'$month',
+              },
+              totalSale:{$sum:'$totalAmount'}
+            }
+          },{
+            $sort:{
+              '_id.month':1
+            }
+          }
+        ])
+        console.log(monthlySales)
+        const dashboarData = {
+          userCount,
+          blockedUsers,
+          salesCount,
+          revenue: revenue[0].revenue,
+          placedOrder,
+          monthlySales
+        }
+        console.log(dashboarData)
+        resolve(dashboarData)
+      }
+      catch (err) {
+        reject(err)
+      }
+
+    })
   }
+
+
+
   // getUserOrderList:(skipLimit)=>{
   //   return new Promise(async(resolve,reject)=>{
   //   const userData=  await order.aggregate([{

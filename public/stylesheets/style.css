@@ -59,13 +59,16 @@ i {
 }
 
 .cat-btn a {
-  margin: 50px;
+  margin:20px 50px;
 }
 .overflow-auto::-webkit-scrollbar {
   width: 0.1rem; /* This hides the horizontal scrollbar */
   height: 0.1rem; /* This hides the vertical scrollbar */
 }
-
+.product-container::-webkit-scrollbar {
+  width: 0.1rem; /* This hides the horizontal scrollbar */
+  height: 0.1rem; /* This hides the vertical scrollbar */
+}
 /* Remove the spinners for number input fields */
 
 input[type="number"]::-webkit-inner-spin-button,
@@ -408,7 +411,9 @@ div.content {
 select{
   border: none;
 }
-
+.sort-active{
+  color:#1266f1;
+}
 @media screen and (max-width: 400px) {
   .user-aside-sec{
     display: block;

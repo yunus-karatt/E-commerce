@@ -24,7 +24,7 @@
             <td>{{this.Username}}</td>
             <td>{{this.Email}}</td>
             <td>{{this.Mobilenumber}}</td>
-            <td>{{orderCount}}</td>
+            {{!-- <td>{{orderCount}}</td> --}}
             {{#if this.Isblocked}}
             <td><a href="/admin/blockuser/{{this._id}}" class="btn btn-success">Unblock</a></td>
             {{else}}

@@ -1,1 +1,134 @@
-  {{>admin-aside}}
+{{>admin-aside}}
+<div class="content">
+  <div class="container-fluid pt-4 px-4">
+    <div class="row g-4">
+      <div class="col-sm-6 col-xl-3">
+        <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+          <i class="fa fa-chart-line fa-3x text-primary"></i>
+          <div class="ms-3">
+            <p class="mb-2">Total Revenue</p>
+            <div class="d-flex flex-wrap justify-content-start align-items-center">
+              <h5 class="mb-0 font-weight-bold">{{dashData.revenue}}</h5>
+              <p class="mb-0 ml-3 text-success font-weight-bold">+8.97%</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="col-sm-6 col-xl-3">
+        <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+          <i class="fa fa-chart-bar fa-3x text-primary"></i>
+          <div class="ms-3">
+            <p class="mb-2">Total Sales count</p>
+            <div class="d-flex flex-wrap justify-content-start align-items-center">
+              <h5 class="mb-0 font-weight-bold">{{dashData.salesCount}}</h5>
+              <p class="mb-0 ml-3 text-success font-weight-bold">+2.45%</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="col-sm-6 col-xl-3">
+        <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+          <i class="fa fa-chart-area fa-3x text-primary"></i>
+          <div class="ms-3">
+            <p class="mb-2">Users</p>
+            <div class="d-flex flex-wrap justify-content-start align-items-center">
+              <h5 class="mb-0 font-weight-bold">{{dashData.userCount}}</h5>
+              <p class="mb-0 ml-3 text-success font-weight-bold"> +6.45%</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-xl-3">
+        <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
+          <i class="fa fa-chart-pie fa-3x text-primary"></i>
+          <div class="ms-3">
+            <p class="mb-2">Blocked Users</p>
+            <div class="d-flex flex-wrap justify-content-start align-items-center">
+              <h5 class="mb-0 font-weight-bold">{{dashData.blockedUsers}}</h5>
+              <p class="mb-0 ml-3 text-danger font-weight-bold">Ban Users</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Sale & Revenue End -->
+
+
+
+
+  <div class="col-md-12 mt-5">
+    <div class="row d-flex justify-content-center" >
+      <div class="col-md-10">
+        <div style="height: 30rem; width: 40rem;">
+          <div>
+            <span>Sales Report</span>
+          </div>
+          <div>
+            <canvas id="myChart"></canvas>
+          </div>
+          <script>
+            const ctx = document.getElementById('myChart').getContext('2d');
+            const myChart = new Chart(ctx, {
+              type: 'bar',
+              data: {
+                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [{
+                  label: 'Sales',
+                  data: [0, 0, 0, 0, 0, 0, 0, 0, {{ dashData.monthlySales.[0].totalSale }},{{ dashData.monthlySales.[1].totalSale }}, 0, 0],
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+              }]
+            },
+              options: {
+              scales: {
+                yAxes: [{
+                  ticks: {
+                    beginAtZero: true
+                  }
+                }]
+              }
+            }
+             });
+
+          </script>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div style="height: 20rem; width: 20rem;">
+          <div>
+            <span>Order Status</span>
+          </div>
+          <div>
+            <canvas id="piChart"></canvas>
+          </div>
+        </div>
+      </div>
+      <script>
+        // Get the canvas element
+        var ctx1 = document.getElementById("piChart").getContext("2d");
+
+        // Define the data for the chart
+        var data = {
+          labels: ["Pending Order", "Delivered Order"],
+          datasets: [
+            {
+              data: [{{ dashData.placedOrder }}, {{ dashData.salesCount }}],
+          backgroundColor: ["#009cff", "#99d1f5"],
+                        },
+                    ],
+                };
+
+        // Create the pie chart
+        var myPieChart = new Chart(ctx1, {
+          type: "pie",
+          data: data,
+        });
+      </script>
+    </div>
+  </div>

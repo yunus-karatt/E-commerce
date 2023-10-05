@@ -49,7 +49,7 @@
               </ul>
             </td>
             <td><a href="/admin/editproduct/{{this._id}}"><i class="fa fa-pencil"></i></a></td>
-            <td><a href="/admin/deleteproduct/{{this._id}}"><i class="fa fa-trash"></i></a></td>
+            <td><a  href="/admin/deleteproduct/{{this._id}}" ><i class="fa fa-trash deleteLink" productId="{{this._id}}"> </i></a></td>
           </tr>
           {{/each}}
         </tbody>
@@ -84,6 +84,7 @@
 <script src='https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js'></script>
 <script src='https://cdn.datatables.net/responsive/2.1.0/js/dataTables.responsive.min.js'></script>
 <script src='https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js'></script>
+<script src="/javascripts/productList.js"></script>
 <script>
   $(document).ready(function () {
     $('#example').DataTable({
@@ -109,4 +110,6 @@
       }
     })
   });
+
+  
 </script>

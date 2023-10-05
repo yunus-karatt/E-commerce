@@ -4,6 +4,13 @@
       {{>user-aside}}
       {{!-- </div> --}}
     <div class="col p-5 user-main ms-5 address-manage">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item"><a href="/myprofile">My Profile</a></li>
+          {{!-- <li class="breadcrumb-item active" aria-current="page">Data</li> --}}
+        </ol>
+      </nav>
       <div class="">
         <h5 class="h3 fw-bold">Profile</h5>
       </div>
@@ -67,7 +74,8 @@
       </div>
       <div class="row otp-div p-3">
         <div class="col-md-8">
-          <p class="fs-5">we will send you a OTP to your registered mail. You can change your password by verifying the OTP</p>
+          <p class="fs-5">we will send you a OTP to your registered mail. You can change your password by verifying the
+            OTP</p>
           <button class="btn btn-dark" userEmail="{{userData.Email}}" id="password-chage">Change Password</button>
           <div class="col-12 mt-4 password-otp" style="display: none;">
             <p class="text-danger" id="mail-otp-error"></p>
@@ -98,7 +106,7 @@
       </div>
     </div>
 
-    </section>
+</section>
 
 <div>
   {{>user-footer}}

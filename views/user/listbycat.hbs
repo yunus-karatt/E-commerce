@@ -8,20 +8,21 @@
           <span class="fs-5">Q<span class="d-none d-sm-inline">uandum</span></span>
           <span class="fs-5">G<span class="d-none d-sm-inline">adgets</span></span>
         </a>
-        
+
         <button class="btn btn-dark my-3" style="display: none;" id="clearBtn">Clear All Filters</button>
         <ul
           class="nav nav-pills flex-sm-column flex-row flex-nowrap flex-shrink-1 flex-sm-grow-0 flex-grow-1 mb-sm-auto mb-0 justify-content-center align-items-center align-items-sm-start"
           id="menu">
           <li>
-            <p class="nav-link px-sm-0 px-2"><span class="text-black text-muted">Category</span>: <span class="ms-1  d-sm-inline">{{prodData.[0].Category.category}}</span>
+            <p class="nav-link px-sm-0 px-2"><span class="text-black text-muted">Category</span>: <span
+                class="ms-1  d-sm-inline">{{prodData.[0].Category.category}}</span>
             </p>
-          </li>   
-          <p class="fw-bold d-none d-sm-inline text-dark text-uppercase border-bottom">Sort</p>
-          <button id="priceBtn" class="nav-link px-sm-0 px-2">
+          </li>
+          <p class="fw-bold d-none d-sm-inline text-dark text-uppercase border-bottom">FILTERs</p>
+          {{!-- <button id="priceBtn" class="nav-link px-sm-0 px-2">
             <span class="ms-1  d-sm-inline ">price</span>
-          </button>
-          <div class="d-flex my-3" style="display: none;">
+          </button> --}}
+          {{!-- <div class="d-flex " style="display: none;">
             <form action="" id="priceForm" style="display: none">
               <div class="select">
                 <select name="minPrice" id="minPrice" class="mb-3">
@@ -42,15 +43,15 @@
                 <option value="50000">50000</option>
                 <option value="above:50000">Above 50000</option>
               </select>
-              <button type="submit" class="btn btn-outline-dark btn-sm ms-3" style="display: block;">SORT</button>
+              <button type="submit" class="btn btn-outline-dark btn-sm ms-3" style="display: block;">Filter</button>
 
 
 
             </form>
-          </div>
-          
-          <p class="fw-bold d-none d-sm-inline text-uppercase border-bottom">Filter</p>
-          
+          </div> --}}
+
+          {{!-- <p class="fw-bold d-none d-sm-inline text-uppercase border-bottom">Filter</p> --}}
+
           {{#equal prodData.[0].Category.category 'Laptop'}}
           <li class="nav-item">
             <input type="hidden" value="{{prodData.[0].Category._id}}" id="catID">
@@ -131,9 +132,27 @@
 
       </div>
     </div>
+
     <div class="col d-flex flex-column h-sm-100" id="cardDiv">
+      <nav aria-label="breadcrumb" class="mt-3 ms-5">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item active" aria-current="page">{{prodData.[0].Category.category}}</li>
+        </ol>
+      </nav>
+      <div class="d-flex mt-3 ms-5">
+        <p class="h6 text-uppercase fw-bold mt-2 me-3">sort:</p>
+        <p class=" h6 fw-semibold me-3 btn btn-light sortBtn " id="latest" catId="{{prodData.[0].Category._id}}"
+          sort="latest">Latest</p>
+        <p class=" h6 fw-semibold me-3 btn btn-light sortBtn" id="ascBtn" catId="{{prodData.[0].Category._id}}"
+          sort="asc">Price:low-to-high</p>
+        <p class=" h6 fw-semibold me-3 btn btn-light sortBtn" id="dscBtn" catId="{{prodData.[0].Category._id}}"
+          sort="dsc">Price:High-to-low</p>
+      </div>
       <main class="row overflow-auto">
+
         <div class="col pt-4">
+
           <div class="container-fluid ">
             <div class="row ms-3 d-flex" style="width: 100%;">
               {{#each prodData}}

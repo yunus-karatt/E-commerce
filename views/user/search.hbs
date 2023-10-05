@@ -1,0 +1,62 @@
+<div class="container ">
+  <div class="d-flex cat-btn justify-content-center align-items-center">
+    <a href="/category?category=mobile"><button type="button"
+        class="btn btn-outline-secondary btn-lg m-1 fw-bolder">MOBILES</button></a>
+    <a href="/category?category=Laptop"><button type="button"
+        class="btn btn-outline-secondary btn-lg m-1 fw-bolder">LAPTOPS</button></a>
+  </div>
+</div>
+<div class="container-fluid ">
+  <div class="row ms-3 mainDiv" style="width: 100%;">
+    {{#if prodData}}
+    {{#each prodData}}
+    <div class="card p-3 m-2 d-flex flex-column" style="max-width: 17rem;">
+      <div class="card-image">
+        <a href="/viewproduct/{{_id}}"> <img style="width: auto; height:15rem; object-fit: contain;"
+            src="/images/uploads/{{Images.[0]}}" class="card-img-top" alt="..."></a>
+      </div>
+      <div class="card-body flex-grow-1">
+        <h5 class="card-title text-uppercase m-0 fw-bold">{{Name}}</h5>
+        <p class="card-text m-0 mt-1">
+          {{Features.RAM}}|ROM:{{Features.Storage}}|OS:{{Features.Operating_system}}
+        </p>
+      </div>
+      <div class="mt-auto">
+        <p class="card-text ms-3 fw-bold fs-2">₹{{Price}}
+        </p>
+        {{#if ../user}}
+        {{#if isInWishList}}
+        <button class="btn float-end love-button mb-2 loved" product-id="{{_id}}" user-id="{{../user._id}}">
+          <i class=" fa-regular fa-heart"></i>
+        </button>
+        {{else}}
+        <button class="btn float-end love-button mb-2" product-id="{{_id}}" user-id="{{../user._id}}">
+          <i class=" fa-regular fa-heart"></i>
+        </button>
+        {{/if}}
+        {{/if}}
+      </div>
+      <div class="card-btn">
+        <a href="/viewproduct/{{_id}}" class="btn btn-dark me-1">View Product</a>
+        {{#if Stock_quantity}}
+        <button product-id="{{_id}}" class="btn addCart btn-dark"> Add to cart</button>
+        {{else}}
+        <button class="btn btn-danger disabled">out of stock</button>
+        {{/if}}
+      </div>
+    </div>
+
+
+    {{/each}}
+    {{else}}
+    <div class="text-center"><img src="/images/Logo/nosearch.png" class="text-center" style="width: auto;" alt=""></div>
+    <div class="text-center">
+      <a href="/" class="btn btn-primary " style="width: auto;">Go Home</a>
+    </div>
+    {{/if}}
+  </div>
+</div>
+<div>
+  {{>user-footer}}
+</div>
+<script src="/javascripts/search.js"></script>

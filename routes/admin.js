@@ -15,7 +15,14 @@ let admin = 1;
 /* GET Admin listing. */
 router.get('/', adminAuth.isValidate, function (req, res, next) {
   let adminData = req.session.admin
-  res.render('admin/Dashboard', { admin, adminData });
+  getAdmin.getDashboardData()
+  .then((dashData)=>{
+    res.render('admin/Dashboard', { admin, adminData, dashData});
+
+  })
+  .catch((err)=>{
+    next(err)
+  })
 });
 
 router.get('/login', (req, res) => {
@@ -226,6 +233,11 @@ router.get('/dated-sales-report',adminAuth.isValidate,(req,res)=>{
     res.json(salesReport)
   })
 })
+
+router.get('/manage-coupon',(req,res)=>{
+  res.render('admin/manageCoupon')
+})
+
 // POST ROUTES
 router.post('/login', (req, res) => {
   getAdmin.doAdminLogin(req.body).then((response) => {

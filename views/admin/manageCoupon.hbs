@@ -1,0 +1,79 @@
+{{>admin-aside}}
+
+
+<div class="content mt-5">
+  <button class="btn btn-dark my-3" id="addCouponBtn"><i class="fa fa-plus"></i>Add Coupon</button>
+  <form class="row g-3 needs-validation my-3" novalidate>
+    <div class="col-md-4">
+      <label for="startDate" class="form-label">Starting Date</label>
+      <input type="Date" class="form-control" id="startDate" name="startDate" required>
+      <div class="valid-feedback">
+        Looks good!
+      </div>
+    </div>
+    <div class="col-md-4">
+      <label for="endDate" class="form-label">End Date</label>
+      <input type="Date" class="form-control" id="endDate" name="endDate" value="Otto" required>
+      <div class="valid-feedback">
+        Looks good!
+      </div>
+    </div>
+    <div class="col-md-3">
+      <label for="coupenType" class="form-label">Coupon Type</label>
+      <select class="form-select" id="coupenType" name="couponType" required>
+        <option selected disabled value="">Choose...</option>
+        <option>Fixed</option>
+        <option>Percentage</option>
+      </select>
+      <div class="invalid-feedback">
+        Please select a Coupon Type
+      </div>
+    </div>
+    <div class="col-md-4">
+      <label for="couponValue" class="form-label">Coupon Value</label>
+      <div class="input-group has-validation">
+        <input type="Number" class="form-control" id="couponValue" name="couponValue"
+          aria-describedby="inputGroupPrepend" required>
+        <div class="invalid-feedback">
+          Please choose a Coupon Value
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <label for="couponLimit" class="form-label">No. of Coupon</label>
+      <input type="text" class="form-control" id="couponLimit" name="couponLimit" required>
+      <div class="invalid-feedback">
+        Please provide a Limit .
+      </div>
+    </div>
+    <div class="form-floating">
+      
+      <textarea class="form-control" id="description" name="description" required></textarea>
+      <label class="form-label" for="floatingTextarea">Description</label>
+
+      <div class="invalid-feedback">
+        Please provide a Description .
+      </div>
+    </div>
+    <div class="col-md-3">
+      <label for="couponCode" class="form-label">Coupon Code</label>
+      <input type="text" class="form-control" id="couponCode" name="couponCode" required>
+      <div class="invalid-feedback">
+        Please provide a valid coupen code.
+      </div>
+    </div>
+
+    <div class="col-12">
+      <button class="btn btn-primary" type="submit">Add coupen</button>
+    </div>
+  </form>
+  <div class="card ">
+    <h5 class="card-header">Featured</h5>
+    <div class="card-body">
+      <h5 class="card-title">Special title treatment</h5>
+      <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+      <a href="#" class="btn btn-primary">Go somewhere</a>
+    </div>
+  </div>
+</div>
+<script src="/javascripts/manageCoupon.js"></script>

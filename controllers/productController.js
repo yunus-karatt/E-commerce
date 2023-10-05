@@ -107,7 +107,10 @@ module.exports = {
             foreignField: '_id',
             as: 'Category'
           }
-        }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } }])
+        }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } },
+        
+      
+      ])
         resolve(productData)
       }
       catch (err) {
@@ -116,7 +119,38 @@ module.exports = {
 
     })
   },
+  getLimitedProduct:(number)=>{
+    let pageNumber=parseInt(number)
+    return new Promise(async (resolve, reject) => {
+      try {
+        const productData = await Product.aggregate([{
+          $match: {
+            Isdeleted: false
+          }
+        }, {
+          $lookup: {
+            from: 'categories',
+            localField: 'Category',
+            foreignField: '_id',
+            as: 'Category'
+          }
+        }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } },
+        {
+          $skip:pageNumber*10
+        } ,
+        {
+          $limit:10
+        }
+      
+      ])
+        resolve(productData)
+      }
+      catch (err) {
+        reject(err)
+      }
 
+    })
+  },
   addProduct: (product, image) => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -340,12 +374,19 @@ module.exports = {
           foreignField: '_id',
           as: 'Category'
         }
-      }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } }])
+      }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } },{$sort:{createdAt:-1}}])
       resolve(productData)
     })
   },
-  getFilteredProd: (catId, filterValues) => {
-    console.log(filterValues)
+  getFilteredProd: (catId, filterValues,sortValues) => {
+    let sortquery;
+    if(sortValues==='asc'){
+      sortquery={Price:1}
+    }else if(sortValues==='dsc'){
+      sortquery={Price:-1}
+    }else{
+      sortquery={createdAt:-1}
+    }
     return new Promise(async (resolve, reject) => {
       const ramValues = filterValues.filter((value) => value.startsWith('Ram:'));
       const brandValues = filterValues.filter((value) => value.startsWith('Brand:'));
@@ -399,7 +440,23 @@ module.exports = {
         filterConditions.push(processorConditions)
       }
       try {
-        if (filterValues.length == 1) {
+        if(filterValues[0]===''){
+          const productData = await Product.aggregate([{
+            $match: {
+              Category: new ObjectId(catId),
+              Isdeleted: false,
+            }
+          }, {
+            $lookup: {
+              from: 'categories',
+              localField: 'Category',
+              foreignField: '_id',
+              as: 'Category'
+            }
+          }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } },{$sort:sortquery}])
+          resolve(productData)
+        }
+        else if (filterValues.length == 1) {
           const productData = await Product.aggregate([{
             $match: {
               Category: new ObjectId(catId),
@@ -413,8 +470,7 @@ module.exports = {
               foreignField: '_id',
               as: 'Category'
             }
-          }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } }])
-          console.log(productData)
+          }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } },{$sort:sortquery}])
           resolve(productData)
 
         } else {
@@ -434,7 +490,7 @@ module.exports = {
                 foreignField: '_id',
                 as: 'Category'
               }
-            }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } }])
+            }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } },{$sort:sortquery}])
           resolve(productData)
         }
       } catch (err) {
@@ -442,67 +498,114 @@ module.exports = {
       }
     })
   },
-  getSortedProduct: (catId, minmPrice, maxmPrice) => {
-    return new Promise(async (resolve, reject) => {
-      if(maxmPrice==='above:50000'){
-        const productData = await Product.aggregate([{
-          $match: {
-            Category: new ObjectId(catId),
-            Isdeleted: false,
-            Price:{$gte:50000}
-          }
-        }, {
-          $lookup: {
-            from: 'categories',
-            localField: 'Category',
-            foreignField: '_id',
-            as: 'Category'
-          }
-        }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } }])
-        resolve(productData)
-      }else{
-      const minPrice = parseInt(minmPrice)
-      const maxPrice = parseInt(maxmPrice)
-      if(isNaN(minPrice)){
-        const productData = await Product.aggregate([{
-          $match: {
-            Category: new ObjectId(catId),
-            Isdeleted: false,
-            Price:{$lte:maxPrice}
-          }
-        }, {
-          $lookup: {
-            from: 'categories',
-            localField: 'Category',
-            foreignField: '_id',
-            as: 'Category'
-          }
-        }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } }])
-        resolve(productData)
-      }else{
-        try {
-        const productData = await Product.aggregate([{
-          $match: {
-            Category: new ObjectId(catId),
-            Isdeleted: false,
-            Price:{$gte:minPrice,$lte:maxPrice}
-          }
-        }, {
-          $lookup: {
-            from: 'categories',
-            localField: 'Category',
-            foreignField: '_id',
-            as: 'Category'
-          }
-        }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } }])
-        resolve(productData)
-      } catch (err) {
-        console.log(err)
-      }
-      }
-      
-    }
+  searchProduct:(search)=>{
+    return new Promise(async(resolve,reject)=>{
+      const searchQuery=new RegExp(search,'i')
+      const productData=await Product.aggregate([ {
+        $lookup: {
+          from: 'categories',
+          localField: 'Category',
+          foreignField: '_id',
+          as: 'Category'
+        }
+      },{
+        $match: {
+          Isdeleted: false,
+          $or:[
+            {Name:{$regex:searchQuery}},
+            {Brand:{$regex:searchQuery}},
+            {'Features.RAM':{$regex:searchQuery}},
+            {'Features.Storage':{$regex:searchQuery}},
+            {'Features.Color':{$regex:searchQuery}},
+            {'Category.category':{$regex:searchQuery}}
+          ]
+        }
+      }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } }])
+      console.log(productData)
+      resolve(productData)
     })
   }
+  // getSortedProduct: (catId, minmPrice, maxmPrice) => {
+  //   return new Promise(async (resolve, reject) => {
+  //     if(maxmPrice==='above:50000'){
+  //       const productData = await Product.aggregate([{
+  //         $match: {
+  //           Category: new ObjectId(catId),
+  //           Isdeleted: false,
+  //           Price:{$gte:50000}
+  //         }
+  //       }, {
+  //         $lookup: {
+  //           from: 'categories',
+  //           localField: 'Category',
+  //           foreignField: '_id',
+  //           as: 'Category'
+  //         }
+  //       }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } }])
+  //       resolve(productData)
+  //     }else{
+  //     const minPrice = parseInt(minmPrice)
+  //     const maxPrice = parseInt(maxmPrice)
+  //     if(isNaN(minPrice)){
+  //       const productData = await Product.aggregate([{
+  //         $match: {
+  //           Category: new ObjectId(catId),
+  //           Isdeleted: false,
+  //           Price:{$lte:maxPrice}
+  //         }
+  //       }, {
+  //         $lookup: {
+  //           from: 'categories',
+  //           localField: 'Category',
+  //           foreignField: '_id',
+  //           as: 'Category'
+  //         }
+  //       }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } }])
+  //       resolve(productData)
+  //     }else{
+  //       try {
+  //       const productData = await Product.aggregate([{
+  //         $match: {
+  //           Category: new ObjectId(catId),
+  //           Isdeleted: false,
+  //           Price:{$gte:minPrice,$lte:maxPrice}
+  //         }
+  //       }, {
+  //         $lookup: {
+  //           from: 'categories',
+  //           localField: 'Category',
+  //           foreignField: '_id',
+  //           as: 'Category'
+  //         }
+  //       }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } }])
+  //       resolve(productData)
+  //     } catch (err) {
+  //       console.log(err)
+  //     }
+  //     }
+      
+  //   }
+  //   })
+  // },
+  // sortProduct:(id,sortBy)=>{
+  //   return new Promise(async(resolve,reject)=>{
+  //     if(sortBy==='asc'){
+  //       const prodData=await Product.aggregate([{
+  //         $match: {
+  //           Isdeleted: false,
+  //           Category:new ObjectId(id)
+  //         }
+  //       }, {
+  //         $lookup: {
+  //           from: 'categories',
+  //           localField: 'Category',
+  //           foreignField: '_id',
+  //           as: 'Category'
+  //         }
+  //       }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } }])
+  //       console.log(prodData)
+  //     }
+  //   })
+  // }
 
 }
