@@ -4,9 +4,77 @@ const addressRadio = document.querySelectorAll('input[name="flexRadioDefault"]')
 const checkOutForm = document.querySelector('#checkOutForm');
 const productData = document.querySelectorAll('.product');
 const existAddressDiv = document.querySelector('.existAddressDiv');
-const addressCanceBtn = document.querySelector('#addressCanceBtn')
+const addressCanceBtn = document.querySelector('#addressCanceBtn');
+const viewCouponBtn = document.querySelector('#viewCouponBtn');
+const couponDiv = document.querySelector('#couponDiv');
+const discountPrice = document.querySelector('.discountPrice')
+const totalPayable = document.querySelector('.totalPayable')
+const discountDisplay = document.querySelector('.discountDisplay');
+
 let addressId;
+const totalPrice = document.querySelector('input[name="totalPrice"]').value
+const WalletBalance = document.querySelector('input[name="walletBalance"]').value
+console.log(typeof (WalletBalance))
+let totalValue;
+let couponId;
 let product = []
+const templateString = `
+{{#each couponData}}
+<div class="card col-12 my-2">
+<div class="card-body">
+<span claass="text-muted">coupen code</span>{{couponCode}}<br>
+{{description}} </br>
+<button class="btn btn-primary btn-sm float-end applybtn" data-coupon-id="{{_id}}" data-coupon-discount="{{discountValue}}" 
+data-coupon-purchaseLimit="{{purchaseLimit}}" coupon-code="{{couponCode}}"
+>APPLY</button>
+</div>
+</div>
+  {{/each}}
+`
+const template = Handlebars.compile(templateString)
+
+// coupon
+viewCouponBtn.addEventListener('click', async (e) => {
+  fetch('/getCoupons')
+    .then((response) => {
+      response.json()
+        .then((response) => {
+          couponDiv.style.display = 'block'
+          const productHtml = template({ couponData: response });
+          couponDiv.innerHTML = productHtml
+        })
+    })
+})
+
+couponDiv.addEventListener('click', (e) => {
+  if (e.target && e.target.classList.contains('applybtn')) {
+    couponId = e.target.getAttribute('data-coupon-id');
+    const couponDiscount = e.target.getAttribute('data-coupon-discount');
+    const couponPurchaseLimit = e.target.getAttribute('data-coupon-purchaseLimit');
+    const couponCode = e.target.getAttribute('coupon-code');
+    if (parseInt(totalPrice) < parseInt(couponPurchaseLimit)) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: `coupon only for above ${couponPurchaseLimit} purachases `,
+      })
+    } else {
+      const discountValue = totalPrice * couponDiscount / 100
+      totalValue = totalPrice - discountValue;
+      discountDisplay.style.display = 'block'
+      discountPrice.innerHTML = discountValue;
+      totalPayable.innerHTML = totalValue;
+      document.querySelector('.couponCodeP').innerHTML = couponCode
+      couponDiv.style.display = 'none'
+    }
+
+
+    // console.log(`Button clicked for coupon code: ${couponId},${couponDiscount},${couponPurchaseLimit}`);
+
+    // You can perform additional actions here, such as applying the coupon.
+  }
+});
+
 
 productData.forEach((productElement) => {
   const productId = productElement.getAttribute('productId')
@@ -87,53 +155,72 @@ checkOutForm.addEventListener('submit', async (e) => {
       )
     } else {
 
-      const totalPrice = document.querySelector('input[name="totalPrice"]').value
+      if (totalValue == null) {
+        totalValue = totalPrice
+      }
       let orderData = {
         addressId: addressId,
         paymentMethod: checkOutForm.paymentMethod.value,
         product: product,
-        totalPrice: totalPrice
+        couponId: couponId,
+        totalPrice: totalValue
       }
       if (orderData.paymentMethod === 'cod') {
         orderData.orderStatus = 'placed'
-      } else {
+      } else if (orderData.paymentMethod === 'wallet') {
+
+        if (parseInt(orderData.totalPrice) > parseInt(WalletBalance)) {
+
+          Swal.fire(
+            'Not enough balance in the wallet',
+            'Please choose another payment option',
+            'warning'
+          )
+        } else {
+          orderData.orderStatus = 'placed'
+        }
+      }
+      else {
         orderData.orderStatus = 'pending'
       }
 
-      await fetch('/place-order', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ orderData })
-      })
-        .then((response) => {
-          response.json()
-            .then((response) => {
-              if (response.method === 'cod') {
-                console.log(response)
-                Swal.fire({
-                  title: 'Order placed',
-                  text: 'Track your order at Orders',
-                  icon: 'success',
-                  showCancelButton: true, // Disable the cancel button
-                  confirmButtonText: 'Continue shopping',
-                  // showCloseButton: true,
-                  // closeButtonAriaLabel: 'Go to orders',
-                  cancelButtonText: 'Go to orders',
-                  allowOutsideClick: false,
-                }).then((result) => {
-                  if (result.isConfirmed) {
-                    window.location.href = '/'
-                  } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    window.location.href = '/view-order'
-                  }
-                });
-              } else if (response.status.method === 'online') {
-                razorPayPayment(response)
-              }
-            })
+
+      if (orderData.orderStatus) {
+        await fetch('/place-order', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ orderData })
         })
+          .then((response) => {
+            response.json()
+              .then((response) => {
+                if (response.status.status === 'cod'||response.status.status === 'wallet') {
+                  Swal.fire({
+                    title: 'Order placed',
+                    text: 'Track your order at Orders',
+                    icon: 'success',
+                    showCancelButton: true, // Disable the cancel button
+                    confirmButtonText: 'Continue shopping',
+                    // showCloseButton: true,
+                    // closeButtonAriaLabel: 'Go to orders',
+                    cancelButtonText: 'Go to orders',
+                    allowOutsideClick: false,
+                  }).then((result) => {
+                    if (result.isConfirmed) {
+                      window.location.href = '/'
+                    } else if (result.dismiss === Swal.DismissReason.cancel) {
+                      window.location.href = `/view-order-details/${response.status.orderId}`
+                    }
+                  });
+                } else if (response.status.method === 'online') {
+                  razorPayPayment(response)
+                }
+              })
+          })
+      }
+
     }
   }
 })
@@ -147,7 +234,7 @@ function razorPayPayment(order) {
     "name": "Quandum Gadgets",
     "description": "Test Transaction",
     "image": "https://example.com/your_logo",
-    "order_id": order.status.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    "order_id": order.status.id,
     "handler": function (response) {
       verifyPayment(response, order)
     },
@@ -187,7 +274,7 @@ function verifyPayment(response, order) {
     response.json()
       .then(response => {
         if (response.updated) {
-          window.location.href = '/view-order'
+          window.location.href = `/view-order-details/${response.orderId}`
         }
       })
   })

@@ -52,6 +52,13 @@ const orderSchema= new mongoose.Schema({
   orderStatus:{
     type:String,
     require:true
+  },
+  cancelReason:{
+    type:String
+  },
+  couponId:{
+    type: mongoose.Types.ObjectId,
+      ref: 'coupons',
   }
 
 })

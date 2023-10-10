@@ -2,6 +2,7 @@ const Admin = require('../model/adminModel');
 const User = require('../model/userModel');
 const Product = require('../model/productModel')
 const order = require('../model/orderModel');
+const coupon=require('../model/couponModel')
 const db = require('../config/connection');
 const bcrypt = require('bcrypt');
 const { ObjectId } = require('mongodb');
@@ -197,6 +198,7 @@ module.exports = {
             paymentMethod: { $first: '$paymentMethod' },
             orderStatus: { $first: '$orderStatus' },
             orderDate: { $first: '$orderDate' },
+            cancelReason:{$first:'$cancelReason'},
             products: { $push: '$products' },
 
           }
@@ -211,6 +213,7 @@ module.exports = {
             orderStatus: 1,
             orderDate: 1,
             products: 1,
+            cancelReason:1
           }
         },])
         console.log(cartData)
@@ -523,6 +526,29 @@ module.exports = {
         reject(err)
       }
 
+    })
+  },
+  createCoupon:(formData)=>{
+    return new Promise(async(resolve,reject)=>{
+      const couponData=new coupon({
+      startDate:formData.startDate,
+      endDate:formData.endDate,
+      discountType:formData.couponType,
+      discountValue:formData.couponValue,
+      usersLimit:formData.couponLimit,
+      description:formData.description,
+      couponCode:formData.couponCode,
+      purchaseLimit:formData.purchaseLimit
+    })
+    await couponData.save()
+    resolve()
+    })
+    
+  },
+  getCoupon:()=>{
+    return new Promise(async(resolve,reject)=>{
+      const couponData=await coupon.find().lean()
+      resolve(couponData)
     })
   }
 

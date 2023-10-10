@@ -235,7 +235,9 @@ router.get('/dated-sales-report',adminAuth.isValidate,(req,res)=>{
 })
 
 router.get('/manage-coupon',(req,res)=>{
-  res.render('admin/manageCoupon')
+  getAdmin.getCoupon()
+  .then(couponData=>res.render('admin/manageCoupon',{admin, couponData}))
+  
 })
 
 // POST ROUTES
@@ -301,7 +303,7 @@ router.post('/editproduct/:id', (req, res) => {
 
 router.post('/change-main-image', multerFunction.upload.fields([{ name: 'mainIMageChange' }]), (req, res) => {
   const existFileName = req.body;
-  const newImage = req.files
+  const newImage = req.files;
   getProduct.changeMainImage(existFileName,newImage)
   .then(()=>{
     res.json({updated:true})
@@ -321,6 +323,13 @@ router.post('/add-image', multerFunction.upload.fields([{ name: 'addNewImageInpu
   })
   .catch(err=>console.log(err))
 })
+
+router.post('/create-coupon',(req,res)=>{
+  const formData=req.body
+getAdmin.createCoupon(formData)
+.then(()=>res.json({created:true}))
+})
+
 // router.post('/update-order-status', (req, res) => {
 //   const orderUpdate = req.body.mngOrderData;
 //   getAdmin.updateOrderStatus(orderUpdate)

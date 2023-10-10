@@ -67,24 +67,50 @@ const templateString = `
 
     </div>
 `
+const currentURL = window.location.href;
 let selectedValues = []
 let sortValues;
 function fetchAndRender() {
-  if (selectedValues.length > 0 || sortValues != '') {
-    clearBtn.style.display = 'block'
-    fetch(`/categroy-filter?category=${catId}&values=${selectedValues.join(',')}&sort=${sortValues}`)
-      .then((response) => {
-        response.json()
-          .then((prodData) => {
-            const template = Handlebars.compile(templateString)
-            const html = template({ prodData })
-            document.querySelector('#cardDiv').innerHTML = html
-            attachEventListeners()
-          })
-      })
+  if (currentURL.includes('search')) {
+
+    if (selectedValues.length > 0 || sortValues != '') {
+     
+      const url = new URL(currentURL);
+   
+      const searchQuery = url.searchParams.get('search');
+      clearBtn.style.display = 'block'
+      console.log(`/search-filter?search=${searchQuery}&values=${selectedValues.join(',')}&sort=${sortValues}`)
+      fetch(`/search-filter?search=${searchQuery}&values=${selectedValues.join(',')}&sort=${sortValues}`)
+        .then((response) => {
+          response.json()
+            .then((prodData) => {
+              const template = Handlebars.compile(templateString)
+              const html = template({ prodData })
+              document.querySelector('#cardDiv').innerHTML = html
+              attachEventListeners()
+            })
+        })
+    } else {
+      window.location.reload()
+    }
   } else {
-    window.location.reload()
+    if (selectedValues.length > 0 || sortValues != '') {
+      clearBtn.style.display = 'block'
+      fetch(`/categroy-filter?category=${catId}&values=${selectedValues.join(',')}&sort=${sortValues}`)
+        .then((response) => {
+          response.json()
+            .then((prodData) => {
+              const template = Handlebars.compile(templateString)
+              const html = template({ prodData })
+              document.querySelector('#cardDiv').innerHTML = html
+              attachEventListeners()
+            })
+        })
+    } else {
+      window.location.reload()
+    }
   }
+
 
 }
 
@@ -92,7 +118,7 @@ function attachEventListeners() {
   const sortBtns = document.querySelectorAll('.sortBtn');
   sortBtns.forEach((btn) => {
     btn.addEventListener('click', handleSortButtonClick);
-    
+
   });
 }
 
@@ -101,8 +127,8 @@ function handleSortButtonClick(e) {
   const sortBtns = document.querySelectorAll('.sortBtn');
   sortValues = sortBy;
   fetchAndRender()
-  
-  
+
+
 }
 
 attachEventListeners()

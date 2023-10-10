@@ -8,21 +8,14 @@ const couponSchema = new mongoose.Schema({
     type: Date,
     require: true
   },
-  discoutType: {
-    type: String,
-    require: true,
-    enum: ['Percentage', 'Fixed']
-  },
   discountValue: {
     type: Number,
     require: true,
   },
-  usedUsers: [
-    {
-      type: mongoose.Types.ObjectId,
-      ref: 'users',
-    }
-  ],
+  usedUsersCount: {
+    type:Number,
+    default:0
+  },
   usersLimit:{
     type:Number,
     require:true
@@ -31,9 +24,12 @@ const couponSchema = new mongoose.Schema({
     type:String,
     require:true
   },
-  coupenCode:{
+  couponCode:{
     type:String,
     require:true
+  },
+  purchaseLimit:{
+    type:Number,
   }
 })
 module.exports = mongoose.model('coupon', couponSchema)

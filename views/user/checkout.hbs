@@ -145,6 +145,17 @@
                     </label>
                   </div>
                 </div>
+                <div class="form-check h-100 border rounded-3 mt-3">
+                  <div class="p-3">
+
+                    <input class="form-check-input" type="radio" value="wallet" name="paymentMethod"
+                      id="walletPayment" />
+                    <label class="form-check-label" for="walletPayment">
+                      WALLET<br> balance <span class="fw-bold ">₹{{wallet.[0].WalletBalance}}</span>
+                    </label>
+                    <input type="number" name="walletBalance" value="{{wallet.[0].WalletBalance}}" id="" hidden>
+                  </div>
+                </div>
                 <div class="form-check h-100 ">
                   <div class="p-3">
                     <input type="number" name="totalPrice" value="{{cartData.[0].totalPrice}}" id="" hidden>
@@ -178,19 +189,45 @@
             <p class="mb-2">Shipping cost:</p>
             <p class="mb-2">+ ₹00.00</p>
           </div>
-          <hr />
+          <hr>
           <div class="d-flex justify-content-between">
             <p class="mb-2">Total price:</p>
             <p class="mb-2 fw-bold">₹{{cartData.[0].totalPrice}}</p>
           </div>
+          <hr>
+          {{!-- <div>
 
-          {{!-- <div class="input-group mt-3 mb-4">
-            <input type="text" class="form-control border" name="" placeholder="Promo code" />
-            <button class="btn btn-light text-primary border">Apply</button>
           </div> --}}
 
-          <hr />
-          <h6 class="text-dark my-4">Items in cart</h6>
+          
+
+          <div class="input-group mt-3 mb-4" id="appliedDiv" >
+            <button class="btn btn-primary btn-sm float-end my-3 mt-4" id="viewCouponBtn">view coupons</button>
+            {{!-- <input type="text" class="form-control border" name="couponInput" id="couponInput"
+              placeholder="Promo code" readonly />
+            <button class="btn btn-light text-primary border">Applied</button> --}}
+          </div>
+          <div id="couponDiv" class="my-3"></div>
+
+          <div class="discountDisplay" style="display: none;">
+            <div class="d-flex justify-content-between  my-3">
+              <p class="mb-2">coupon applied:</p>
+              <p class="mb-2 fw-bold couponCodeP"></p>
+
+            </div>
+            <div class="d-flex justify-content-between  my-3">
+              <p class="mb-2">You saved:</p>
+              <p class="mb-2 fw-bold discountPrice"></p>
+
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between">
+              <p class="mb-2">Total Payable:</p>
+              <p class="mb-2 fw-bold totalPayable"></p>
+            </div>
+          </div>
+
+          <h6 class="text-dark my-5">Items in cart</h6>
           {{#each cartData}}
           {{#each this.products}}
           <div class="d-flex align-items-center mb-4  product" productId="{{_id}}" quantity="{{count}}"

@@ -3,7 +3,8 @@ const order = require('../model/orderModel')
 const User = require('../model/userModel');
 const wishList = require('../model/wishListModel');
 const cart = require('../model/cartModel');
-const address = require('../model/addressMode')
+const address = require('../model/addressMode');
+const coupon = require('../model/couponModel')
 const db = require('../config/connection');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto')
@@ -150,7 +151,7 @@ module.exports = {
   },
 
   getWishLish: (user) => {
-  
+
     const wishId = user._id
     return new Promise(async (resolve, reject) => {
       try {
@@ -180,7 +181,8 @@ module.exports = {
               _id: 1,
               Name: 1,
               Images: 1,
-              Price: 1
+              Price: 1,
+              Stock_quantity: 1
             },
             features: '$products.Features',
           }
@@ -496,14 +498,23 @@ module.exports = {
       products: orderData.product,
       totalPrice: orderData.totalPrice,
       paymentMethod: orderData.paymentMethod,
-      orderStatus: orderData.orderStatus
+      orderStatus: orderData.orderStatus,
+      couponId: orderData.couponId
+    }
+   console.log(orderDetails)
+    if (orderDetails.couponId) {
+      coupon.updateOne({ _id: orderDetails.couponId }, { $inc: { usedUsersCount: 1 } })
+        .then((response) => console.log(response))
+
     }
 
     return new Promise(async (resolve, reject) => {
       try {
         const orderStatus = await order.create(orderDetails)
+        console.log(orderStatus)
         // Update the product stock quantities
         if (orderStatus.paymentMethod === 'cod') {
+          console.log('cod')
           const productUpdates = orderDetails.products.map((product) => ({
             updateOne: {
               filter: { _id: product.productId },
@@ -512,8 +523,22 @@ module.exports = {
           }));
           await Product.bulkWrite(productUpdates);
           await cart.deleteOne({ userId: userId })
-          resolve({ status: 'cod' })
-        } else {
+          resolve({ status: 'cod', orderId: orderStatus._id })
+        }else if(orderStatus.paymentMethod=== 'wallet'){
+          await User.updateOne({_id:userId},{$inc:{WalletBalance: -orderStatus.totalPrice}})
+          const productUpdates = orderDetails.products.map((product) => ({
+            updateOne: {
+              filter: { _id: product.productId },
+              update: { $inc: { Stock_quantity: -product.quantity } }
+            }
+          }));
+          await Product.bulkWrite(productUpdates);
+          await cart.deleteOne({ userId: userId })
+          resolve({ status: 'wallet', orderId: orderStatus._id })
+          
+        } 
+        else {
+          console.log('yes online')
           var options = {
             amount: orderDetails.totalPrice * 100,  // amount in the smallest currency unit
             currency: "INR",
@@ -603,6 +628,9 @@ module.exports = {
               shipmentDateForDlv: 1,
               deleveredDate: 1
             }
+          },
+          {
+            $sort: { orderDate: -1 }
           }
         ])
         for (x in orderData) {
@@ -674,10 +702,14 @@ module.exports = {
     })
   },
 
-  cancelAllOrder: (orderId) => {
+  cancelAllOrder: (orderId, reason,paymentMethod,userId) => {
     return new Promise(async (resolve, reject) => {
       try {
         const cancelledOrder = await order.findById(orderId);
+        if(paymentMethod==='online'||paymentMethod==='wallet'){
+          await User.updateOne({_id:userId},{$inc:{WalletBalance:cancelledOrder.totalPrice}})
+         
+         }
         for (const product of cancelledOrder.products) {
           if (product.itemStatus != 'cancelled') {
             const foundProduct = await Product.findById(product.productId);
@@ -689,10 +721,12 @@ module.exports = {
         cancelledOrder.orderStatus = 'cancelled';
         cancelledOrder.totalPrice = 0;
         cancelledOrder.cancelDate = new Date();
+        cancelledOrder.cancelReason = reason
         for (const product of cancelledOrder.products) {
           product.itemStatus = 'cancelled';
         }
         cancelledOrder.save()
+       
         // await order.updateOne({_id:orderId},{$set:{orderStatus:'cancelled',totalPrice:0,'products.$[].itemStatus':'cancelled'}});
         resolve()
       }
@@ -710,10 +744,10 @@ module.exports = {
         hmac.update(orderData.response.razorpay_order_id + '|' + orderData.response.razorpay_payment_id)
         let generatedSignature = hmac.digest('hex')
         let isSignatureValid = generatedSignature === orderData.response.razorpay_signature;
-        if(isSignatureValid){
+        if (isSignatureValid) {
           resolve()
         }
-        else{
+        else {
           reject()
         }
       }
@@ -723,30 +757,50 @@ module.exports = {
     })
 
   },
-  changeOrderStatus:(orderData,userId)=>{
-    const orderId= orderData.status.receipt
-    return new Promise(async(resolve,reject)=>{
-      try{
+  changeOrderStatus: (orderData, userId) => {
+    const orderId = orderData.status.receipt
+    return new Promise(async (resolve, reject) => {
+      try {
         // const orderData= await order.findOne({_id:orderId})
         const updatedOrder = await order.findOneAndUpdate(
           { _id: orderId },
           { $set: { orderStatus: 'placed' } },
           { new: true }
-        );      console.log('..............................',updatedOrder)
-      const productUpdates = updatedOrder.products.map((product) => ({
-        updateOne: {
-          filter: { _id: product.productId },
-          update: { $inc: { Stock_quantity: -product.quantity } }
-        }
-      }));
-      await Product.bulkWrite(productUpdates);
-      await cart.deleteOne({ userId: userId })
-      resolve()
+        );
+        const productUpdates = updatedOrder.products.map((product) => ({
+          updateOne: {
+            filter: { _id: product.productId },
+            update: { $inc: { Stock_quantity: -product.quantity } }
+          }
+        }));
+        await Product.bulkWrite(productUpdates);
+        await cart.deleteOne({ userId: userId })
+        resolve(orderId)
       }
-      catch(err){
+      catch (err) {
         reject(err)
       }
     })
   },
- 
+  getCoupons: () => {
+    return new Promise(async (resolve, reject) => {
+      const couponData = await coupon.aggregate([{
+        $match: {
+          startDate: { $lte: new Date() },
+          endDate: { $gt: new Date() },
+          $expr: {
+            $lt: ["$usedUsersCount", "$usersLimit"]
+          }
+        }
+
+      }])
+      resolve(couponData)
+    })
+  },
+  getWallet:(userId)=>{
+    return new Promise(async(resolve,reject)=>{
+      const WalletBalance=await User.find({_id:userId},{WalletBalance:1}).lean()
+      resolve(WalletBalance)
+    })
+  }
 } 

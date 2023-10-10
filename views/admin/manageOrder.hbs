@@ -5,11 +5,14 @@
     <div class="btn-group dropend mt-5">
       <button type="button" class="btn btn-primary btn-lg dropdown-toggle" data-bs-toggle="dropdown"
         aria-expanded="false">
-        Manage Order
+        Change Order Status
       </button>
       <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="/admin/update-order-status?orderId={{data.[0]._id}}&status=shipped">Shipped</admin/a></admin/li>
-        <li><a class="dropdown-item" href="/admin/update-order-status?orderId={{data.[0]._id}}&status=delivered">Delivered</a></li>
+        <li><a class="dropdown-item" href="/admin/update-order-status?orderId={{data.[0]._id}}&status=shipped">Shipped
+            </admin /a>
+            </admin /li>
+        <li><a class="dropdown-item"
+            href="/admin/update-order-status?orderId={{data.[0]._id}}&status=delivered">Delivered</a></li>
       </ul>
     </div>
     {{/notEqual}}
@@ -61,9 +64,18 @@
           </div>
 
         </div>
-        {{!-- <div class="card-footer text-muted">
+        {{#equal data.[0].orderStatus 'cancelled'}}
 
-        </div> --}}
+        <div class="col-sm-6">
+          <div class="card-body text-start">
+            <h5 class="card-title">Reason for Cancellation</h5>
+            <p class="card-text ms-2">
+              {{data.[0].cancelReason}}
+            </p>
+          </div>
+
+        </div>
+        {{/equal}}
       </div>
     </div>
     <div class="row ">

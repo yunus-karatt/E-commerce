@@ -10,15 +10,30 @@
         </a>
 
         <button class="btn btn-dark my-3" style="display: none;" id="clearBtn">Clear All Filters</button>
+        <p class="fw-bold d-none d-sm-inline text-dark text-uppercase border-bottom">FILTERs</p>
         <ul
           class="nav nav-pills flex-sm-column flex-row flex-nowrap flex-shrink-1 flex-sm-grow-0 flex-grow-1 mb-sm-auto mb-0 justify-content-center align-items-center align-items-sm-start"
           id="menu">
+          {{#if search}}
+          <li class="nav-item">
+            {{!-- <input type="hidden" value="{{prodData.[0].Category._id}}" id="catID"> --}}
+            <button id="brandBtn" class="nav-link px-sm-0 px-2 filterBtn">
+              <span class="ms-1  d-sm-inline">Category</span>
+            </button>
+            <form id="catForm" style="display: none;" class="filterForm">
+              <label><input type="checkbox" name="fl-colour" value="Cat:mobile" id="red" /> Mobile</label><br>
+              <label><input type="checkbox" name="fl-colour" value="Cat:Laptop" id="yellow" /> Laptop</label><br>
+            </form>
+
+          </li>
+          {{else}}
           <li>
             <p class="nav-link px-sm-0 px-2"><span class="text-black text-muted">Category</span>: <span
                 class="ms-1  d-sm-inline">{{prodData.[0].Category.category}}</span>
             </p>
           </li>
-          <p class="fw-bold d-none d-sm-inline text-dark text-uppercase border-bottom">FILTERs</p>
+          {{/if}}
+
           {{!-- <button id="priceBtn" class="nav-link px-sm-0 px-2">
             <span class="ms-1  d-sm-inline ">price</span>
           </button> --}}
@@ -51,7 +66,69 @@
           </div> --}}
 
           {{!-- <p class="fw-bold d-none d-sm-inline text-uppercase border-bottom">Filter</p> --}}
+          {{#if search}}
+          <li class="nav-item">
+            <input type="hidden" value="{{prodData.[0].Category._id}}" id="catID">
+            <button id="brandBtn" class="nav-link px-sm-0 px-2 filterBtn">
+              <span class="ms-1  d-sm-inline">Brands</span>
+            </button>
+            <form id="brandForm" style="display: none;" class="filterForm">
+              <label><input type="checkbox" name="fl-colour" value="Brand:Lenovo" id="red" /> Lenovo</label><br>
+              <label><input type="checkbox" name="fl-colour" value="Brand:Dell" id="yellow" /> Dell</label><br>
+              <label><input type="checkbox" name="fl-colour" value="Brand:Apple" id="pink" /> Apple</label><br>
+              <label><input type="checkbox" name="fl-colour" value="Brand:Hp" id="purple" /> Hp</label><br>
+              <label><input type="checkbox" name="fl-colour" value="Brand:Asus" id="green" /> Asus</label><br>
+              <label><input type="checkbox" name="fl-colour" value="Brand:Msi" id="other" /> Msi</label><br>
+              <label><input type="checkbox" name="fl-colour" value="Brand:Poco" id="red" /> Poco</label><br>
+              <label><input type="checkbox" name="fl-colour" value="Brand:Samsung" id="yellow" /> Samsung</label><br>
+              <label><input type="checkbox" name="fl-colour" value="Brand:Apple" id="pink" /> Apple</label><br>
+              <label><input type="checkbox" name="fl-colour" value="Brand:Redmi" id="purple" /> Redmi</label><br>
+              <label><input type="checkbox" name="fl-colour" value="Brand:Vivo" id="green" /> Vivo</label><br>
+              <label><input type="checkbox" name="fl-colour" value="Brand:Oppo" id="other" /> Oppo</label>
+            </form>
 
+          </li>
+          <li>
+            <button id="ramBtn" data-bs-toggle="collapse" class="nav-link px-sm-0 px-2 filterBtn">
+              <span class="ms-1  d-sm-inline">Ram</span> </button>
+            <form id="ramForm" style="display: none;" class="filterForm">
+              <label><input type="checkbox" name="fl-colour" value="Ram:4 GB RAM" id="red" /> 4 GB</label><br>
+              <label><input type="checkbox" name="fl-colour" value="Ram:8 GB RAM" id="yellow" /> 8 GB</label><br>
+              <label><input type="checkbox" name="fl-colour" value="Ram:6 GB RAM" id="pink" /> 6 GB</label><br>
+            </form>
+          </li>
+          <li>
+            <button id="romBtn" data-bs-toggle="collapse" class="nav-link px-sm-0 px-2 filterBtn">
+              <span class="ms-1  d-sm-inline">Storage</span> </button>
+            <form id="romForm" style="display: none;" class="filterForm">
+              <label><input type="checkbox" name="fl-colour" value="Rom:128 GB" id="red" /> 128 GB</label><br>
+              <label><input type="checkbox" name="fl-colour" value="Rom:256 GB" id="yellow" /> 256 GB</label><br>
+              <label><input type="checkbox" name="fl-colour" value="Rom:512 GB" id="pink" /> 512 GB</label><br>
+            </form>
+          </li>
+          <li>
+            <button id="osBtn" data-bs-toggle="collapse" class="nav-link px-sm-0 px- filterBtn">
+              <span class="ms-1  d-sm-inline">Color</span> </button>
+            <form id="osForm" style="display: none;" class="filterForm">
+              <label><input type="checkbox" name="fl-colour" value="Color:Black" id="Black" /> Black</label><br>
+              <label><input type="checkbox" name="fl-colour" value="Color:Red" id="Red" /> Red</label><br>
+              <label><input type="checkbox" name="fl-colour" value="Color:Blue" id="Blue" /> Blue</label><br>
+            </form>
+          </li>
+           <li>
+            <button id="processorBtn" data-bs-toggle="collapse" class="nav-link px-sm-0 px-2 filterBtn">
+              <span class="ms-1  d-sm-inline">Processor</span> </button>
+            <form id="processorForm" style="display: none;" class="filterForm">
+              <label><input type="checkbox" name="fl-colour" value="Processor:Core i5" id="Corei5" />Core i5
+              </label><br>
+              <label><input type="checkbox" name="fl-colour" value="Processor:Core i7" id="Corei7" /> Core
+                i7</label><br>
+              <label><input type="checkbox" name="fl-colour" value="Processor:Ryzen" id="Ryzen" /> Ryzen</label><br>
+              <label><input type="checkbox" name="fl-colour" value="Processor:Mac" id="Mac" /> Mac</label><br>
+
+            </form>
+          </li>
+          {{else}}
           {{#equal prodData.[0].Category.category 'Laptop'}}
           <li class="nav-item">
             <input type="hidden" value="{{prodData.[0].Category._id}}" id="catID">
@@ -127,19 +204,22 @@
             </form>
           </li>
           {{/equal}}
-
+          {{/if}}
         </ul>
 
       </div>
     </div>
 
     <div class="col d-flex flex-column h-sm-100" id="cardDiv">
+      {{#if search}}
+      {{else}}
       <nav aria-label="breadcrumb" class="mt-3 ms-5">
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="/">Home</a></li>
           <li class="breadcrumb-item active" aria-current="page">{{prodData.[0].Category.category}}</li>
         </ol>
       </nav>
+      {{/if}}
       <div class="d-flex mt-3 ms-5">
         <p class="h6 text-uppercase fw-bold mt-2 me-3">sort:</p>
         <p class=" h6 fw-semibold me-3 btn btn-light sortBtn " id="latest" catId="{{prodData.[0].Category._id}}"

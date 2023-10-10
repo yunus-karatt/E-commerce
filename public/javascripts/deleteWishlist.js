@@ -38,3 +38,25 @@ document.querySelectorAll('.wish-button').forEach((button) => {
 
   })
 })
+
+document.querySelectorAll('.addCart').forEach((btn)=>{
+  btn.addEventListener('click',async(e)=>{
+    const productId = btn.getAttribute('product-id')
+    console.log(productId)
+    await fetch('/api/addcart', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ productId })
+    }).then((response) => {
+      return response.json();
+    }).then((data) => {
+      if (data.loggedIn) {
+        window.location.href = '/viewcart';
+      } else {
+        window.location.href = '/login';
+      }
+    });
+  })
+})

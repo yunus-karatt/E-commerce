@@ -1,9 +1,8 @@
- 
 <section class="container user-aside-sec wish-section ">
   {{!-- <div class="row"> --}}
     {{!-- <div class="col-3 align-items-center user-aside-div"> --}}
-     {{>user-aside}}
-    {{!-- </div> --}}
+      {{>user-aside}}
+      {{!-- </div> --}}
     <div class="col user-main ms-5 ">
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -32,11 +31,16 @@
             </div>
           </a>
           <div class="float-end wish-button-div">
+            {{#if products.Stock_quantity}}
+            <button product-id="{{products._id}}" class="btn addCart btn-success"> Add to cart</button>
+            {{else}}
+            <button class="btn btn-danger disabled">out of stock</button>
+            {{/if}}
             <button class="wish-button btn btn-danger" userId="{{../user._id}}" productId="{{products._id}}"><i
                 class="fa-solid fa-trash"></i>Remove</button>
 
           </div>
-          
+
         </dir>
         {{/each}}
         {{else}}
@@ -54,7 +58,8 @@
         {{/if}}
       </div>
     </div>
-  {{!-- </div> --}}
+    {{!--
+  </div> --}}
 </section>
 <div>
   {{>user-footer}}

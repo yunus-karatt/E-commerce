@@ -48,7 +48,7 @@
                 <div>
                   {{#notEqual orderData.[0].orderStatus 'delivered'}}
                   <span class="text-muted"><a class="text-danger cancel-order" order-id="{{orderData.[0]._id}}"
-                      href="/cancel-order/{{orderData.[0]._id}}">Cancel Order</a></span>
+                    paymentMethod="{{orderData.[0].paymentMethod}}"  href="/cancel-order/{{orderData.[0]._id}}">Cancel Order</a></span>
                   {{/notEqual}}
                   <h5></h5>
                 </div>
@@ -88,7 +88,7 @@
 
               </div>
               {{!-- {{#if totalPrice}} --}}
-              {{#notEqual products.itemStatus 'cancelled'}}
+              {{!-- {{#notEqual products.itemStatus 'cancelled'}}
               <div class="card-footer remove-product p-4">
                 <div class="d-flex justify-content-between card-footer-div">
                   {{#notEqual orderStatus 'delivered'}}
@@ -102,7 +102,7 @@
                   </h5>
                 </div>
               </div>
-              {{/notEqual}}
+              {{/notEqual}} --}}
               {{!-- {{/if}} --}}
             </div>
           </div>

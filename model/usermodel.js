@@ -29,6 +29,10 @@ Isblocked:{
     type:Boolean,
     require:true,
     default:false
+},
+WalletBalance:{
+    type:Number,
+    default:0
 }
 
 

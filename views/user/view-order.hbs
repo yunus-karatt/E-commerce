@@ -79,13 +79,13 @@
 
                   <div class="border-start h-100"></div>
                   {{#notEqual orderStatus 'delivered'}}
-                  {{#notEqual paymentMethod 'online'}}
-                  <h5 class="fw-normal mb-0"><a class="order-cancel" order-id="{{_id}}"
+                  
+                  <h5 class="fw-normal mb-0"><a class="order-cancel" order-id="{{_id}}" order-method="{{paymentMethod}}"
                       href="/cancel-order/{{_id}}">Cancel</a></h5>
 
                   <div class="border-start h-100"></div>
                   <h5 class="fw-normal mb-0"><a href="#!">Pre-pay</a></h5>
-                  {{/notEqual}}
+                  
                   {{/notEqual}}
                   <div class="border-start h-100"></div>
                   <h5 class="fw-normal mb-0"><a href="#!" class="text-muted"><i class="fas fa-ellipsis-v"></i></a>

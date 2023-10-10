@@ -1,13 +1,37 @@
-
 <div class="sidebar ">
-  <a class="" href="/admin/"> <i class="fa-solid fa-table-columns"></i>Dashboard</a>
-  <a class="" href="/admin/category"><i class="fa-solid fa-border-all"></i>Category</a>
-  <a href="/admin/products"><i class="fa-solid fa-grip"></i>Products</a>
-  <a href="/admin/userslist"><i class="fa-solid fa-users"></i>Customers</a>
-  <a href="/admin/get-orders"><i class="fa-solid fa-cart-shopping"></i>Orders</a>
-  <a href="#"><i class="fa-solid fa-gear"></i>Settings</a>
-  <a href="/admin/salesreport"><i class="fa-solid fa-arrow-right-from-bracket"></i>Sales Report</a>
+  <a class="dashboard-link" href="/admin/"> <i class="fa-solid fa-table-columns"></i>Dashboard</a>
+  <a class="category-link" href="/admin/category"><i class="fa-solid fa-border-all"></i>Category</a>
+  <a class="products-link" href="/admin/products"><i class="fa-solid fa-grip"></i>Products</a>
+  <a class="customers-link" href="/admin/userslist"><i class="fa-solid fa-users"></i>Customers</a>
+  <a class="orders-link" href="/admin/get-orders"><i class="fa-solid fa-cart-shopping"></i>Orders</a>
+  <a class="settings-link" href="#"><i class="fa-solid fa-gear"></i>Settings</a>
+  <a class="sales-report-link" href="/admin/salesreport"><i class="fa-solid fa-arrow-right-from-bracket"></i>Sales
+    Report</a>
   {{!-- <a href="#"><i class="fa-regular fa-flag"></i>Banner
     Manage</a> --}}
-  <a href="/admin/manage-coupon"><i class="fa-solid fa-percent"></i>Manage Coupons</a>
+  <a class="coupons-link" href="/admin/manage-coupon"><i class="fa-solid fa-percent"></i>Manage Coupons</a>
 </div>
+<script>
+  document.addEventListener('DOMContentLoaded', (e) => {
+    const currentPage = window.location.pathname;
+    console.log(currentPage)
+    const pageToLinkMap = {
+      "/admin/": "dashboard-link",
+      "/admin/category": "category-link",
+      "/admin/products": "products-link",
+      "/admin/userslist": "customers-link",
+      "/admin/get-orders": "orders-link",
+      "/admin/salesreport": "sales-report-link",
+      "/admin/manage-coupon": "coupons-link",
+      "/admin/addproduct":"products-link",
+
+    }
+    const currentLinkClass = pageToLinkMap[currentPage]
+    if(currentLinkClass){
+      const currentLink=document.querySelector(`.${currentLinkClass}`);
+      if(currentLink){
+        currentLink.classList.add('active')
+      }
+    }
+  })
+</script>

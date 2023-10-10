@@ -2,35 +2,26 @@
 
 
 <div class="content mt-5">
-  <button class="btn btn-dark my-3" id="addCouponBtn"><i class="fa fa-plus"></i>Add Coupon</button>
-  <form class="row g-3 needs-validation my-3" novalidate>
-    <div class="col-md-4">
+  <button class="btn btn-dark my-3" id="addCouponBtn">Add Coupon</button>
+  <div style="display: none;" id="AddCpnForm">
+  <form class="row g-3 needs-validation d-flex my-3" novalidate>
+    <div class="col-md-5">
       <label for="startDate" class="form-label">Starting Date</label>
       <input type="Date" class="form-control" id="startDate" name="startDate" required>
       <div class="valid-feedback">
         Looks good!
       </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-5">
       <label for="endDate" class="form-label">End Date</label>
-      <input type="Date" class="form-control" id="endDate" name="endDate" value="Otto" required>
+      <input type="Date" class="form-control" id="endDate" name="endDate"  required>
       <div class="valid-feedback">
         Looks good!
       </div>
     </div>
+    
     <div class="col-md-3">
-      <label for="coupenType" class="form-label">Coupon Type</label>
-      <select class="form-select" id="coupenType" name="couponType" required>
-        <option selected disabled value="">Choose...</option>
-        <option>Fixed</option>
-        <option>Percentage</option>
-      </select>
-      <div class="invalid-feedback">
-        Please select a Coupon Type
-      </div>
-    </div>
-    <div class="col-md-4">
-      <label for="couponValue" class="form-label">Coupon Value</label>
+      <label for="couponValue" class="form-label">Coupon Value (%)</label>
       <div class="input-group has-validation">
         <input type="Number" class="form-control" id="couponValue" name="couponValue"
           aria-describedby="inputGroupPrepend" required>
@@ -62,18 +53,59 @@
         Please provide a valid coupen code.
       </div>
     </div>
+     <div class="col-md-3">
+      <label for="purchaseLimit" class="form-label">Purchase Limit</label>
+      <input type="number" class="form-control" id="purchaseLimit" name="purchaseLimit" required>
+      <div class="invalid-feedback">
+        Please provide a valid coupen code.
+      </div>
+    </div>
 
     <div class="col-12">
       <button class="btn btn-primary" type="submit">Add coupen</button>
     </div>
   </form>
-  <div class="card ">
-    <h5 class="card-header">Featured</h5>
-    <div class="card-body">
-      <h5 class="card-title">Special title treatment</h5>
-      <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-      <a href="#" class="btn btn-primary">Go somewhere</a>
+  </div>
+  <div class="couponDiv">
+  <div class="table-responsive">
+      <table class="table table-striped" id="couponTable">
+        <thead>
+          <tr>
+            <th scope="col">coupon ID</th>
+            <th scope="col">Start Date</th>
+            <th scope="col">End Date</th>
+            <th scope="col">Discount in percentage</th>
+            <th scope="col">user Limit</th>
+            <th scope="col">No. of coupons used</th>
+           
+          </tr>
+        </thead>
+        <tbody class="table-group-divider">
+
+          {{#each couponData}}
+          <tr>
+            <td>{{_id}}</td>
+            <td>{{startDate}}</td>
+            <td>{{endDate}}
+            </td>
+            <td> {{discountValue}}% </td>
+            <td>{{usersLimit}}</td>
+            <td>{{usedUsersCount}}</td>
+          {{/each}}
+
+        </tbody>
+      </table>
     </div>
   </div>
 </div>
 <script src="/javascripts/manageCoupon.js"></script>
+<script src='https://code.jquery.com/jquery-3.7.0.js'></script>
+<!-- Data Table JS -->
+<script src='https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js'></script>
+<script src='https://cdn.datatables.net/responsive/2.1.0/js/dataTables.responsive.min.js'></script>
+<script src='https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js'></script>
+<script>
+  $(document).ready(() => {
+    new DataTable('#couponTable');
+  })
+</script>
