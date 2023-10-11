@@ -1,4 +1,10 @@
 const handlebars = require('handlebars');
+const moment = require('moment'); 
+
+// Register a custom helper for formatting dates
+handlebars.registerHelper('formatDate', function (date, format) {
+  return moment(date).format(format);
+});
 
 // Register a custom Handlebars helper for notEqual
 handlebars.registerHelper('notEqual', function (a, b, options) {

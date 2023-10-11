@@ -532,6 +532,10 @@ select{
   .user-main{
     margin-top: 150px;
   }
+  .walletDiv{
+    display: block !important;
+    margin-top: 200px !important;
+  }
 }
 @media (min-width: 576px) {
   .h-sm-100 {

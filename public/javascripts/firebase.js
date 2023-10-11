@@ -40,7 +40,8 @@ if (currentURL.includes('/signup')) {
       Password: loginform.Password.value,
       Confirmpassword: loginform.Confirmpassword.value,
       Mobilenumber: loginform.Mobilenumber.value,
-      Email: loginform.Email.value
+      Email: loginform.Email.value,
+      referencedBy:loginform.referenceId.value
     }
 
     // VALIDATION
@@ -97,7 +98,6 @@ if (currentURL.includes('/signup')) {
     e.preventDefault()
     let otp_number = otpform.otp.value
     confirmationResult.confirm(otp_number).then(async (result) => {
-      // User signed in successfully.
       const user = result;
       await fetch('/createsession', {
         method: 'POST',

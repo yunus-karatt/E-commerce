@@ -1,15 +1,82 @@
 <section class="container user-aside-sec">
   {{>user-aside}}
-  <div class="container">
-    <div class="m-5 d-flex justify-content-start" style="width: 100%;">
-      <div class="card text-bg-primary mb-3 " style="max-width: 18rem;">
+  <div class="">
+    <div class="walletDiv m-5 d-flex justify-content-between" >
+      <div class="card col-md-6 text-bg-light mb-3 me-2" style="max-width: 18rem;">
         <div class="card-header">Wallet </div>
         <div class="card-body">
           <h5 class="card-title">Your Wallet Balance is</h5>
-           <h5 class="card-title text-center my-3  fs-2">₹{{wallet.[0].WalletBalance}}</h5>
-          
+          <h5 class="card-title text-center my-3  fs-2">₹{{wallet.[0].WalletBalance}}</h5>
+        </div>
+      </div>
+      <div class="card col-md-6 text-bg-light mb-3 me-2" style="max-width: 18rem;">
+        <div class="card-header">Top up Wallet </div>
+        <div class="card-body text-center">
+          <h5 class="card-title">"Boost Your Wallet, Boost Your Shopping Power!" </h5>
+          <button class="btn btn-primary my-2" id="topUpBtn">Top Up Now</button>
+        </div>
+      </div>
+      <div class="card col-md-6 text-bg-light mb-3 " style="max-width: 18rem;">
+        <div class="card-header">Invite &amp; earn 
+        <button class="float-end btn btn-dark btn-sm" onclick="copyReferralCode('{{user.referenceId}}')">Copy Referral</button>
+        </div>
+        <div class="card-body">
+          <p style="font-size: 18px; margin: 0;">Invite your friends and earn <br> <span style="font-weight: bold;">50
+            Rs</span>!</p>
+        <p style="font-size: 16px; margin: 0;">Refferral code:<span class="fw-bold">{{user.referenceId}}</span></p>
+                <p style="font-size: 16px; margin: 0;">Share the love and get rewarded.</p>
+
         </div>
       </div>
     </div>
+    <div class="m-5 table-responsive">
+    <table class="table border">
+      <thead>
+        <tr>
+          <th scope="col">Date</th>
+          <th scope="col">Transaction Type</th>
+          <th scope="col">Description</th>
+          <th scope="col">Amount</th>
+          {{!-- <th scope="col">Balance</th> --}}
+        </tr>
+      </thead>
+
+      {{#each walletHistory}}
+      <tbody>
+        {{#if Username}}
+        <tr>
+          <td>{{formatDate createdAt "MMM DD, YYYY HH:mm:ss"}}</td>
+          <td>Referral Bonus</td>
+          <td>{{Username}} referred you</td>
+          <td>+50</td>
+          {{!-- <td>{{}}</td> --}}
+        </tr>
+        {{/if}}
+        {{#if orderDate}}
+        <td>{{formatDate orderDate "MMM DD, YYYY HH:mm:ss"}}</td>
+        <td>Purchase</td>
+        <td>order id:{{_id}}<br>payment through wallet</td>
+        <td>-{{totalPrice}}</td>
+        {{/if}}
+        {{#if topUpDate}}
+        <td>{{formatDate topUpDate "MMM DD, YYYY HH:mm:ss"}}</td>
+        <td>Topup Wallet</td>
+        <td>Topup id:{{_id}}<br>payment through online</td>
+        <td>+{{amount}}</td>
+        {{/if}}
+        {{#if cancelDate}}
+        <td>{{formatDate cancelDate "MMM DD, YYYY HH:mm:ss"}}</td>
+        <td>Cancellation</td>
+        <td>order id:{{_id}}<br>payment through {{paymentMethod}}</td>
+        <td>+{{totalPrice}}</td>
+        {{/if}}
+      </tbody>
+      {{/each}}
+    </table>
+    </div>
   </div>
 </section>
+<div>
+  {{>user-footer}}
+</div>
+<script src="/javascripts/wallet.js"></script>

@@ -10,6 +10,7 @@ const couponDiv = document.querySelector('#couponDiv');
 const discountPrice = document.querySelector('.discountPrice')
 const totalPayable = document.querySelector('.totalPayable')
 const discountDisplay = document.querySelector('.discountDisplay');
+const currntLocBtn=document.querySelector('.currntLocBtn')
 
 let addressId;
 const totalPrice = document.querySelector('input[name="totalPrice"]').value
@@ -87,12 +88,30 @@ productData.forEach((productElement) => {
 document.getElementById('addNewAddress').addEventListener('click', (e) => {
   existAddressDiv.style.display = 'none'
   checkOutAdd.style.display = 'block';
+  currntLocBtn.style.display='block'
 })
+currntLocBtn.addEventListener('click',(e)=>{
+  let locationData
+  navigator.geolocation.getCurrentPosition(async (position) => {
+    const { latitude, longitude } = position.coords;
+    console.log(typeof (longitude))
+    const url = `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&apiKey=b98b406c2108486db5d7ffe6747ca238`
+    await fetch(url).then(res => res.json()).then(data => locationData = data.features[0].properties)
+    console.log(locationData)
+    checkOutAdd.inputAddress.value = locationData.formatted
+    checkOutAdd.inputCity.value = locationData.suburb
+    checkOutAdd.inputState.value = locationData.state
+    checkOutAdd.inputZip.value = locationData.postcode
+
+  })
+})
+
 
 addressCanceBtn.addEventListener('click', (e) => {
   existAddressDiv.style.display = 'block'
   checkOutAdd.style.display = 'none';
   addErr.innerHTML = ''
+  currntLocBtn.style.display='none'
 })
 
 checkOutAdd.addEventListener('submit', async (e) => {
@@ -126,6 +145,8 @@ checkOutAdd.addEventListener('submit', async (e) => {
           .then((response) => {
             addressId = response.addressId;
             checkOutAdd.style.display = 'none';
+            addErr.innerHTML=''
+            currntLocBtn.style.display='none'
           })
       })
   }
@@ -226,7 +247,7 @@ checkOutForm.addEventListener('submit', async (e) => {
 })
 
 function razorPayPayment(order) {
-  console.log('..........', order)
+  console.log(order)
   var options = {
     "key": "rzp_test_ZAyPL2XD7S33Zs", // Enter the Key ID generated from the Dashboard
     "amount": order.status.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise

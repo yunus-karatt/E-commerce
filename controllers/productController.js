@@ -362,19 +362,34 @@ module.exports = {
   getProductByCat: (category) => {
     return new Promise(async (resolve, reject) => {
       const catId = await Category.findOne({ category: category }, { _id: 1 })
-      const productData = await Product.aggregate([{
-        $match: {
-          Category: catId._id,
-          Isdeleted: false
-        }
-      }, {
-        $lookup: {
-          from: 'categories',
-          localField: 'Category',
-          foreignField: '_id',
-          as: 'Category'
-        }
-      }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } }, { $sort: { createdAt: -1 } }])
+      const productData = await Product.aggregate([
+        {
+          $match: {
+            Category: catId._id,
+            Isdeleted: false
+          }
+        },
+        {
+          $lookup: {
+            from: 'categories',
+            localField: 'Category',
+            foreignField: '_id',
+            as: 'Category'
+          }
+        },
+        {
+          $unwind: '$Category'
+        },
+        {
+          $unwind: '$Features'
+        },
+        {
+          $match: { 'Category.list': true }
+        },
+        {
+          $sort: { createdAt: -1 }
+        },
+      ])
       resolve(productData)
     })
   },
@@ -453,7 +468,9 @@ module.exports = {
               foreignField: '_id',
               as: 'Category'
             }
-          }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } }, { $sort: sortquery }])
+          }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } }, { $sort: sortquery },
+
+          ])
           resolve(productData)
         }
         else if (filterValues.length == 1) {
@@ -489,7 +506,8 @@ module.exports = {
                 foreignField: '_id',
                 as: 'Category'
               }
-            }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } }, { $sort: sortquery }])
+            }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } }, { $sort: sortquery },
+          ])
           resolve(productData)
         }
       } catch (err) {
@@ -519,7 +537,7 @@ module.exports = {
             { 'Category.category': { $regex: searchQuery } }
           ]
         }
-      }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } }])
+      }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } },])
       resolve(productData)
     })
   },
@@ -540,10 +558,8 @@ module.exports = {
       const colorValues = filterValues.filter((value) => value.startsWith('Color:'));
       const processorValues = filterValues.filter((value) => value.startsWith('Processor'));
       const categoryValues = filterValues.filter((value) => value.startsWith('Cat'))
-      // const [catValu]=categoryValues
-      // const resultString = catValu.replace(/^Cat:/, '');
       const filterConditions = [];
-      const categoryConditions=[];
+      const categoryConditions = [];
       if (ramValues.length > 0) {
         const ramCondition = {
           $or: ramValues.map((ram) => ({
@@ -602,63 +618,93 @@ module.exports = {
       }
       try {
         if (filterConditions[0] === '') {
-          const productData = await Product.aggregate([{
-            $match: {
-              Isdeleted: false,
-              $or: [
-                { Name: { $regex: searchQuery } },
-                { Brand: { $regex: searchQuery } },
-                { 'Features.RAM': { $regex: searchQuery } },
-                { 'Features.Storage': { $regex: searchQuery } },
-                { 'Features.Operating_system': { $regex: searchQuery } },
-                { 'Features.Color': { $regex: searchQuery } },
-              ]
+          console.log('here')
+          const productData = await Product.aggregate([
+            {
+              $match: {
+                Isdeleted: false,
+                $or: [
+                  { Name: { $regex: searchQuery } },
+                  { Brand: { $regex: searchQuery } },
+                  { 'Features.RAM': { $regex: searchQuery } },
+                  { 'Features.Storage': { $regex: searchQuery } },
+                  { 'Features.Operating_system': { $regex: searchQuery } },
+                  { 'Features.Color': { $regex: searchQuery } },
+                ]
+              }
+            },
+            {
+              $lookup: {
+                from: 'categories',
+                localField: 'Category',
+                foreignField: '_id',
+                as: 'Category'
+              }
+            },
+            {
+              $unwind: '$Category'
+            },
+            {
+              $unwind: '$Features'
+            },
+            {
+              $match: { 'Category.list': true, 'Category.category': categoryValues }
+            },
+            {
+              $sort: sortquery
             }
-          }, {
-            $lookup: {
-              from: 'categories',
-              localField: 'Category',
-              foreignField: '_id',
-              as: 'Category'
-            }
-          }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true,'Category.category' :categoryValues} }, { $sort: sortquery }])
+          ])
           resolve(productData)
         }
         else if (filterConditions.length == 1) {
-          const productData = await Product.aggregate([{
-            $match: {
-              Isdeleted: false,
-              $and: filterConditions,
-              $or: [
-                { Name: { $regex: searchQuery } },
-                { Brand: { $regex: searchQuery } },
-                { 'Features.RAM': { $regex: searchQuery } },
-                { 'Features.Storage': { $regex: searchQuery } },
-                { 'Features.Operating_system': { $regex: searchQuery } },
-                { 'Features.Color': { $regex: searchQuery } },
-              ]
+          const productData = await Product.aggregate([
+            {
+              $match:
+              {
+                Isdeleted: false,
+                $and: filterConditions,
+                $or: [
+                  { Name: { $regex: searchQuery } },
+                  { Brand: { $regex: searchQuery } },
+                  { 'Features.RAM': { $regex: searchQuery } },
+                  { 'Features.Storage': { $regex: searchQuery } },
+                  { 'Features.Operating_system': { $regex: searchQuery } },
+                  { 'Features.Color': { $regex: searchQuery } },
+                ]
+              }
+            },
+            {
+              $lookup: {
+                from: 'categories',
+                localField: 'Category',
+                foreignField: '_id',
+                as: 'Category'
+              }
+            },
+            {
+              $unwind: '$Category'
+            },
+            {
+              $unwind: '$Features'
+            },
+            {
+              $match:
+              {
+                'Category.list': true,
+                $or: categoryConditions
+              }
+            },
+            {
+              $sort: sortquery
             }
-          }, {
-            $lookup: {
-              from: 'categories',
-              localField: 'Category',
-              foreignField: '_id',
-              as: 'Category'
-            }
-          }, { $unwind: '$Category' }, { $unwind: '$Features' },
-          {
-            $match:
-              { 'Category.list': true ,
-              $or:categoryConditions
-            }
-          },
-          { $sort: sortquery }])
+          ])
           resolve(productData)
 
         } else {
           const productData = await Product.aggregate([
             {
-              $match: {
+              $match:
+              {
                 Isdeleted: false,
                 // $and: filterConditions,
                 $or: [
@@ -670,16 +716,27 @@ module.exports = {
                   { 'Features.Color': { $regex: searchQuery } },
                 ]
               },
-            }, {
+            },
+            {
               $lookup: {
                 from: 'categories',
                 localField: 'Category',
                 foreignField: '_id',
                 as: 'Category'
               }
-            }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true,
-          $or:categoryConditions
-          } }, { $sort: sortquery }])
+            },
+            {
+              $unwind: '$Category'
+            },
+            {
+              $unwind: '$Features'
+            },
+            {
+              $match: {
+                'Category.list': true,
+                $or: categoryConditions
+              }
+            }, { $sort: sortquery }])
           resolve(productData)
         }
       } catch (err) {
@@ -687,87 +744,4 @@ module.exports = {
       }
     })
   }
-  // getSortedProduct: (catId, minmPrice, maxmPrice) => {
-  //   return new Promise(async (resolve, reject) => {
-  //     if(maxmPrice==='above:50000'){
-  //       const productData = await Product.aggregate([{
-  //         $match: {
-  //           Category: new ObjectId(catId),
-  //           Isdeleted: false,
-  //           Price:{$gte:50000}
-  //         }
-  //       }, {
-  //         $lookup: {
-  //           from: 'categories',
-  //           localField: 'Category',
-  //           foreignField: '_id',
-  //           as: 'Category'
-  //         }
-  //       }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } }])
-  //       resolve(productData)
-  //     }else{
-  //     const minPrice = parseInt(minmPrice)
-  //     const maxPrice = parseInt(maxmPrice)
-  //     if(isNaN(minPrice)){
-  //       const productData = await Product.aggregate([{
-  //         $match: {
-  //           Category: new ObjectId(catId),
-  //           Isdeleted: false,
-  //           Price:{$lte:maxPrice}
-  //         }
-  //       }, {
-  //         $lookup: {
-  //           from: 'categories',
-  //           localField: 'Category',
-  //           foreignField: '_id',
-  //           as: 'Category'
-  //         }
-  //       }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } }])
-  //       resolve(productData)
-  //     }else{
-  //       try {
-  //       const productData = await Product.aggregate([{
-  //         $match: {
-  //           Category: new ObjectId(catId),
-  //           Isdeleted: false,
-  //           Price:{$gte:minPrice,$lte:maxPrice}
-  //         }
-  //       }, {
-  //         $lookup: {
-  //           from: 'categories',
-  //           localField: 'Category',
-  //           foreignField: '_id',
-  //           as: 'Category'
-  //         }
-  //       }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } }])
-  //       resolve(productData)
-  //     } catch (err) {
-  //       console.log(err)
-  //     }
-  //     }
-
-  //   }
-  //   })
-  // },
-  // sortProduct:(id,sortBy)=>{
-  //   return new Promise(async(resolve,reject)=>{
-  //     if(sortBy==='asc'){
-  //       const prodData=await Product.aggregate([{
-  //         $match: {
-  //           Isdeleted: false,
-  //           Category:new ObjectId(id)
-  //         }
-  //       }, {
-  //         $lookup: {
-  //           from: 'categories',
-  //           localField: 'Category',
-  //           foreignField: '_id',
-  //           as: 'Category'
-  //         }
-  //       }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } }])
-  //       console.log(prodData)
-  //     }
-  //   })
-  // }
-
 }

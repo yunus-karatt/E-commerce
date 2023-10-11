@@ -510,16 +510,14 @@ module.exports = {
             }
           }
         ])
-        console.log(monthlySales)
         const dashboarData = {
           userCount,
           blockedUsers,
           salesCount,
-          revenue: revenue[0].revenue,
+          revenue: revenue[0] ? revenue[0].revenue : 0,
           placedOrder,
           monthlySales
         }
-        console.log(dashboarData)
         resolve(dashboarData)
       }
       catch (err) {

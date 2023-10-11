@@ -67,19 +67,19 @@ const templateString = `
 
     </div>
 `
+
 const currentURL = window.location.href;
 let selectedValues = []
 let sortValues;
+
+
 function fetchAndRender() {
   if (currentURL.includes('search')) {
 
     if (selectedValues.length > 0 || sortValues != '') {
-     
       const url = new URL(currentURL);
-   
       const searchQuery = url.searchParams.get('search');
       clearBtn.style.display = 'block'
-      console.log(`/search-filter?search=${searchQuery}&values=${selectedValues.join(',')}&sort=${sortValues}`)
       fetch(`/search-filter?search=${searchQuery}&values=${selectedValues.join(',')}&sort=${sortValues}`)
         .then((response) => {
           response.json()
@@ -127,8 +127,6 @@ function handleSortButtonClick(e) {
   const sortBtns = document.querySelectorAll('.sortBtn');
   sortValues = sortBy;
   fetchAndRender()
-
-
 }
 
 attachEventListeners()
@@ -185,4 +183,5 @@ checkBox.forEach((checkBox) => {
 clearBtn.addEventListener('click', (e) => {
   window.location.reload()
 })
+
 

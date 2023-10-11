@@ -20,22 +20,37 @@ var instance = new Razorpay({
 
 module.exports = {
 
-  doSignup: function (userData) {
+  doSignup: async function (userData) {
+    let userId;
+    let referenceId = '' + Date.now()
+    referenceId = referenceId.substring(3, 13);
+    referenceId = 'REF' + referenceId;
+    if (userData.userData.referencedBy) {
+      userId = await User.findOneAndUpdate({ referenceId: userData.userData.referencedBy }, { $inc: { WalletBalance: 50 } }, { new: true })
+
+    }
     let Userdata = {
       Username: userData.userData.Username,
       Password: userData.userData.Password,
       Confirmpassword: userData.userData.Confirmpassword,
       Mobilenumber: userData.userData.Mobilenumber,
       Email: userData.userData.Email,
+      referenceId: referenceId,
     }
+
+
     return new Promise(async (res, rej) => {
       try {
+        if (userId) {
+          Userdata['referencedBy'] = userId._id;
+        }
         Userdata.Password = await bcrypt.hash(Userdata.Password, 10)
         Userdata.Confirmpassword = await bcrypt.hash(Userdata.Confirmpassword, 10)
         let user = await User.findOne({ Mobilenumber: Userdata.Mobilenumber })
         if (user) {
           res(user)
         } else {
+          console.log(Userdata)
           await User.insertMany([Userdata])
           res()
         }
@@ -501,7 +516,7 @@ module.exports = {
       orderStatus: orderData.orderStatus,
       couponId: orderData.couponId
     }
-   console.log(orderDetails)
+    console.log(orderDetails)
     if (orderDetails.couponId) {
       coupon.updateOne({ _id: orderDetails.couponId }, { $inc: { usedUsersCount: 1 } })
         .then((response) => console.log(response))
@@ -524,8 +539,8 @@ module.exports = {
           await Product.bulkWrite(productUpdates);
           await cart.deleteOne({ userId: userId })
           resolve({ status: 'cod', orderId: orderStatus._id })
-        }else if(orderStatus.paymentMethod=== 'wallet'){
-          await User.updateOne({_id:userId},{$inc:{WalletBalance: -orderStatus.totalPrice}})
+        } else if (orderStatus.paymentMethod === 'wallet') {
+          await User.updateOne({ _id: userId }, { $inc: { WalletBalance: -orderStatus.totalPrice } })
           const productUpdates = orderDetails.products.map((product) => ({
             updateOne: {
               filter: { _id: product.productId },
@@ -535,10 +550,9 @@ module.exports = {
           await Product.bulkWrite(productUpdates);
           await cart.deleteOne({ userId: userId })
           resolve({ status: 'wallet', orderId: orderStatus._id })
-          
-        } 
+
+        }
         else {
-          console.log('yes online')
           var options = {
             amount: orderDetails.totalPrice * 100,  // amount in the smallest currency unit
             currency: "INR",
@@ -702,14 +716,14 @@ module.exports = {
     })
   },
 
-  cancelAllOrder: (orderId, reason,paymentMethod,userId) => {
+  cancelAllOrder: (orderId, reason, paymentMethod, userId) => {
     return new Promise(async (resolve, reject) => {
       try {
         const cancelledOrder = await order.findById(orderId);
-        if(paymentMethod==='online'||paymentMethod==='wallet'){
-          await User.updateOne({_id:userId},{$inc:{WalletBalance:cancelledOrder.totalPrice}})
-         
-         }
+        if (paymentMethod === 'online' || paymentMethod === 'wallet') {
+          await User.updateOne({ _id: userId }, { $inc: { WalletBalance: cancelledOrder.totalPrice } })
+
+        }
         for (const product of cancelledOrder.products) {
           if (product.itemStatus != 'cancelled') {
             const foundProduct = await Product.findById(product.productId);
@@ -719,14 +733,14 @@ module.exports = {
 
         }
         cancelledOrder.orderStatus = 'cancelled';
-        cancelledOrder.totalPrice = 0;
+        // cancelledOrder.totalPrice = 0;
         cancelledOrder.cancelDate = new Date();
         cancelledOrder.cancelReason = reason
         for (const product of cancelledOrder.products) {
           product.itemStatus = 'cancelled';
         }
         cancelledOrder.save()
-       
+
         // await order.updateOne({_id:orderId},{$set:{orderStatus:'cancelled',totalPrice:0,'products.$[].itemStatus':'cancelled'}});
         resolve()
       }
@@ -738,6 +752,9 @@ module.exports = {
   },
 
   paymentVerification: (orderData) => {
+    console.log(orderData)
+    console.log(orderData.response.razorpay_order_id,orderData.response.razorpay_payment_id)
+    console.log(process.env.RAZORPAY_KEY_SECRET)
     return new Promise(async (resolve, reject) => {
       try {
         let hmac = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
@@ -797,10 +814,51 @@ module.exports = {
       resolve(couponData)
     })
   },
-  getWallet:(userId)=>{
-    return new Promise(async(resolve,reject)=>{
-      const WalletBalance=await User.find({_id:userId},{WalletBalance:1}).lean()
+  getWallet: (userId) => {
+    return new Promise(async (resolve, reject) => {
+      const WalletBalance = await User.find({ _id: userId }, { WalletBalance: 1 }).lean()
       resolve(WalletBalance)
+    })
+  },
+  getWalletHistory: (userId) => {
+    return new Promise(async (resolve, reject) => {
+      const cancelledOrder = await order.find({
+        userId: userId, $and: [
+          { paymentMethod: { $in: ['online', 'wallet'] } },
+          { orderStatus: 'cancelled' }
+        ]
+      }, { cancelDate: 1, orderStatus: 1, totalPrice: 1, paymentMethod: 1 }).lean()
+      const refferedUsers = await User.find({ referencedBy: userId }, { Username: 1, _id: 0, createdAt: 1 }).lean()
+      const topupData=await User.find({_id:userId},{walletTopUp:1,_id:0}).lean()
+      const walletPaidOrders = await order.find({ userId:userId,paymentMethod: 'wallet' }, { orderDate: 1, orderStatus: 1, totalPrice: 1, paymentMethod: 1 }).lean()
+      const combinedData = cancelledOrder.concat(refferedUsers, walletPaidOrders,topupData[0].walletTopUp)
+      const sortedData = combinedData.sort((a, b) => {
+        const aDate = new Date(a.orderDate || a.createdAt || a.cancelDate||a.topUpDate);
+        const bDate = new Date(b.orderDate || b.createdAt || b.cancelDate||b.topUpDate);
+        return aDate - bDate;
+      });
+      resolve(sortedData)
+    })
+  },
+  topupWallet:(amount)=>{
+    const receiptID='ID'+Date.now()
+    return new Promise(async(resolve,reject)=>{
+      var options = {
+        amount: amount * 100,  // amount in the smallest currency unit
+        currency: "INR",
+        receipt:receiptID
+      };
+      instance.orders.create(options, function (err, order) {
+        resolve(order)
+      });
+    })
+  },
+  updateWallet:(userId,amount)=>{
+    const topUpAmount=parseInt(amount)
+    return new Promise(async(resolve,reject)=>{
+      await User.updateOne({_id:userId},{
+        $inc:{WalletBalance:topUpAmount},$push:{walletTopUp:{amount:topUpAmount}}})
+      resolve()
     })
   }
 } 

@@ -11,7 +11,7 @@ router.get('/', async function (req, res, next) {
   res.render('user/Homepage', { user: req.session.user });
 });
 
-router.get('/login',nocache(), (req, res) => {
+router.get('/login', nocache(), (req, res) => {
   if (req.session.userLoggedIn) {
     res.redirect('/')
   } else {
@@ -20,7 +20,7 @@ router.get('/login',nocache(), (req, res) => {
   }
 })
 
-router.get('/signup',nocache(), (req, res) => {
+router.get('/signup', nocache(), (req, res) => {
   if (req.session.userLoggedIn) {
     res.redirect('/')
   } else {
@@ -28,7 +28,7 @@ router.get('/signup',nocache(), (req, res) => {
   }
 })
 
-router.get('/otplogin',nocache(), (req, res) => {
+router.get('/otplogin', nocache(), (req, res) => {
   if (req.session.userLoggedIn) {
     res.redirect('/')
   } else {
@@ -36,7 +36,7 @@ router.get('/otplogin',nocache(), (req, res) => {
   }
 })
 
-router.get('/logout',nocache(), (req, res) => {
+router.get('/logout', nocache(), (req, res) => {
   req.session.user = null;
   req.session.userLoggedIn = false;
   res.redirect('/')
@@ -54,7 +54,7 @@ router.get('/viewproduct/:id', (req, res) => {
 })
 
 // wish list
-router.get('/api/wishlist',userAuth.isUserValid, (req, res) => {
+router.get('/api/wishlist', userAuth.isUserValid, (req, res) => {
   if (req.session.user) {
     userget.getWishLish(req.session.user)
       .then((wishListData) => {
@@ -108,9 +108,9 @@ router.get('/viewcart', userAuth.isUserValid, (req, res) => {
 // CHECKOUT
 router.get('/checkout', userAuth.isUserValid, (req, res) => {
   const userId = req.session.user._id;
-  Promise.all([userget.getAddress(userId), userget.getCart(userId),userget.getWallet(userId)])
-    .then(([userAddress, cartData,wallet]) => {
-      res.render('user/checkout', { userAddress, cartData, wallet,isCheckoutPage: true });
+  Promise.all([userget.getAddress(userId), userget.getCart(userId), userget.getWallet(userId)])
+    .then(([userAddress, cartData, wallet]) => {
+      res.render('user/checkout', { userAddress, cartData, wallet, isCheckoutPage: true });
     })
     .catch((error) => {
       res.status(500).send('An error occurred: ' + error.message);
@@ -185,7 +185,7 @@ router.get('/view-order-details/:id', userAuth.isUserValid, async (req, res) => 
 
 })
 
-router.get('/cancel-single-order/:orderid/:productid',userAuth.isUserValid, (req, res) => {
+router.get('/cancel-single-order/:orderid/:productid', userAuth.isUserValid, (req, res) => {
   const orderId = req.params.orderid;
   const productId = req.params.productid;
   userget.cancelOrder(orderId, productId)
@@ -227,33 +227,34 @@ router.get('/categroy-filter', (req, res) => {
     })
 })
 
-router.get('/search-filter',(req,res)=>{
-  const search=req.query.search;
-  const filterValues=req.query.values.split(',');
-  const sort=req.query.sort;
-  getProduct.getFilteredSearchProd(search,filterValues,sort)
-  .then((prodData)=>res.json(prodData))
+router.get('/search-filter', (req, res) => {
+  const search = req.query.search;
+  const filterValues = req.query.values.split(',');
+  const sort = req.query.sort;
+  getProduct.getFilteredSearchProd(search, filterValues, sort)
+    .then((prodData) => res.json(prodData))
 })
 
 router.get('/api/products', async (req, res) => {
   const pageNumber = req.query.page
   const user = req.session.user
   let wishData;
-  if(user){
-       wishData = await userget.getWishLish(user)
+  if (user) {
+    wishData = await userget.getWishLish(user)
   }
   getProduct.getLimitedProduct(pageNumber)
     .then((response) => {
-      if (wishData) {
+
+      if (wishData&&wishData.length !== 0) {
         const wishListProductIds = new Set(wishData[0].productId.map(String));
         response.forEach((product) => {
-         
+
           if (wishListProductIds.has(String(product._id))) {
-            product.isInWishList = true; 
+            product.isInWishList = true;
           } else {
-            product.isInWishList = false; 
+            product.isInWishList = false;
           }
-        
+
         })
         res.json({ response, user: req.session.user })
       } else {
@@ -263,25 +264,30 @@ router.get('/api/products', async (req, res) => {
     })
 })
 
-router.get('/search',(req,res)=>{
-  const search= req.query.search
+router.get('/search', (req, res) => {
+  const search = req.query.search
   getProduct.searchProduct(search)
-  .then(response=>{
-    res.render('user/listbycat',{prodData:response,search:true})
-  })
+    .then(response => {
+      res.render('user/listbycat', { prodData: response, search: true })
+    })
 })
 
-router.get('/getCoupons',(req,res)=>{
+router.get('/getCoupons', (req, res) => {
   userget.getCoupons()
-  .then(couponData=>res.json(couponData))
+    .then(couponData => res.json(couponData))
 })
 
-router.get('/wallet',userAuth.isUserValid,(req,res)=>{
-  userget.getWallet(req.session.user._id)
-  .then((response)=>{
-    console.log(response)
-    res.render('user/wallet',{wallet:response})
+router.get('/wallet', userAuth.isUserValid, (req, res) => {
+  Promise.all([userget.getWallet(req.session.user._id),userget.getWalletHistory(req.session.user._id)])
+  .then(([wallet,walletHistory])=>{
+    res.render('user/wallet',{wallet,walletHistory})
   })
+}) 
+
+router.get('/topup-wallet/:amount',(req,res)=>{
+  const amount=req.params.amount
+  userget.topupWallet(amount)
+  .then((response)=>res.json(response))
 })
 
 // router.get('/sort-by-price',(req,res)=>{
@@ -523,7 +529,7 @@ router.post('/confirm-otp', (req, res) => {
 router.post('/place-order', (req, res) => {
   const userId = req.session.user._id;
   const orderData = req.body.orderData;
-  
+
   userget.placeOrder(userId, orderData)
     .then((status) => {
       if (status.status === 'cod') {
@@ -546,13 +552,25 @@ router.post('/verify-payment', (req, res) => {
     .then(() => {
       userget.changeOrderStatus(paymentData.order, userId)
         .then((orderId) => {
-          res.json({ updated: true,orderId })
+          res.json({ updated: true, orderId })
         })
         .catch((err) => {
           console.log(err)
         })
     })
 
+})
+
+router.post('/verify-topup-payment',(req,res)=>{
+  const userId = req.session.user._id
+  const paymentData = req.body
+  const topUpAmount=paymentData.order.amount/100
+  userget.paymentVerification(paymentData)
+  .then(()=>{
+    userget.updateWallet(userId,topUpAmount)
+    .then(()=>res.json({updated:true}))
+  })
+  .catch((err)=>console.log(err))
 })
 
 // router.post('/search', async(req, res) => {
@@ -567,13 +585,13 @@ router.post('/verify-payment', (req, res) => {
 //       if (wishData) {
 //         const wishListProductIds = new Set(wishData[0].productId.map(String));
 //         response.forEach((product) => {
-         
+
 //           if (wishListProductIds.has(String(product._id))) {
 //             product.isInWishList = true; 
 //           } else {
 //             product.isInWishList = false; 
 //           }
-        
+
 //         })
 //         res.render('user/search', { prodData: response })
 //       } else {
@@ -591,9 +609,9 @@ router.post('/verify-payment', (req, res) => {
 router.post('/cancel-order', userAuth.isUserValid, (req, res) => {
   const orderId = req.body.orderId;
   const reason = req.body.userInput;
-  const paymentMethod=req.body.paymentMethod
-  const userId=req.session.user._id
-  userget.cancelAllOrder(orderId,reason,paymentMethod,userId)
+  const paymentMethod = req.body.paymentMethod
+  const userId = req.session.user._id
+  userget.cancelAllOrder(orderId, reason, paymentMethod, userId)
     .then(() => {
       res.redirect('/view-order')
     })

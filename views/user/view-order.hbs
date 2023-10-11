@@ -71,7 +71,7 @@
                 </div>
                 {{/if}}
               </div>
-              {{#if totalPrice}}
+              {{#notEqual orderStatus 'cancelled'}}
               <div class="card-footer p-4">
                 <div class="d-flex justify-content-between card-footer-div">
                   <h5 class="fw-normal mb-0"><a order-id="{{_id}}" status="{{orderStatus}}" href=""
@@ -109,7 +109,7 @@
                   </li>
                 </ul>
               </div>
-              {{/if}}
+              {{/notEqual}}
             </div>
           </div>
           {{/each}}
