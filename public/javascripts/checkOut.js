@@ -15,7 +15,6 @@ const currntLocBtn=document.querySelector('.currntLocBtn')
 let addressId;
 const totalPrice = document.querySelector('input[name="totalPrice"]').value
 const WalletBalance = document.querySelector('input[name="walletBalance"]').value
-console.log(typeof (WalletBalance))
 let totalValue;
 let couponId;
 let product = []
@@ -68,11 +67,6 @@ couponDiv.addEventListener('click', (e) => {
       document.querySelector('.couponCodeP').innerHTML = couponCode
       couponDiv.style.display = 'none'
     }
-
-
-    // console.log(`Button clicked for coupon code: ${couponId},${couponDiscount},${couponPurchaseLimit}`);
-
-    // You can perform additional actions here, such as applying the coupon.
   }
 });
 
@@ -94,12 +88,10 @@ currntLocBtn.addEventListener('click',(e)=>{
   let locationData
   navigator.geolocation.getCurrentPosition(async (position) => {
     const { latitude, longitude } = position.coords;
-    console.log(typeof (longitude))
     const url = `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&apiKey=b98b406c2108486db5d7ffe6747ca238`
     await fetch(url).then(res => res.json()).then(data => locationData = data.features[0].properties)
-    console.log(locationData)
     checkOutAdd.inputAddress.value = locationData.formatted
-    checkOutAdd.inputCity.value = locationData.suburb
+    checkOutAdd.inputCity.value = locationData.city
     checkOutAdd.inputState.value = locationData.state
     checkOutAdd.inputZip.value = locationData.postcode
 
@@ -247,7 +239,6 @@ checkOutForm.addEventListener('submit', async (e) => {
 })
 
 function razorPayPayment(order) {
-  console.log(order)
   var options = {
     "key": "rzp_test_ZAyPL2XD7S33Zs", // Enter the Key ID generated from the Dashboard
     "amount": order.status.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise

@@ -38,7 +38,6 @@ const couponDiv = document.querySelector('.couponDiv');
 })()
 
 addBtn.addEventListener('click', (e) => {
-  console.log('clik')
   AddCpnForm.style.display = 'block';
   couponDiv.style.display = 'none';
 })

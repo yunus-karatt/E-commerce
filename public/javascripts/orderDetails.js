@@ -13,7 +13,6 @@ document.querySelectorAll('.cancel-order').forEach((link) => {
       confirmButtonText: 'Yes, Cancel!'
     }).then((result) => {
       if (result.isConfirmed) {
-        // window.location.href=`/cancel-order/${orderId}`
         Swal.fire({
           title: 'Please tell us the reason for cancell',
           input: 'text',
@@ -23,7 +22,6 @@ document.querySelectorAll('.cancel-order').forEach((link) => {
         }).then(async (result) => {
           if (result.isConfirmed) {
             userInput = result.value;
-            // window.location.href = `/cancel-order/${orderId}`
             await fetch('/cancel-order', {
               method: 'post',
               headers: {

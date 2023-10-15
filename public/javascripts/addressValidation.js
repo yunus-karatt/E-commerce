@@ -21,12 +21,11 @@ locationbtn.addEventListener('click', (e) => {
   let locationData
   navigator.geolocation.getCurrentPosition(async (position) => {
     const { latitude, longitude } = position.coords;
-    console.log(typeof (longitude))
     const url = `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&apiKey=b98b406c2108486db5d7ffe6747ca238`
     await fetch(url).then(res => res.json()).then(data => locationData = data.features[0].properties)
-    console.log(locationData)
     addressFrom.inputAddress.value = locationData.formatted
-    addressFrom.inputCity.value = locationData.suburb
+    addressFrom.inputCity.value = locationData.city
+ 
     addressFrom.inputState.value = locationData.state
     addressFrom.inputZip.value = locationData.postcode
 

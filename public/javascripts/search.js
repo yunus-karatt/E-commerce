@@ -1,4 +1,3 @@
-console.log('connect')
 document.querySelectorAll('.addCart').forEach((button)=>{
   button.addEventListener('click',async(e)=>{
     const productId = button.getAttribute('product-id');
@@ -22,7 +21,6 @@ document.querySelectorAll('.addCart').forEach((button)=>{
 
 document.querySelectorAll('.love-button').forEach((button)=>{
   button.addEventListener('click',async(e)=>{
-    console.log('click')
     const productId = button.getAttribute('product-id')
     const userId = button.getAttribute('user-id')
 

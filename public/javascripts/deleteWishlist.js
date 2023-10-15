@@ -42,7 +42,6 @@ document.querySelectorAll('.wish-button').forEach((button) => {
 document.querySelectorAll('.addCart').forEach((btn)=>{
   btn.addEventListener('click',async(e)=>{
     const productId = btn.getAttribute('product-id')
-    console.log(productId)
     await fetch('/api/addcart', {
       method: 'POST',
       headers: {

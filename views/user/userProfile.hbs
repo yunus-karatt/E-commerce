@@ -1,110 +1,106 @@
 <section class="container user-aside-sec">
-  {{!-- <div class="row"> --}}
-    {{!-- <div class="col-3 align-items-center user-aside"> --}}
-      {{>user-aside}}
-      {{!-- </div> --}}
-    <div class="col p-5 user-main ms-5 address-manage">
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/">Home</a></li>
-          <li class="breadcrumb-item"><a href="/myprofile">My Profile</a></li>
-          {{!-- <li class="breadcrumb-item active" aria-current="page">Data</li> --}}
-        </ol>
-      </nav>
-      <div class="">
-        <h5 class="h3 fw-bold">Profile</h5>
-      </div>
-      <p class="profileErr text-danger fw-bold"></p>
-      <div class="container">
-        <div class="row">
-          <div class="col-12">
-            <form class="container g-3 " id="update-profile">
-              <div class="row p-3">
-                <div class="col-md-8 ">
-                  <div class="col-12">
-                    <button id="profile-edit" class="btn btn-dark btn-lg mb-3"><i class="fa fa-pencil"></i>Edit</button>
-                  </div>
-                  <div>
-                    <label for="updateUsername" class="form-label">User Name</label>
-                    <input type="text" placeholder="{{userData.Username}}" value="{{userData.Username}}"
-                      class="form-control" id="updateUsername" disabled>
-                  </div>
+  {{>user-aside}}
+  <div class="col p-5 user-main ms-5 address-manage">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item"><a href="/myprofile">My Profile</a></li>
+      </ol>
+    </nav>
+    <div class="">
+      <h5 class="h3 fw-bold">Profile</h5>
+    </div>
+    <p class="profileErr text-danger fw-bold"></p>
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <form class="container g-3 " id="update-profile">
+            <div class="row p-3">
+              <div class="col-md-8 ">
+                <div class="col-12">
+                  <button id="profile-edit" class="btn btn-dark btn-lg mb-3"><i class="fa fa-pencil"></i>Edit</button>
+                </div>
+                <div>
+                  <label for="updateUsername" class="form-label">User Name</label>
+                  <input type="text" placeholder="{{userData.Username}}" value="{{userData.Username}}"
+                    class="form-control" id="updateUsername" disabled>
                 </div>
               </div>
-              <div class="row  p-3">
-                <div class="col-md-8">
-                  <label for="updateEmail" class="form-label">Email</label>
-                  <input value="{{userData.Email}}" type="email" class="form-control" id="updateEmail" disabled>
-                  <div class="col-12 mt-4">
-                    <button id="save-profile" type="submit" class="btn btn-primary mb-3" style="display: none;">Save
-                      Changes</button>
-                  </div>
+            </div>
+            <div class="row  p-3">
+              <div class="col-md-8">
+                <label for="updateEmail" class="form-label">Email</label>
+                <input value="{{userData.Email}}" type="email" class="form-control" id="updateEmail" disabled>
+                <div class="col-12 mt-4">
+                  <button id="save-profile" type="submit" class="btn btn-primary mb-3" style="display: none;">Save
+                    Changes</button>
                 </div>
               </div>
-              <div class="row  p-3">
-                <div class="col-md-8" id="mobile-div">
-                  <div class="col-12">
-                    <button id="mobile-edit" class="btn btn-dark btn-lg mb-3"><i class="fa fa-pencil"></i>Edit</button>
-                  </div>
-                  <label for="updateMobile" class="form-label">Mobile Number</label>
-                  <input type="number" placeholder="{{userData.Mobilenumber}}" value="{{userData.Mobilenumber}}"
-                    class="form-control" id="updateMobile" disabled>
-                  <div class="col-12 mt-4">
-                    <p class="text-danger " id="mobile-error"></p>
-                    <button id="save-mobile" type="submit" class="btn btn-primary" style="display: none;">Send
-                      OTP</button>
-                  </div>
+            </div>
+            <div class="row  p-3">
+              <div class="col-md-8" id="mobile-div">
+                <div class="col-12">
+                  <button id="mobile-edit" class="btn btn-dark btn-lg mb-3"><i class="fa fa-pencil"></i>Edit</button>
+                </div>
+                <label for="updateMobile" class="form-label">Mobile Number</label>
+                <input type="number" placeholder="{{userData.Mobilenumber}}" value="{{userData.Mobilenumber}}"
+                  class="form-control" id="updateMobile" disabled>
+                <div class="col-12 mt-4">
+                  <p class="text-danger " id="mobile-error"></p>
+                  <button id="save-mobile" type="submit" class="btn btn-primary" style="display: none;">Send
+                    OTP</button>
                 </div>
               </div>
-              <div class="row otp-div p-3" style="display: none;">
-                <div class="col-md-8">
-                  <label for="otp" class="form-label fw-bold">Enter OTP</label>
-                  <input type="number" class="form-control" id="otp">
-                  <div class="col-12 mt-4">
-                    <p class="text-danger" id="mobile-error"></p>
-                    <button id="save-otp" type="submit" class="btn btn-primary">Enter
-                      OTP</button>
-                  </div>
+            </div>
+            <div class="row otp-div p-3" style="display: none;">
+              <div class="col-md-8">
+                <label for="otp" class="form-label fw-bold">Enter OTP</label>
+                <input type="number" class="form-control" id="otp">
+                <div class="col-12 mt-4">
+                  <p class="text-danger" id="mobile-error"></p>
+                  <button id="save-otp" type="submit" class="btn btn-primary">Enter
+                    OTP</button>
                 </div>
               </div>
-            </form>
-          </div>
-        </div>
-
-      </div>
-      <div class="row otp-div p-3">
-        <div class="col-md-8">
-          <p class="fs-5">we will send you a OTP to your registered mail. You can change your password by verifying the
-            OTP</p>
-          <button class="btn btn-dark" userEmail="{{userData.Email}}" id="password-chage">Change Password</button>
-          <div class="col-12 mt-4 password-otp" style="display: none;">
-            <p class="text-danger" id="mail-otp-error"></p>
-            <form action="" id="emial-otp-form">
-              <p>we have sent a otp to {{userData.Email}}</p>
-              <label for="otp" class="form-label fw-bold">Enter OTP</label>
-              <input type="number" name="emailOtp" class="form-control" id="emailOtp">
-
-              <button type="submit" class="btn btn-primary mt-3">Enter
-                OTP</button>
-            </form>
-          </div>
+            </div>
+          </form>
         </div>
       </div>
-      <div class="row change-ps-div p-3">
-        <div class="col-md-8">
-          <div class="col-12 mt-4 change-ps" style="display: none;">
-            <p class="text-danger" id="change-ps-err"></p>
-            <form action="" id="change-ps-form" mobile="{{userData.Mobilenumber}}">
-              <label for="password" class="form-label fw-bold">Enter Password</label>
-              <input type="password" name="changePs" class="form-control" id="changePs">
-              <label for="confirm password" class="form-label fw-bold">Confirm Password</label>
-              <input type="password" name="changePsCfm" class="form-control" id="changePsCfm">
-              <button id="change-ps" type="submit" class="btn btn-primary mt-2">Save</button>
-            </form>
-          </div>
+
+    </div>
+    <div class="row otp-div p-3">
+      <div class="col-md-8">
+        <p class="fs-5">we will send you a OTP to your registered mail. You can change your password by verifying the
+          OTP</p>
+        <button class="btn btn-dark" userEmail="{{userData.Email}}" id="password-chage">Change Password</button>
+        <div class="col-12 mt-4 password-otp" style="display: none;">
+          <p class="text-danger" id="mail-otp-error"></p>
+          <form action="" id="emial-otp-form">
+            <p>we have sent a otp to {{userData.Email}}</p>
+            <label for="otp" class="form-label fw-bold">Enter OTP</label>
+            <input type="number" name="emailOtp" class="form-control" id="emailOtp">
+
+            <button type="submit" class="btn btn-primary mt-3">Enter
+              OTP</button>
+          </form>
         </div>
       </div>
     </div>
+    <div class="row change-ps-div p-3">
+      <div class="col-md-8">
+        <div class="col-12 mt-4 change-ps" style="display: none;">
+          <p class="text-danger" id="change-ps-err"></p>
+          <form action="" id="change-ps-form" mobile="{{userData.Mobilenumber}}">
+            <label for="password" class="form-label fw-bold">Enter Password</label>
+            <input type="password" name="changePs" class="form-control" id="changePs">
+            <label for="confirm password" class="form-label fw-bold">Confirm Password</label>
+            <input type="password" name="changePsCfm" class="form-control" id="changePsCfm">
+            <button id="change-ps" type="submit" class="btn btn-primary mt-2">Save</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 
 </section>
 

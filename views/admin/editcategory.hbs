@@ -1,16 +1,106 @@
-
-      {{>admin-aside}}
-  <div class=" content mt-5">
-    <div class="col-4">
-      <p class="h3">Update category</p>
-      <form method="post" action="/admin/editcategory/{{singleCat._id}}">
-        <div class="mb-3 mt-5">
-          <p>{{singleCat.category}}</p>
-          <label for="exampleInputSingleCategory" class="form-label">category</label>
-          <input name="singleCategory" value="{{{singleCat.category}}}" type="string" class="form-control" id="singleInputCategory">
-        </div>
-        <button type="submit" class="btn btn-primary mt-3 float-center">Submit</button>
-      </form>
-    </div>
+{{>admin-aside}}
+<div class=" content mt-5">
+  <div class="col-md-6">
+    <p class="h3">Update category</p>
+    <button class="btn btn-dark my-3" id="offerBtn">Add Category Offer</button>
+    <form method="post" action="/admin/editcategory/{{singleCat._id}}" id="categForm">
+      <div class="mb-3 mt-5">
+        <label for="exampleInputSingleCategory" class="form-label">category</label>
+        <input name="singleCategory" value="{{{singleCat.category}}}" type="string" class="form-control"
+          id="singleInputCategory">
+      </div>
+      <button type="submit" class="btn btn-primary mt-3 float-center">Submit</button>
+    </form>
   </div>
+  <div class="container">
+    <form class="row g-3 needs-validation" id="offerForm" novalidate style="display: none;">
+      <div class="col-md-6">
+        <label for="startDate" class="form-label">Start Date</label>
+        <input type="date" class="form-control" name="startDate" id="startDate" required>
+        <div class="valid-feedback">
+          Looks good!
+        </div>
+        <div class="invalid-feedback">
+          Please provide a valid date.
+        </div>
+      </div>
+      <div class="col-md-6">
+        <label for="endDate" name="endDate" class="form-label">End Date</label>
+        <input type="date" class="form-control" id="endDate" name="endDate" required>
+        <div class="valid-feedback">
+          Looks good!
+        </div>
+        <div class="invalid-feedback">
+          Please provide a valid date.
+        </div>
+      </div>
 
+      <div class="col-md-6">
+        <label for="discountAmount" class="form-label">Discount in percentage</label>
+        <input type="number" class="form-control" id="discountAmount" required>
+        <div class="invalid-feedback">
+          Please provide a valid discount.
+        </div>
+        <div class="valid-feedback">
+          Looks good!
+        </div>
+        <input type="text" name="catId" id="catId" value="{{singleCat._id}}" hidden>
+      </div>
+      <div class="col-12">
+        <p class="offerErr text-danger fs-3"></p>
+        <button class="btn btn-primary" type="submit">Add offer</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+
+  const offerBtn = document.querySelector('#offerBtn')
+  const catgForm = document.querySelector('#categForm')
+  const offerForm = document.querySelector('#offerForm')
+  const offerErr = document.querySelector('.offerErr')
+  offerBtn.addEventListener('click', (e) => {
+    catgForm.style.display = 'none';
+    offerForm.style.display = 'block'
+  })
+  offerForm.addEventListener('submit', async(e) => {
+    e.preventDefault()
+    const startDate = new Date(offerForm.startDate.value).toISOString().split('T')[0];
+    const endDate = new Date(offerForm.endDate.value).toISOString().split('T')[0];
+    const discountAmount = offerForm.discountAmount.value;
+    const catId=offerForm.catId.value;
+    const today = new Date().toISOString().split('T')[0];
+    if (startDate === '' || endDate === '' || discountAmount === '') {
+      offerErr.innerHTML = 'Please fill all fields'
+    } else if (startDate < today) {
+      console.log(today)
+      console.log(startDate)
+      offerErr.innerHTML = 'Please select a valid start Date'
+    } else if (endDate < today || endDate < startDate) {
+      offerErr.innerHTML = 'Please select a valid ending Date'
+    }else{
+      const formData={
+        startDate,
+        endDate,
+        discountAmount,
+        catId
+      }
+      await fetch('/admin/category-offer',{
+        method:'post',
+        headers:{
+          'Content-Type': 'application/json',
+        },
+        body:JSON.stringify({formData})
+      })
+      .then((response)=>{
+        response.json()
+        .then((response)=>{
+          if(response.updated){
+            window.location='/admin/category'
+          }
+        })
+      })
+    }
+  })
+</script>

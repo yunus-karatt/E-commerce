@@ -11,12 +11,13 @@
                 <p class="text-danger fw-bold fs-4 text-uppercase loginerror"></p>
                 <div class="form-outline text-start form-white mb-4">
                   <label class="form-label">Username</label>
-                  <input  type="text" name="Username" id="Username" class="form-control form-control-lg" />
+                  <input type="text" name="Username" id="Username" class="form-control form-control-lg" />
 
                 </div>
                 <div class="form-outline text-start form-white mb-4">
                   <label class="form-label" for="typePasswordX">Password</label>
-                  <input  minlength="8" type="password" name="Password" id="Password" class="form-control form-control-lg" />
+                  <input minlength="8" type="password" name="Password" id="Password"
+                    class="form-control form-control-lg" />
 
                 </div>
                 {{#if msg}}
@@ -55,8 +56,7 @@
     </div>
   </div>
 </section>
-  <div>
-    {{>user-footer}}
-  </div>
-  <script src="/javascripts/loginValidation.js"></script>
-  
+<div>
+  {{>user-footer}}
+</div>
+<script src="/javascripts/loginValidation.js"></script>

@@ -25,7 +25,6 @@ document.querySelectorAll('.addCart').forEach((button)=>{
      
    }).then((data)=>{
      if(data.loggedIn){
-         // popup.style.display='block'
          Swal.fire({
            title: 'Added to cart',
            text: "Go to cart for checkout",
@@ -37,11 +36,6 @@ document.querySelectorAll('.addCart').forEach((button)=>{
            cancelButtonText:'Continue shopping'
          }).then((result) => {
            if (result.isConfirmed) {
-             // Swal.fire(
-             //   'Deleted!',
-             //   'Your file has been deleted.',
-             //   'success'
-             // )
              window.location.href='/viewcart'
            }
          })

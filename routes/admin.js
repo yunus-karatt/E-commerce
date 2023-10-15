@@ -25,6 +25,7 @@ router.get('/', adminAuth.isValidate, function (req, res, next) {
   })
 });
 
+
 router.get('/login', (req, res) => {
   if (req.session.adminLoggedIn) {
     res.redirect('/admin/')
@@ -51,15 +52,6 @@ router.get('/userslist', adminAuth.isValidate, (req, res) => {
     })
 })
 
-// router.get('/userslist/:skip',(req,res)=>{
-//   let skipLimit= req.params.skip
-//   skipLimit= parseInt(skipLimit)
-//   getAdmin.getUserOrderList(skipLimit)
-//   .then((userList)=>{
-//     res.render('admin/userlist', { admin, userList })
-//   })
-// })
-
 router.get('/get-limited-user/:skip',adminAuth.isValidate, (req, res) => {
   const skip = req.params.skip;
   getAdmin.getLimitedUser(skip)
@@ -73,10 +65,8 @@ router.get('/get-limited-user/:skip',adminAuth.isValidate, (req, res) => {
 
 router.get('/search-user/:search',adminAuth.isValidate,(req, res) => {
   const searchQuery = req.params.search;
-  // console.log(req.params.search)
   getAdmin.findUser(searchQuery)
     .then((userList) => {
-      console.log(userList)
       res.json(userList)
     })
     .catch((error) => {
@@ -110,8 +100,12 @@ router.get('/addcategory/', adminAuth.isValidate, (req, res) => {
 })
 
 router.get('/editcategory/:id', adminAuth.isValidate, (req, res) => {
-  getProduct.getSinleCat(req.params.id).then((singleCat) => {
+  getProduct.getSinleCat(req.params.id)
+  .then((singleCat) => {
     res.render('admin/editcategory', { admin, singleCat })
+  })
+  .catch((error) => {
+    res.status(500).send('An error occurred: ' + error.message);
   })
 })
 
@@ -169,11 +163,7 @@ router.get('/editproduct/:id',adminAuth.isValidate, async (req, res) => {
       })
   }
   catch (err) {
-    //     const productData= await getProduct.getSinglePr(req.params.id)
-    //  const productCat = await getProduct.getSinleCat(productData.Category)
-    //   getProduct.getProductEditCategory(productCat).then((findCat)=>{
-    //     res.render('admin/editproduct',{admin,productData,findCat,productCat})
-    //   })
+   console.log(err)
   }
 
 })
@@ -207,12 +197,18 @@ router.get('/update-order-status',adminAuth.isValidate, (req, res) => {
     .then(() => {
       res.redirect(`/admin/manage-order/${orderId}`)
     })
+    .catch((error) => {
+      res.status(500).send('An error occurred: ' + error.message);
+    })
 })
 // get sales report
 router.get('/salesreport',adminAuth.isValidate,(req,res)=>{
   getAdmin.getSalesReport()
   .then((salesReport)=>{
     res.render('admin/salesReport',{admin,salesReport})
+  })
+  .catch((error) => {
+    res.status(500).send('An error occurred: ' + error.message);
   })
   
 })
@@ -223,6 +219,9 @@ router.get('/sales-report/:payment',adminAuth.isValidate,(req,res)=>{
   .then((salesReport)=>{
     res.json(salesReport)
   })
+  .catch((error) => {
+    res.status(500).send('An error occurred: ' + error.message);
+  })
 })
 
 router.get('/dated-sales-report',adminAuth.isValidate,(req,res)=>{
@@ -232,15 +231,29 @@ router.get('/dated-sales-report',adminAuth.isValidate,(req,res)=>{
   .then((salesReport)=>{
     res.json(salesReport)
   })
+  .catch((error) => {
+    res.status(500).send('An error occurred: ' + error.message);
+  })
 })
 
 router.get('/manage-coupon',(req,res)=>{
   getAdmin.getCoupon()
   .then(couponData=>res.render('admin/manageCoupon',{admin, couponData}))
-  
+  .catch((error) => {
+    res.status(500).send('An error occurred: ' + error.message);
+  })
 })
 
 // POST ROUTES
+
+router.post('/signup',(req,res)=>{ 
+  getAdmin.adminSignup(req.body)
+  .then(()=> res.status(200).json({ message: 'Admin signup successful', admin }))
+  .catch((error) => {
+    res.status(500).send('An error occurred: ' + error.message);
+  })
+})
+
 router.post('/login', (req, res) => {
   getAdmin.doAdminLogin(req.body).then((response) => {
     if (response.status) {
@@ -264,7 +277,7 @@ router.post('/addcategory', (req, res) => {
       if (error.message == 'category exist') {
         res.render('admin/addcategory', { err: 'category already exist' })
       } else {
-        res.status(500).send('An error occurred: ' + error.message);
+        res.status(500).send('An error occurred: ' + error.message); 
       }
 
     })
@@ -290,7 +303,6 @@ router.post('/addproduct', multerFunction.upload.fields([
       res.json({ success: true })
     })
     .catch((error) => {
-      console.log(error)
       res.status(500).send('An error occurred: ' + error.message);
     })
 })
@@ -314,7 +326,6 @@ router.post('/change-main-image', multerFunction.upload.fields([{ name: 'mainIMa
 })
 
 router.post('/add-image', multerFunction.upload.fields([{ name: 'addNewImageInput' }]),(req,res)=>{
-  console.log(req.body)
   const productId=req.body.addProductId
   const newImage=req.files
   getProduct.addNewImage(productId,newImage)
@@ -328,24 +339,28 @@ router.post('/create-coupon',(req,res)=>{
   const formData=req.body
 getAdmin.createCoupon(formData)
 .then(()=>res.json({created:true}))
+.catch((error) => {
+  res.status(500).send('An error occurred: ' + error.message);
+})
 })
 
-// router.post('/update-order-status', (req, res) => {
-//   const orderUpdate = req.body.mngOrderData;
-//   getAdmin.updateOrderStatus(orderUpdate)
-//     .then(() => {
-//       res.json({ updated: true })
-//     })
-//     .catch((error) => {
-//       res.status(500).send('An error occurred: ' + error.message);
-//     })
-// })
+// CATEGORY OFFER
+router.post('/category-offer',(req,res)=>{
+  getProduct.addCategoryOffer(req.body)
+  .then(()=>res.json({updated:true}))
+  .catch((error) => {
+    res.status(500).send('An error occurred: ' + error.message);
+  })
+})
 
 router.put('/delete-product-image/:productId/:ImageData', (req, res) => {
   const productId = req.params.productId
   const imageData = req.params.ImageData
   getProduct.deleteImage(productId, imageData)
     .then(() => res.json({ updated: true }))
+    .catch((error) => {
+      res.status(500).send('An error occurred: ' + error.message);
+    })
 })
 
 module.exports = router;

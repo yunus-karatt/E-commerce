@@ -1,4 +1,4 @@
-<section  style="display: block;" id="mobile-login-section">
+<section style="display: block;" id="mobile-login-section">
   <section>
     <div class="container mt-5" style="height: 100vh">
       <div class="row " style="height: 70%;">
@@ -16,9 +16,10 @@
             <p class="text-danger badnumalert text-center"></p>
             <form action="/otplogin" id="mobile-login-form" method="POST">
               <div class="form-outline form-white mb-4 mt-5">
-                <input required autocomplete="off" type="Number" id="mobile-login-input"  class="form-control form-control-lg" placeholder="Mobile Number"
-                  name="mobilelogininput" />
-                <button class="btn btn-dark border border-light btn-lg fw-bold px-5 mt-5" id="submitPhone" style="color: #FFD700;" type="submit">Send OTP</button>
+                <input required autocomplete="off" type="Number" id="mobile-login-input"
+                  class="form-control form-control-lg" placeholder="Mobile Number" name="mobilelogininput" />
+                <button class="btn btn-dark border border-light btn-lg fw-bold px-5 mt-5" id="submitPhone"
+                  style="color: #FFD700;" type="submit">Send OTP</button>
               </div>
             </form>
           </div>
@@ -45,9 +46,10 @@
             <p class="text-danger loginotpalert text-center"></p>
             <form action="/otplogin" id="otp-login-form" method="post">
               <div class="form-outline form-white mb-4 mt-5">
-                <input required autocomplete="off" type="text" id="logintp" class="form-control form-control-lg" placeholder="OTP"
-                  name="digit" />
-                <button name="otploginsubmit" id="otp-login-submit" class="btn btn-dark border border-light btn-lg fw-bold px-5 mt-5" type="submit">Verify OTP</button>
+                <input required autocomplete="off" type="text" id="logintp" class="form-control form-control-lg"
+                  placeholder="OTP" name="digit" />
+                <button name="otploginsubmit" id="otp-login-submit"
+                  class="btn btn-dark border border-light btn-lg fw-bold px-5 mt-5" type="submit">Verify OTP</button>
               </div>
             </form>
           </div>
@@ -56,7 +58,7 @@
     </div>
   </section>
 </section>
-  <div>
-    {{>user-footer}}
-  </div>
+<div>
+  {{>user-footer}}
+</div>
 <script type="module" src="/javascripts/firebase.js"></script>

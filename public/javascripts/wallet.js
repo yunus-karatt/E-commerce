@@ -21,7 +21,6 @@ function copyReferralCode(referralCode){
 }
 
 function razorPayPayment(order) {
-  console.log(order)
   var options = {
     "key": "rzp_test_ZAyPL2XD7S33Zs", // Enter the Key ID generated from the Dashboard
     "amount": order.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
@@ -59,7 +58,6 @@ function razorPayPayment(order) {
 }
 
 function verifyPayment(response, order) {
-  console.log(response,order)
   fetch('/verify-topup-payment', {
     method: 'POST',
     headers: {
@@ -114,4 +112,4 @@ topUpBtn.addEventListener('click',(e)=>{
   });
   
   
-})
+}) 

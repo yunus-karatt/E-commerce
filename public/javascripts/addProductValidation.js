@@ -95,7 +95,6 @@ form.addEventListener('submit', (e) => {
   const productPrice = form.querySelector('#productPrice').value;
   const productQuantity = form.querySelector('#productQuantity').value;
   const productImages = form.querySelector('#productImages').files;
-  console.log(productName)
   let file;
   let fileType;
 
@@ -129,7 +128,6 @@ form.addEventListener('submit', (e) => {
     const file = new File([blob], "image.png", {
       type: "image/png",
     });
-    console.log(file)
     const form = document.getElementById('form')
     let formData = new FormData(form);
     formData.append('productMainImages', file);

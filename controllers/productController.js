@@ -1,9 +1,11 @@
 const Category = require('../model/categoryModel')
 const Product = require('../model/productModel')
 const db = require('../config/connection')
+const userController = require('../controllers/userController')
 const { ObjectId } = require('mongodb')
 const { trusted } = require('mongoose')
 const fs = require('fs')
+const { count } = require('console')
 module.exports = {
   // CATEGORY
   getAllCategory: () => {
@@ -35,7 +37,6 @@ module.exports = {
   addCategory: (categoryData) => {
     return new Promise(async (resolve, reject) => {
       try {
-        console.log(categoryData)
         const existCategory = await Category.findOne({ category: categoryData.category })
         if (existCategory) {
           reject(new Error('category exist'))
@@ -61,7 +62,6 @@ module.exports = {
       catch (err) {
         reject(err)
       }
-
     })
   },
 
@@ -74,7 +74,6 @@ module.exports = {
       catch (err) {
         reject(err)
       }
-
     })
   },
 
@@ -108,8 +107,6 @@ module.exports = {
             as: 'Category'
           }
         }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } },
-
-
         ])
         resolve(productData)
       }
@@ -119,8 +116,58 @@ module.exports = {
 
     })
   },
-  getLimitedProduct: (number) => {
+  productCount: async () => {
+    try {
+      const count = await Product.aggregate([{
+        $match: {
+          Isdeleted: false
+        }
+      }, {
+        $lookup: {
+          from: 'categories',
+          localField: 'Category',
+          foreignField: '_id',
+          as: 'Category'
+        }
+      }, { $match: { 'Category.list': true } }
+        , {
+        $group: {
+          _id: null,
+          count: { $sum: 1 },
+
+        }
+      }, {
+        $project: {
+          count: 1,
+          _id: 0
+        }
+      }
+      ])
+      let totalPages
+      let totalPageArr = []
+      let lastPage
+      if (count.length !== 0) {
+        totalPages = Math.ceil(count[0].count / 10)
+        for (let i = 1; i <= totalPages; i++) {
+          totalPageArr.push(i)
+        }
+      }
+      if (totalPageArr.length != 0) {
+        lastPage = totalPageArr[totalPageArr.length - 1]
+
+      }
+      return { totalPageArr, lastPage }
+    }
+    catch (err) {
+      return (err)
+    }
+
+  },
+  getLimitedProduct: async (number) => {
     let pageNumber = parseInt(number)
+    const limit = 10
+    const skip = (pageNumber - 1) * limit
+
     return new Promise(async (resolve, reject) => {
       try {
         const productData = await Product.aggregate([{
@@ -136,13 +183,27 @@ module.exports = {
           }
         }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } },
         {
-          $skip: pageNumber * 10
+          $skip: skip
         },
         {
-          $limit: 10
+          $limit: limit
         }
 
         ])
+
+        for (const product of productData) {
+          const currentDate = new Date();
+          if (product && product.Category && product.Category.offers) {
+
+
+            for (const offer of product.Category.offers) {
+              if (offer.startDate <= currentDate && offer.endDate >= currentDate) {
+                product.offerPercentage = offer.discount
+                product.offerPrice = product.Price - (product.Price * offer.discount) / 100;
+              }
+            }
+          }
+        }
         resolve(productData)
       }
       catch (err) {
@@ -228,52 +289,53 @@ module.exports = {
   },
 
   updateProduct: (id, updateData) => {
-    // const images = updateImage.map((file) => {
-    //   return file.filename
-    // })
-    console.log(updateData)
     return new Promise(async (resolve, reject) => {
-      const catId = await Category.findOne({ category: updateData.editPrCat })
-      console.log(catId)
-      if (updateData.editPrCat === 'Laptop') {
-        await Product.updateOne({ _id: id }, {
-          $set: {
-            Name: updateData.editPrName,
-            Category: catId,
-            Brand: updateData.editPrBrand,
-            Description: updateData.editPrDes,
-            Features: [{
-              Processor: updateData.editPrProcessor,
-              RAM: updateData.editPrRam,
-              Storage: updateData.editPrStorage,
-              Operating_system: updateData.editPrOs,
-              Color: updateData.editPrColor
-            }],
-            Price: updateData.editPrPrice,
-            Stock_quantity: updateData.editPrQuant,
+      try {
+        const catId = await Category.findOne({ category: updateData.editPrCat })
+        if (updateData.editPrCat === 'Laptop') {
+          await Product.updateOne({ _id: id }, {
+            $set: {
+              Name: updateData.editPrName,
+              Category: catId,
+              Brand: updateData.editPrBrand,
+              Description: updateData.editPrDes,
+              Features: [{
+                Processor: updateData.editPrProcessor,
+                RAM: updateData.editPrRam,
+                Storage: updateData.editPrStorage,
+                Operating_system: updateData.editPrOs,
+                Color: updateData.editPrColor
+              }],
+              Price: updateData.editPrPrice,
+              Stock_quantity: updateData.editPrQuant,
 
-          }
-        })
-      } else {
-        await Product.updateOne({ _id: id }, {
-          $set: {
-            Name: updateData.editPrName,
-            Category: catId,
-            Brand: updateData.editPrBrand,
-            Description: updateData.editPrDes,
-            Features: [{
-              RAM: updateData.editPrRam,
-              Storage: updateData.editPrStorage,
-              Operating_system: updateData.editPrOs,
-              Color: updateData.editPrColor
-            }],
-            Price: updateData.editPrPrice,
-            Stock_quantity: updateData.editPrQuant,
+            }
+          })
+        } else {
+          await Product.updateOne({ _id: id }, {
+            $set: {
+              Name: updateData.editPrName,
+              Category: catId,
+              Brand: updateData.editPrBrand,
+              Description: updateData.editPrDes,
+              Features: [{
+                RAM: updateData.editPrRam,
+                Storage: updateData.editPrStorage,
+                Operating_system: updateData.editPrOs,
+                Color: updateData.editPrColor
+              }],
+              Price: updateData.editPrPrice,
+              Stock_quantity: updateData.editPrQuant,
 
-          }
-        })
+            }
+          })
+        }
+        resolve()
       }
-      resolve()
+      catch (err) {
+        reject(err)
+      }
+
     })
   },
 
@@ -350,7 +412,6 @@ module.exports = {
     const file = image.addNewImageInput[0].filename
     return new Promise(async (resolve, reject) => {
       try {
-        console.log(productId)
         await Product.updateOne({ _id: productId }, { $push: { Images: file } })
         resolve()
       }
@@ -359,42 +420,77 @@ module.exports = {
       }
     })
   },
-  getProductByCat: (category) => {
+  getProductByCat: (category, user) => {
     return new Promise(async (resolve, reject) => {
-      const catId = await Category.findOne({ category: category }, { _id: 1 })
-      const productData = await Product.aggregate([
-        {
-          $match: {
-            Category: catId._id,
-            Isdeleted: false
+      try {
+        let wishData;
+        if (user) {
+          userController.getWishLish(user).then((data) => wishData = data)
+
+        }
+        const catId = await Category.findOne({ category: category }, { _id: 1 })
+        let productData = await Product.aggregate([
+          {
+            $match: {
+              Category: catId._id,
+              Isdeleted: false
+            }
+          },
+          {
+            $lookup: {
+              from: 'categories',
+              localField: 'Category',
+              foreignField: '_id',
+              as: 'Category'
+            }
+          },
+          {
+            $unwind: '$Category'
+          },
+          {
+            $unwind: '$Features'
+          },
+          {
+            $match: { 'Category.list': true }
+          },
+          {
+            $sort: { createdAt: -1 }
+          },
+        ])
+        if (wishData && wishData.length != 0) {
+          productData = productData.map((id) => {
+            if (wishData[0].productId.includes(id._id)) {
+              return { ...id, inWishlist: true }
+            }
+            return id
+          })
+        }
+        for (const product of productData) {
+          const currentDate = new Date();
+          if (product && product.Category && product.Category.offers) {
+            for (const offer of product.Category.offers) {
+              if (offer.startDate <= currentDate && offer.endDate >= currentDate) {
+                product.offerPercentage = offer.discount
+                product.offerPrice = product.Price - (product.Price * offer.discount) / 100;
+              }
+            }
           }
-        },
-        {
-          $lookup: {
-            from: 'categories',
-            localField: 'Category',
-            foreignField: '_id',
-            as: 'Category'
-          }
-        },
-        {
-          $unwind: '$Category'
-        },
-        {
-          $unwind: '$Features'
-        },
-        {
-          $match: { 'Category.list': true }
-        },
-        {
-          $sort: { createdAt: -1 }
-        },
-      ])
-      resolve(productData)
+        }
+        resolve(productData)
+      }
+      catch (err) {
+        reject(err)
+      }
+
     })
   },
-  getFilteredProd: (catId, filterValues, sortValues) => {
+  getFilteredProd: (catId, filterValues, sortValues, user) => {
     let sortquery;
+    let wishData;
+    if (user) {
+      userController.getWishLish(user).then((data) => wishData = data)
+
+    }
     if (sortValues === 'asc') {
       sortquery = { Price: 1 }
     } else if (sortValues === 'dsc') {
@@ -403,6 +499,7 @@ module.exports = {
       sortquery = { createdAt: -1 }
     }
     return new Promise(async (resolve, reject) => {
+
       const ramValues = filterValues.filter((value) => value.startsWith('Ram:'));
       const brandValues = filterValues.filter((value) => value.startsWith('Brand:'));
       const romValues = filterValues.filter((value) => value.startsWith('Rom:'));
@@ -456,7 +553,7 @@ module.exports = {
       }
       try {
         if (filterValues[0] === '') {
-          const productData = await Product.aggregate([{
+          let productData = await Product.aggregate([{
             $match: {
               Category: new ObjectId(catId),
               Isdeleted: false,
@@ -471,10 +568,31 @@ module.exports = {
           }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } }, { $sort: sortquery },
 
           ])
+          if (wishData && wishData.length != 0) {
+            productData = productData.map((id) => {
+              if (wishData[0].productId.includes(id._id)) {
+                return { ...id, inWishlist: true }
+              }
+              return id
+            })
+          }
+          for (const product of productData) {
+            const currentDate = new Date();
+            if (product && product.Category && product.Category.offers) {
+
+
+              for (const offer of product.Category.offers) {
+                if (offer.startDate <= currentDate && offer.endDate >= currentDate) {
+                  product.offerPercentage = offer.discount
+                  product.offerPrice = product.Price - (product.Price * offer.discount) / 100;
+                }
+              }
+            }
+          }
           resolve(productData)
         }
         else if (filterValues.length == 1) {
-          const productData = await Product.aggregate([{
+          let productData = await Product.aggregate([{
             $match: {
               Category: new ObjectId(catId),
               Isdeleted: false,
@@ -488,11 +606,32 @@ module.exports = {
               as: 'Category'
             }
           }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } }, { $sort: sortquery }])
+          if (wishData) {
+            productData = productData.map((id) => {
+              if (wishData[0].productId.includes(id._id)) {
+                return { ...id, inWishlist: true }
+              }
+              return id
+            })
+          }
+          for (const product of productData) {
+            const currentDate = new Date();
+            if (product && product.Category && product.Category.offers) {
+
+
+              for (const offer of product.Category.offers) {
+                if (offer.startDate <= currentDate && offer.endDate >= currentDate) {
+                  product.offerPercentage = offer.discount
+                  product.offerPrice = product.Price - (product.Price * offer.discount) / 100;
+                }
+              }
+            }
+          }
           resolve(productData)
 
         } else {
 
-          const productData = await Product.aggregate([
+          let productData = await Product.aggregate([
             {
               $match: {
                 Category: new ObjectId(catId),
@@ -508,41 +647,95 @@ module.exports = {
               }
             }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } }, { $sort: sortquery },
           ])
+          if (wishData && wishData.length != 0) {
+            productData = productData.map((id) => {
+              if (wishData[0].productId.includes(id._id)) {
+                return { ...id, inWishlist: true }
+              }
+              return id
+            })
+          }
+          for (const product of productData) {
+            const currentDate = new Date();
+            if (product && product.Category && product.Category.offers) {
+
+
+              for (const offer of product.Category.offers) {
+                if (offer.startDate <= currentDate && offer.endDate >= currentDate) {
+                  product.offerPercentage = offer.discount
+                  product.offerPrice = product.Price - (product.Price * offer.discount) / 100;
+                }
+              }
+            }
+          }
           resolve(productData)
         }
       } catch (err) {
-        console.log(err)
+        reject(err)
       }
     })
   },
-  searchProduct: (search) => {
+  searchProduct: (search, user) => {
     return new Promise(async (resolve, reject) => {
-      const searchQuery = new RegExp(search, 'i')
-      const productData = await Product.aggregate([{
-        $lookup: {
-          from: 'categories',
-          localField: 'Category',
-          foreignField: '_id',
-          as: 'Category'
+      try {
+        const searchQuery = new RegExp(search, 'i')
+        let wishData;
+        if (user) {
+          userController.getWishLish(user).then((data) => wishData = data)
         }
-      }, {
-        $match: {
-          Isdeleted: false,
-          $or: [
-            { Name: { $regex: searchQuery } },
-            { Brand: { $regex: searchQuery } },
-            { 'Features.RAM': { $regex: searchQuery } },
-            { 'Features.Storage': { $regex: searchQuery } },
-            { 'Features.Color': { $regex: searchQuery } },
-            { 'Category.category': { $regex: searchQuery } }
-          ]
+        let productData = await Product.aggregate([{
+          $lookup: {
+            from: 'categories',
+            localField: 'Category',
+            foreignField: '_id',
+            as: 'Category'
+          }
+        }, {
+          $match: {
+            Isdeleted: false,
+            $or: [
+              { Name: { $regex: searchQuery } },
+              { Brand: { $regex: searchQuery } },
+              { 'Features.RAM': { $regex: searchQuery } },
+              { 'Features.Storage': { $regex: searchQuery } },
+              { 'Features.Color': { $regex: searchQuery } },
+              { 'Category.category': { $regex: searchQuery } }
+            ]
+          }
+        }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } },])
+        if (wishData && wishData.length !== 0) {
+          productData = productData.map((id) => {
+            if (wishData[0].productId.includes(id._id)) {
+              return { ...id, inWishlist: true }
+            }
+            return id
+          })
         }
-      }, { $unwind: '$Category' }, { $unwind: '$Features' }, { $match: { 'Category.list': true } },])
-      resolve(productData)
+        for (const product of productData) {
+          const currentDate = new Date();
+          if (product && product.Category && product.Category.offers) {
+            for (const offer of product.Category.offers) {
+              if (offer.startDate <= currentDate && offer.endDate >= currentDate) {
+                product.offerPercentage = offer.discount
+                product.offerPrice = product.Price - (product.Price * offer.discount) / 100;
+              }
+            }
+          }
+        }
+        resolve(productData)
+      }
+      catch (err) {
+        reject(err)
+      }
+
     })
   },
-  getFilteredSearchProd: (search, filterValues, sortValues) => {
+  getFilteredSearchProd: (search, filterValues, sortValues, user) => {
     let sortquery;
+    let wishData;
+    if (user) {
+      userController.getWishLish(user).then((data) => wishData = data)
+    }
     const searchQuery = new RegExp(search, 'i')
     if (sortValues === 'asc') {
       sortquery = { Price: 1 }
@@ -578,7 +771,6 @@ module.exports = {
       if (romValues.length > 0) {
         const romConditions = {
           'Features.Storage': { $in: romValues.map((rom) => rom.replace('Rom:', '')) },
-
         };
         filterConditions.push(romConditions)
       }
@@ -590,7 +782,6 @@ module.exports = {
               return new RegExp(cleanedColor, 'i');
             })
           }
-
         }
         filterConditions.push(colorConditions)
       }
@@ -617,12 +808,13 @@ module.exports = {
         categoryConditions.push(categoryCondition)
       }
       try {
-        if (filterConditions[0] === '') {
-          console.log('here')
-          const productData = await Product.aggregate([
+        if (categoryConditions.length == 0 && filterConditions.length != 0) {
+          let productData = await Product.aggregate([
             {
               $match: {
                 Isdeleted: false,
+                $and: filterConditions,
+
                 $or: [
                   { Name: { $regex: searchQuery } },
                   { Brand: { $regex: searchQuery } },
@@ -648,21 +840,41 @@ module.exports = {
               $unwind: '$Features'
             },
             {
-              $match: { 'Category.list': true, 'Category.category': categoryValues }
+              $match: { 'Category.list': true, }
             },
             {
               $sort: sortquery
             }
           ])
+          if (wishData && wishData.length != 0) {
+            productData = productData.map((id) => {
+              if (wishData[0].productId.includes(id._id)) {
+                return { ...id, inWishlist: true }
+              }
+              return id
+            })
+          }
+          for (const product of productData) {
+            const currentDate = new Date();
+            if (product && product.Category && product.Category.offers) {
+
+
+              for (const offer of product.Category.offers) {
+                if (offer.startDate <= currentDate && offer.endDate >= currentDate) {
+                  product.offerPercentage = offer.discount
+                  product.offerPrice = product.Price - (product.Price * offer.discount) / 100;
+                }
+              }
+            }
+          }
           resolve(productData)
         }
-        else if (filterConditions.length == 1) {
-          const productData = await Product.aggregate([
+        else if (filterConditions.length == 0 && categoryConditions.length !== 0) {
+          let productData = await Product.aggregate([
             {
               $match:
               {
                 Isdeleted: false,
-                $and: filterConditions,
                 $or: [
                   { Name: { $regex: searchQuery } },
                   { Brand: { $regex: searchQuery } },
@@ -698,15 +910,93 @@ module.exports = {
               $sort: sortquery
             }
           ])
-          resolve(productData)
+          if (wishData && wishData.length != 0) {
+            productData = productData.map((id) => {
+              if (wishData[0].productId.includes(id._id)) {
+                return { ...id, inWishlist: true }
+              }
+              return id
+            })
+          }
+          for (const product of productData) {
+            const currentDate = new Date();
+            if (product && product.Category && product.Category.offers) {
 
-        } else {
-          const productData = await Product.aggregate([
+
+              for (const offer of product.Category.offers) {
+                if (offer.startDate <= currentDate && offer.endDate >= currentDate) {
+                  product.offerPercentage = offer.discount
+                  product.offerPrice = product.Price - (product.Price * offer.discount) / 100;
+                }
+              }
+            }
+          }
+          resolve(productData)
+        } else if (filterConditions.length == 0 && categoryConditions.length == 0) {
+          let productData = await Product.aggregate([
             {
               $match:
               {
                 Isdeleted: false,
-                // $and: filterConditions,
+                $or: [
+                  { Name: { $regex: searchQuery } },
+                  { Brand: { $regex: searchQuery } },
+                  { 'Features.RAM': { $regex: searchQuery } },
+                  { 'Features.Storage': { $regex: searchQuery } },
+                  { 'Features.Operating_system': { $regex: searchQuery } },
+                  { 'Features.Color': { $regex: searchQuery } },
+                ]
+              },
+            },
+            {
+              $lookup: {
+                from: 'categories',
+                localField: 'Category',
+                foreignField: '_id',
+                as: 'Category'
+              }
+            },
+            {
+              $unwind: '$Category'
+            },
+            {
+              $unwind: '$Features'
+            },
+            {
+              $match: {
+                'Category.list': true,
+              }
+            }, { $sort: sortquery }])
+          if (wishData && wishData.length != 0) {
+            productData = productData.map((id) => {
+              if (wishData[0].productId.includes(id._id)) {
+                return { ...id, inWishlist: true }
+              }
+              return id
+            })
+          }
+          for (const product of productData) {
+            const currentDate = new Date();
+            if (product && product.Category && product.Category.offers) {
+
+
+              for (const offer of product.Category.offers) {
+                if (offer.startDate <= currentDate && offer.endDate >= currentDate) {
+                  product.offerPercentage = offer.discount
+                  product.offerPrice = product.Price - (product.Price * offer.discount) / 100;
+                }
+              }
+            }
+          }
+          resolve(productData)
+        }
+        else {
+          let productData = await Product.aggregate([
+            {
+              $match:
+              {
+                Isdeleted: false,
+                $and: filterConditions,
                 $or: [
                   { Name: { $regex: searchQuery } },
                   { Brand: { $regex: searchQuery } },
@@ -737,10 +1027,58 @@ module.exports = {
                 $or: categoryConditions
               }
             }, { $sort: sortquery }])
+          if (wishData && wishData.length != 0) {
+            productData = productData.map((id) => {
+              if (wishData[0].productId.includes(id._id)) {
+                return { ...id, inWishlist: true }
+              }
+              return id
+            })
+          }
+          for (const product of productData) {
+            const currentDate = new Date();
+            if (product && product.Category && product.Category.offers) {
+
+
+              for (const offer of product.Category.offers) {
+                if (offer.startDate <= currentDate && offer.endDate >= currentDate) {
+                  product.offerPercentage = offer.discount
+                  product.offerPrice = product.Price - (product.Price * offer.discount) / 100;
+                }
+              }
+            }
+          }
           resolve(productData)
         }
       } catch (err) {
-        console.log(err)
+        reject(err)
+      }
+    })
+  },
+  addCategoryOffer: (formData) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const catData = await Category.findOneAndUpdate(
+          { _id: formData.formData.catId },
+          {
+            $push: {
+              offers: {
+                $each: [
+                  {
+                    startDate: formData.formData.startDate,
+                    endDate: formData.formData.endDate,
+                    discount: formData.formData.discountAmount
+                  },
+                ],
+              },
+            },
+          },
+          { new: true }
+        );
+        resolve()
+      }
+      catch (err) {
+        reject(err)
       }
     })
   }

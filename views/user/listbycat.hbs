@@ -115,7 +115,7 @@
               <label><input type="checkbox" name="fl-colour" value="Color:Blue" id="Blue" /> Blue</label><br>
             </form>
           </li>
-           <li>
+          <li>
             <button id="processorBtn" data-bs-toggle="collapse" class="nav-link px-sm-0 px-2 filterBtn">
               <span class="ms-1  d-sm-inline">Processor</span> </button>
             <form id="processorForm" style="display: none;" class="filterForm">
@@ -210,7 +210,7 @@
       </div>
     </div>
 
-    <div class="col d-flex flex-column h-sm-100" id="cardDiv" >
+    <div class="col d-flex flex-column h-sm-100" id="cardDiv">
       {{#if search}}
       {{else}}
       <nav aria-label="breadcrumb" class="mt-3 ms-5">
@@ -248,14 +248,46 @@
                   </p>
                 </div>
                 <div class="mt-auto">
+                  {{#if offerPrice}}
+                  <p class="card-text ms-3  fs-5 text-decoration-line-through">₹{{Price}}
+                  </p>
+                  <p class=" ms-3 text-success">{{offerPercentage}}%off</p>
+
+                  <p class="card-text ms-3 fw-bold fs-2">₹{{offerPrice}}
+                  </p>
+                  {{else}}
+                  <p class="card-text ms-3 fw-bold fs-2">₹{{Price}}
+                  </p>
+                  {{/if}}
+                  {{#if ../user}}
+                  {{#if inWishlist}}
+                  <button class="btn float-end  mb-2">
+                    <i class=" fa-regular fa-heart love-button loved" product-id="{{_id}}"
+                      user-id="{{../user._id}}"></i>
+                  </button>
+                  {{else}}
+                  <button class="btn float-end  mb-2">
+                    <i class=" fa-regular fa-heart love-button" product-id="{{_id}}" user-id="{{../user._id}}"></i>
+                  </button>
+                  {{/if}}
+                  {{/if}}
+                </div>
+                {{!-- <div class="mt-auto">
                   <p class="card-text ms-3 fw-bold fs-2">₹{{Price}}
                   </p>
                   {{#if ../user}}
-                  <button class="btn float-end love-button mb-2" product-id="{{_id}}" user-id="{{../user._id}}">
-                    <i class=" fa-regular fa-heart"></i>
+                  {{#if inWishlist}}
+                  <button class="btn float-end  mb-2 ">
+                    <i class=" fa-regular fa-heart love-button loved" product-id="{{_id}}"
+                      user-id="{{../user._id}}"></i>
+                  </button>
+                  {{else}}
+                  <button class="btn float-end  mb-2">
+                    <i class=" fa-regular fa-heart love-button" product-id="{{_id}}" user-id="{{../user._id}}"></i>
                   </button>
                   {{/if}}
-                </div>
+                  {{/if}}
+                </div> --}}
                 <div class="card-btn">
                   <a href="/viewproduct/{{_id}}" class="btn btn-dark me-1">View Product</a>
                   {{#if Stock_quantity}}
@@ -282,4 +314,3 @@
 
 </div>
 <script src="/javascripts/category.js"></script>
-<script src="/javascripts/wishList.js"></script>

@@ -20,7 +20,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 app.engine('hbs', hbs.engine({ extname: 'hbs', defaultLayout: 'layout', layoutsDir: __dirname + '/views/layout/', partialsDir: __dirname + '/views/partials/' ,runtimeOptions:{
   allowedProtoPropertiesBydefault:false,allowProtoMethodsByDefault:false,
-},helpers:handlebarHelpers,}))
+},helpers:handlebarHelpers,})) 
 
 app.use(logger('dev'));
 app.use(express.json());

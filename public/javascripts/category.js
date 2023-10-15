@@ -1,4 +1,3 @@
-
 const checkBox = document.querySelectorAll('input[type="checkbox"]')
 const filterBtn = document.querySelectorAll('.filterBtn')
 const filterForm = document.querySelectorAll('.filterForm')
@@ -10,6 +9,9 @@ const ascBtn = document.getElementById('btn btn-light');
 const dscBtn = document.getElementById('dscBtn')
 const sortBtn = document.querySelectorAll('.sortBtn')
 const latest = document.querySelector('#latest')
+const loveButton=document.querySelectorAll('.love-button')
+const cardDiv= document.querySelector('#cardDiv')
+
 const templateString = `
 <div class="col d-flex flex-column h-sm-100" id="cardDiv">
       <div class="d-flex mt-5 ms-5">
@@ -37,12 +39,28 @@ const templateString = `
                   </p>
                 </div>
                 <div class="mt-auto">
+                  {{#if offerPrice}}
+                  <p class="card-text ms-3  fs-5 text-decoration-line-through">₹{{Price}}
+                  </p>
+                  <p class=" ms-3 text-success">{{offerPercentage}}%off</p>
+
+                  <p class="card-text ms-3 fw-bold fs-2">₹{{offerPrice}}
+                  </p>
+                  {{else}}
                   <p class="card-text ms-3 fw-bold fs-2">₹{{Price}}
                   </p>
+                  {{/if}}
                   {{#if ../user}}
-                  <button class="btn float-end love-button mb-2" product-id="{{_id}}" user-id="{{../user._id}}">
-                    <i class=" fa-regular fa-heart"></i>
+                  {{#if inWishlist}}
+                  <button class="btn float-end  mb-2">
+                    <i class=" fa-regular fa-heart love-button loved" product-id="{{_id}}"
+                      user-id="{{../user._id}}"></i>
                   </button>
+                  {{else}}
+                  <button class="btn float-end  mb-2">
+                    <i class=" fa-regular fa-heart love-button" product-id="{{_id}}" user-id="{{../user._id}}"></i>
+                  </button>
+                  {{/if}}
                   {{/if}}
                 </div>
                 <div class="card-btn">
@@ -54,8 +72,6 @@ const templateString = `
                   {{/if}}
                 </div>
               </div>
-
-
               {{/each}}
 
             </div>
@@ -72,7 +88,6 @@ const currentURL = window.location.href;
 let selectedValues = []
 let sortValues;
 
-
 function fetchAndRender() {
   if (currentURL.includes('search')) {
 
@@ -85,8 +100,8 @@ function fetchAndRender() {
           response.json()
             .then((prodData) => {
               const template = Handlebars.compile(templateString)
-              const html = template({ prodData })
-              document.querySelector('#cardDiv').innerHTML = html
+              const html = template({ prodData:prodData.prodData,user:prodData.user })
+              cardDiv.innerHTML = html
               attachEventListeners()
             })
         })
@@ -100,9 +115,10 @@ function fetchAndRender() {
         .then((response) => {
           response.json()
             .then((prodData) => {
+
               const template = Handlebars.compile(templateString)
-              const html = template({ prodData })
-              document.querySelector('#cardDiv').innerHTML = html
+              const html = template({ prodData:prodData.prodData,user:prodData.user })
+              cardDiv.innerHTML = html
               attachEventListeners()
             })
         })
@@ -110,8 +126,6 @@ function fetchAndRender() {
       window.location.reload()
     }
   }
-
-
 }
 
 function attachEventListeners() {
@@ -141,31 +155,6 @@ filterBtn.forEach((btn, index) => {
   })
 })
 
-// priceBtn.addEventListener('click', (e) => {
-//   if (priceForm.style.display === 'block') {
-//     priceForm.style.display = 'none';
-//   } else {
-//     priceForm.style.display = 'block';
-//   }
-// })
-
-// priceForm.addEventListener('submit', (e) => {
-//   e.preventDefault()
-//   const minPrice = priceForm.minPrice.value
-//   const maxPrice = priceForm.maxPrice.value
-//   fetch(`/sort-by-price?category=${catId}&minprice=${minPrice}&maxprice=${maxPrice}`)
-//     .then((response) => {
-//       response.json()
-//         .then((response) => {
-//           const template = Handlebars.compile(templateString)
-//           const html = template({ prodData:response })
-//           document.querySelector('#cardDiv').innerHTML = html
-//           clearBtn.style.display='block'
-
-//         })
-//     })
-// })
-
 checkBox.forEach((checkBox) => {
   checkBox.addEventListener('click', (e) => {
     const checkBoxValue = checkBox.value
@@ -184,4 +173,40 @@ clearBtn.addEventListener('click', (e) => {
   window.location.reload()
 })
 
+cardDiv.addEventListener('click', async (e) => {
+  if (e.target.classList.contains('love-button')) {
+    const productId = e.target.getAttribute('product-id')
+    const userId = e.target.getAttribute('user-id')
 
+    const wishListData = {
+      productId,
+      userId
+    }
+    e.target.classList.toggle('loved');
+    await fetch('/api/wishlist', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(wishListData)
+    }).catch((err) => console.log(err))
+  }
+  else if (e.target.classList.contains('addCart')) {
+    const productId = e.target.getAttribute('product-id');
+    await fetch('/api/addcart', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ productId })
+    }).then((response) => {
+      return response.json();
+    }).then((data) => {
+      if (data.loggedIn) {
+        window.location.href = '/viewcart';
+      } else {
+        window.location.href = '/login';
+      }
+    });
+  }
+});

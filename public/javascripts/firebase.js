@@ -173,10 +173,7 @@ if (currentURL.includes('/signup')) {
   })
   otpLoginForm.addEventListener('submit', (e) => {
     e.preventDefault()
-    console.log(otpLoginForm.digit.value)
     let otp_numberL = otpLoginForm.digit.value
-    console.log(otp_numberL)
-    // console.log(confirmationResults)
     confirmationResult.confirm(otp_numberL).then(async (result) => {
       // User signed in successfully.
       const user = result;
@@ -187,19 +184,12 @@ if (currentURL.includes('/signup')) {
         },
         body: JSON.stringify({ mobilenumber }),
       }).then(() => {
-        // otpform.otp.value = '';
-
         window.location.href = '/';
       }).catch((err) => {
         console.log(err)
       })
 
-      // console.log(user)
-      // ...
     }).catch((error) => {
-      // User couldn't sign in (bad verification code?)
-      // ...
-      // loginotpalert.innerHTML = "otp didn't match"
       console.log(error)
     });
   })

@@ -1,5 +1,3 @@
-// const { json } = require("body-parser");
-
 document.querySelectorAll('.itemStatus').forEach((status, index) => {
   if (status.textContent.trim() === 'cancelled') {
     // Select the corresponding card footer and hide it
@@ -35,7 +33,6 @@ document.querySelectorAll('.order-cancel').forEach((link) => {
         }).then(async(result) => {
           if (result.isConfirmed) {
             userInput = result.value;
-            // window.location.href = `/cancel-order/${orderId}`
             await fetch('/cancel-order',{
               method:'post',
               headers:{
@@ -64,7 +61,6 @@ document.querySelectorAll('.track').forEach((track) => {
     } else {
       progressBar.style.display = 'block';
     }
-    console.log(orderStatus)
     if (orderStatus == 'shipped') {
       document.getElementById(`step2-${id}`).classList.add('active')
     } else if (orderStatus === 'delivered') {

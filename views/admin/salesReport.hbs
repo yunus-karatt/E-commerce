@@ -49,9 +49,11 @@
           <p id="dateErr" class="mb-3 text-danger"></p>
         </div>
       </div>
+      {{#if salesReport}}
       <div class="ms-auto">
       <button class="btn btn-success" id="downloadPdf">Download PDF</button>
       </div>
+      {{/if}}
     </div>
     <div class="table-responsive">
       <table class="table table-striped" id="salesReport">

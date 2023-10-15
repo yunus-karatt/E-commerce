@@ -22,6 +22,11 @@ handlebars.registerHelper('equal', function (a, b, options) {
     return options.inverse(this);
   }
 });
-
+handlebars.registerHelper('increment', function (value) {
+  return parseInt(value) + 1;
+});
+handlebars.registerHelper('decrement', function (value) { 
+  return parseInt(value) - 1;
+});
 
 module.exports = handlebars;

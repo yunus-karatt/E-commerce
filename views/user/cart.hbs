@@ -64,7 +64,14 @@
 
                 <!-- Price -->
                 <p class="text-start text-md-center">
+                  {{#if priceAfterDiscount}}
+                  <p class="text-success">{{offerPercentage}}% off</p>
+                  <strong class="text-decoration-line-through text-muted">₹ {{price}}</strong>
+                  <strong>₹ {{priceAfterDiscount}}</strong>
+
+                  {{else}}
                   <strong>₹ {{price}}</strong>
+                  {{/if}}
                 </p>
                 <!-- Price -->
               </div>
@@ -133,7 +140,7 @@
                     <p class="mb-0">(including VAT)</p>
                   </strong>
                 </div>
-                <span><strong>₹{{cartData.[0].totalPrice}}</strong></span>
+                <span><strong>₹{{cartData.[0].totalDiscountPrice}}</strong></span>
               </li>
             </ul>
 

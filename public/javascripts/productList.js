@@ -1,9 +1,6 @@
-// Define a function to handle the click event
 function handleDeleteClick(e) {
   e.preventDefault();
   const productId = this.getAttribute('productId');
-  console.log(productId);
-
   Swal.fire({
     title: 'Are you sure?',
     text: "You won't be able to revert this!",

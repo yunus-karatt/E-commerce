@@ -7,6 +7,7 @@ const templateString = `
   <th scope="col">Username</th>
   <th scope="col">Email</th>
   <th scope="col">mobile Number</th>
+  <th scope="col">Wallet Balance</th>
   <th scope="col">Block/Unblock</th>
 </tr>
 </thead>
@@ -16,6 +17,7 @@ const templateString = `
       <td>{{this.Username}}</td>
       <td>{{this.Email}}</td>
       <td>{{this.Mobilenumber}}</td>
+      <td>{{WalletBalance}}</td>
       {{#if this.Isblocked}}
       <td><a href="/admin/blockuser/{{this._id}}" class="btn btn-success">Unblock</a></td>
       {{else}}

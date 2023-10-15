@@ -2,7 +2,7 @@ const Admin = require('../model/adminModel');
 const User = require('../model/userModel');
 const Product = require('../model/productModel')
 const order = require('../model/orderModel');
-const coupon=require('../model/couponModel')
+const coupon = require('../model/couponModel')
 const db = require('../config/connection');
 const bcrypt = require('bcrypt');
 const { ObjectId } = require('mongodb');
@@ -12,24 +12,29 @@ module.exports = {
   doAdminLogin: (adminData) => {
     let response = {}
     return new Promise(async (res, rej) => {
-      let admin = await Admin.findOne({ Email: adminData.Adminemail })
-      if (admin) {
-        bcrypt.compare(adminData.Adminpassword, admin.get('Password'), (err, result) => {
-          if (err) {
-            console.log("password checking error" + err)
-          } else if (result) {
-            response.admin = result
-            response.status = true
-            res(response)
-          } else {
-            response.logginErr = "Please check your password"
-            res(response)
-          }
-        })
-      } else {
-        response.logginErr = "Please enter a valid email"
-        res(response)
+      try {
+        let admin = await Admin.findOne({ Email: adminData.Adminemail })
+        if (admin) {
+          bcrypt.compare(adminData.Adminpassword, admin.get('Password'), (err, result) => {
+            if (err) {
+            } else if (result) {
+              response.admin = result
+              response.status = true
+              res(response)
+            } else {
+              response.logginErr = "Please check your password"
+              res(response)
+            }
+          })
+        } else {
+          response.logginErr = "Please enter a valid email"
+          res(response)
+        }
       }
+      catch (err) {
+        rej(err)
+      }
+
     })
   },
 
@@ -37,16 +42,6 @@ module.exports = {
     return new Promise(async (resolve, reject) => {
       try {
         const userList = await User.find({}).sort({ Username: 1 }).limit(5).lean()
-        // const userList= await User.aggregate([
-        //   {
-        //     $lookup:{
-        //       from:'orders',
-        //       localField:'_id',
-        //       foreignField:'userId',
-        //       as:'orders'
-        //     }
-        //   }
-        // ])
         resolve(userList)
       }
       catch (err) {
@@ -93,36 +88,6 @@ module.exports = {
       }
     })
   },
-
-  // getOrderData: () => {
-  //   return new Promise(async (resolve, reject) => {
-  //     try {
-  //       const orderData = await order.aggregate([{
-  //         $unwind: '$products'
-  //       },
-  //       {
-  //         $lookup: {
-  //           from: 'products',
-  //           localField: 'products.productId',
-  //           foreignField: '_id',
-  //           as: 'productDetails'
-  //         }
-  //       },
-  //       {
-  //         $unwind: '$productDetails'
-  //       }
-  //       ])
-  //       for (x in orderData) {
-  //         orderData[x].orderDate = orderData[x].orderDate.toISOString().split('T')[0]
-  //       }
-  //       resolve(orderData)
-  //     }
-  //     catch (err) {
-  //       reject(err)
-  //     }
-
-  //   })
-  // },
   getOrderData: () => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -198,7 +163,7 @@ module.exports = {
             paymentMethod: { $first: '$paymentMethod' },
             orderStatus: { $first: '$orderStatus' },
             orderDate: { $first: '$orderDate' },
-            cancelReason:{$first:'$cancelReason'},
+            cancelReason: { $first: '$cancelReason' },
             products: { $push: '$products' },
 
           }
@@ -213,10 +178,9 @@ module.exports = {
             orderStatus: 1,
             orderDate: 1,
             products: 1,
-            cancelReason:1
+            cancelReason: 1
           }
         },])
-        console.log(cartData)
         resolve(cartData)
       }
       catch (err) {
@@ -229,14 +193,6 @@ module.exports = {
   updateOrderStatus: (orderId, status) => {
     return new Promise(async (resolve, reject) => {
       try {
-        //  if (status === 'cancelled') {
-        //         const orderData = await order.findOne({ _id: updateData.orderId, 'products.productId': updateData.productId })
-        //         const quantity = orderData.products.find(id => id.productId.equals(new ObjectId(updateData.productId)))
-        //         await order.updateOne({ _id: updateData.orderId, 'products.productId': updateData.productId }, { $set: { 'products.$.itemStatus': "cancelled" } })
-        //         await order.updateOne({ _id: updateData.orderId }, { $inc: { totalPrice: -quantity.pricePerQnt } })
-        //         await Product.updateOne({ _id: updateData.productId }, { $inc: { Stock_quantity: quantity.quantity } })
-        //         resolve()
-        //       } 
         if (status === 'shipped') {
           await order.updateOne({ _id: orderId }, { $set: { orderStatus: "shipped", shippedDate: new Date() } })
           resolve()
@@ -253,214 +209,230 @@ module.exports = {
   },
   getSalesReport: () => {
     return new Promise(async (resolve, reject) => {
-      const salesReport = await order.aggregate([{
-        $match: {
-          orderStatus: 'delivered'
-        }
-      },
-      {
-        $unwind: '$products'
-      },
-      {
-        $lookup: {
-          from: 'products',
-          localField: 'products.productId',
-          foreignField: '_id',
-          as: 'productDetails'
-        }
-      },
-      {
-        $unwind: '$productDetails'
-      },
-      {
-        $lookup: {
-          from: 'categories',
-          localField: 'productDetails.Category',
-          foreignField: '_id',
-          as: 'productDetails.Category'
-        }
-      },
-      {
-        $project: {
-          orderDate: 1,
-          'address.firstName': 1,
-          'productDetails.Name': 1,
-          'productDetails.Category.category': 1,
-          'products.pricePerQnt': 1,
-          'products.quantity': 1,
-          paymentMethod: 1
+      try {
+        const salesReport = await order.aggregate([{
+          $match: {
+            orderStatus: 'delivered'
+          }
+        },
+        {
+          $unwind: '$products'
+        },
+        {
+          $lookup: {
+            from: 'products',
+            localField: 'products.productId',
+            foreignField: '_id',
+            as: 'productDetails'
+          }
+        },
+        {
+          $unwind: '$productDetails'
+        },
+        {
+          $lookup: {
+            from: 'categories',
+            localField: 'productDetails.Category',
+            foreignField: '_id',
+            as: 'productDetails.Category'
+          }
+        },
+        {
+          $project: {
+            orderDate: 1,
+            'address.firstName': 1,
+            'productDetails.Name': 1,
+            'productDetails.Category.category': 1,
+            'products.pricePerQnt': 1,
+            'products.quantity': 1,
+            paymentMethod: 1
 
+          }
         }
+        ])
+        for (x in salesReport) {
+          salesReport[x].orderDate = salesReport[x].orderDate.toISOString().split('T')[0]
+        }
+        resolve(salesReport)
       }
-      ])
-      for (x in salesReport) {
-        salesReport[x].orderDate = salesReport[x].orderDate.toISOString().split('T')[0]
+      catch (err) {
+        reject(err)
       }
-      resolve(salesReport)
+
     })
 
   },
   getFilterSalesReport: (paymentMethod) => {
     return new Promise(async (resolve, reject) => {
-      const salesReport = await order.aggregate([{
-        $match: {
-          orderStatus: 'delivered',
-          paymentMethod: paymentMethod
-        }
-      },
-      {
-        $unwind: '$products'
-      },
-      {
-        $lookup: {
-          from: 'products',
-          localField: 'products.productId',
-          foreignField: '_id',
-          as: 'productDetails'
-        }
-      },
-      {
-        $unwind: '$productDetails'
-      },
-      {
-        $lookup: {
-          from: 'categories',
-          localField: 'productDetails.Category',
-          foreignField: '_id',
-          as: 'productDetails.Category'
-        }
-      },
-      {
-        $project: {
-          orderDate: 1,
-          'address.firstName': 1,
-          'productDetails.Name': 1,
-          'productDetails.Category.category': 1,
-          'products.pricePerQnt': 1,
-          'products.quantity': 1,
-          paymentMethod: 1
+      try {
+        const salesReport = await order.aggregate([{
+          $match: {
+            orderStatus: 'delivered',
+            paymentMethod: paymentMethod
+          }
+        },
+        {
+          $unwind: '$products'
+        },
+        {
+          $lookup: {
+            from: 'products',
+            localField: 'products.productId',
+            foreignField: '_id',
+            as: 'productDetails'
+          }
+        },
+        {
+          $unwind: '$productDetails'
+        },
+        {
+          $lookup: {
+            from: 'categories',
+            localField: 'productDetails.Category',
+            foreignField: '_id',
+            as: 'productDetails.Category'
+          }
+        },
+        {
+          $project: {
+            orderDate: 1,
+            'address.firstName': 1,
+            'productDetails.Name': 1,
+            'productDetails.Category.category': 1,
+            'products.pricePerQnt': 1,
+            'products.quantity': 1,
+            paymentMethod: 1
 
+          }
         }
+        ])
+        for (x in salesReport) {
+          salesReport[x].orderDate = salesReport[x].orderDate.toISOString().split('T')[0]
+        }
+        resolve(salesReport)
       }
-      ])
-      for (x in salesReport) {
-        salesReport[x].orderDate = salesReport[x].orderDate.toISOString().split('T')[0]
+      catch (err) {
+        reject(err)
       }
-      resolve(salesReport)
+
     })
   },
   getDatedReport: (startDate, endDate) => {
     return new Promise(async (resolve, reject) => {
-      if (startDate === endDate) {
-        const today = new Date();
-        const startTime = new Date(today);
-        startTime.setUTCHours(0, 0, 0, 0);
-        const endTime = new Date(today);
-        endTime.setUTCHours(23, 59, 59, 999);
-        const salesReport = await order.aggregate([{
-          $match: {
-            orderStatus: 'delivered',
-            orderDate: {
-              $gte: startTime,
-              $lte: endTime
+      try {
+        if (startDate === endDate) {
+          const today = new Date();
+          const startTime = new Date(today);
+          startTime.setUTCHours(0, 0, 0, 0);
+          const endTime = new Date(today);
+          endTime.setUTCHours(23, 59, 59, 999);
+          const salesReport = await order.aggregate([{
+            $match: {
+              orderStatus: 'delivered',
+              orderDate: {
+                $gte: startTime,
+                $lte: endTime
+              }
+            }
+          },
+          {
+            $unwind: '$products'
+          },
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'products.productId',
+              foreignField: '_id',
+              as: 'productDetails'
+            }
+          },
+          {
+            $unwind: '$productDetails'
+          },
+          {
+            $lookup: {
+              from: 'categories',
+              localField: 'productDetails.Category',
+              foreignField: '_id',
+              as: 'productDetails.Category'
+            }
+          },
+          {
+            $project: {
+              orderDate: 1,
+              'address.firstName': 1,
+              'productDetails.Name': 1,
+              'productDetails.Category.category': 1,
+              'products.pricePerQnt': 1,
+              'products.quantity': 1,
+              paymentMethod: 1
+
             }
           }
-        },
-        {
-          $unwind: '$products'
-        },
-        {
-          $lookup: {
-            from: 'products',
-            localField: 'products.productId',
-            foreignField: '_id',
-            as: 'productDetails'
+          ])
+          for (x in salesReport) {
+            salesReport[x].orderDate = salesReport[x].orderDate.toISOString().split('T')[0]
           }
-        },
-        {
-          $unwind: '$productDetails'
-        },
-        {
-          $lookup: {
-            from: 'categories',
-            localField: 'productDetails.Category',
-            foreignField: '_id',
-            as: 'productDetails.Category'
-          }
-        },
-        {
-          $project: {
-            orderDate: 1,
-            'address.firstName': 1,
-            'productDetails.Name': 1,
-            'productDetails.Category.category': 1,
-            'products.pricePerQnt': 1,
-            'products.quantity': 1,
-            paymentMethod: 1
+          resolve(salesReport)
+        } else {
+          startDate = new Date(startDate)
+          endDate = new Date()
+          const salesReport = await order.aggregate([{
+            $match: {
+              orderStatus: 'delivered',
+              orderDate: {
+                $gte: startDate,
+                $lte: endDate
+              }
+            }
+          },
+          {
+            $unwind: '$products'
+          },
+          {
+            $lookup: {
+              from: 'products',
+              localField: 'products.productId',
+              foreignField: '_id',
+              as: 'productDetails'
+            }
+          },
+          {
+            $unwind: '$productDetails'
+          },
+          {
+            $lookup: {
+              from: 'categories',
+              localField: 'productDetails.Category',
+              foreignField: '_id',
+              as: 'productDetails.Category'
+            }
+          },
+          {
+            $project: {
+              orderDate: 1,
+              'address.firstName': 1,
+              'productDetails.Name': 1,
+              'productDetails.Category.category': 1,
+              'products.pricePerQnt': 1,
+              'products.quantity': 1,
+              paymentMethod: 1
 
-          }
-        }
-        ])
-        for (x in salesReport) {
-          salesReport[x].orderDate = salesReport[x].orderDate.toISOString().split('T')[0]
-        }
-        resolve(salesReport)
-      } else {
-        startDate = new Date(startDate)
-        endDate = new Date()
-        const salesReport = await order.aggregate([{
-          $match: {
-            orderStatus: 'delivered',
-            orderDate: {
-              $gte: startDate,
-              $lte: endDate
             }
           }
-        },
-        {
-          $unwind: '$products'
-        },
-        {
-          $lookup: {
-            from: 'products',
-            localField: 'products.productId',
-            foreignField: '_id',
-            as: 'productDetails'
+          ])
+          for (x in salesReport) {
+            salesReport[x].orderDate = salesReport[x].orderDate.toISOString().split('T')[0]
           }
-        },
-        {
-          $unwind: '$productDetails'
-        },
-        {
-          $lookup: {
-            from: 'categories',
-            localField: 'productDetails.Category',
-            foreignField: '_id',
-            as: 'productDetails.Category'
-          }
-        },
-        {
-          $project: {
-            orderDate: 1,
-            'address.firstName': 1,
-            'productDetails.Name': 1,
-            'productDetails.Category.category': 1,
-            'products.pricePerQnt': 1,
-            'products.quantity': 1,
-            paymentMethod: 1
-
-          }
+          resolve(salesReport)
         }
-        ])
-        for (x in salesReport) {
-          salesReport[x].orderDate = salesReport[x].orderDate.toISOString().split('T')[0]
-        }
-        console.log(salesReport)
-        resolve(salesReport)
       }
-
+      catch (err) {
+        reject(err)
+      }
     })
   },
+
   getDashboardData: () => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -482,31 +454,31 @@ module.exports = {
           }
         }
         ])
-        const placedOrder=await order.find({ orderStatus: 'placed' }).count()
-        const monthlySales=await order.aggregate([
+        const placedOrder = await order.find({ orderStatus: 'placed' }).count()
+        const monthlySales = await order.aggregate([
           {
-            $match:{
+            $match: {
               orderStatus: 'delivered'
             }
           },
           {
-            $project:{
-              month:{$month:'$orderDate'},
-              year:{$year:'$orderDate'},
-              totalAmount:'$totalPrice'
+            $project: {
+              month: { $month: '$orderDate' },
+              year: { $year: '$orderDate' },
+              totalAmount: '$totalPrice'
             }
           },
           {
-            $group:{
-              _id:{
-                year:'$year',
-                month:'$month',
+            $group: {
+              _id: {
+                year: '$year',
+                month: '$month',
               },
-              totalSale:{$sum:'$totalAmount'}
+              totalSale: { $sum: '$totalAmount' }
             }
-          },{
-            $sort:{
-              '_id.month':1
+          }, {
+            $sort: {
+              '_id.month': 1
             }
           }
         ])
@@ -526,66 +498,56 @@ module.exports = {
 
     })
   },
-  createCoupon:(formData)=>{
-    return new Promise(async(resolve,reject)=>{
-      const couponData=new coupon({
-      startDate:formData.startDate,
-      endDate:formData.endDate,
-      discountType:formData.couponType,
-      discountValue:formData.couponValue,
-      usersLimit:formData.couponLimit,
-      description:formData.description,
-      couponCode:formData.couponCode,
-      purchaseLimit:formData.purchaseLimit
+  createCoupon: (formData) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const couponData = new coupon({
+          startDate: formData.startDate,
+          endDate: formData.endDate,
+          discountType: formData.couponType,
+          discountValue: formData.couponValue,
+          usersLimit: formData.couponLimit,
+          description: formData.description,
+          couponCode: formData.couponCode,
+          purchaseLimit: formData.purchaseLimit
+        })
+        await couponData.save()
+        resolve()
+      }
+      catch (err) {
+        reject(err)
+      }
+
     })
-    await couponData.save()
-    resolve()
-    })
-    
+
   },
-  getCoupon:()=>{
-    return new Promise(async(resolve,reject)=>{
-      const couponData=await coupon.find().lean()
-      resolve(couponData)
+  getCoupon: () => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const couponData = await coupon.find().lean()
+        resolve(couponData)
+      }
+      catch (err) {
+        reject(err)
+      }
+
+    })
+  },
+  adminSignup: async (adminData) => {
+    const hashedPassword = await bcrypt.hash(adminData.password, 10)
+    return new Promise(async (resolve, reject) => {
+      try {
+        const admin = new Admin({
+          Email: adminData.email,
+          Password: hashedPassword
+        })
+        await admin.save()
+        resolve()
+      }
+      catch (err) {
+        reject(err)
+      }
+
     })
   }
-
-
-
-  // getUserOrderList:(skipLimit)=>{
-  //   return new Promise(async(resolve,reject)=>{
-  //   const userData=  await order.aggregate([{
-  //       $unwind:'$products'
-  //     },
-  //     {
-  //       $match:{'products.itemStatus':{$ne:'cancelled'}}
-  //     },
-  //     {
-  //       $group:{
-  //         _id:'$userId',
-  //         orderCount:{$sum:1}
-  //       }
-  //     },
-  //     {
-  //       $lookup:{
-  //         from:'users',
-  //         localField:'_id',
-  //         foreignField:'_id',
-  //         as:'user'
-  //       }
-  //     },
-  //     {
-  //       $unwind:'$user'
-  //     },
-  //     {
-  //       $skip:skipLimit
-  //     },
-  //     {
-  //       $limit:5
-  //     }
-  //   ])
-
-  //     resolve(userData)
-  //   })
-  // }
 } 

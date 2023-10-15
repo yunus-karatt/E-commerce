@@ -50,7 +50,6 @@ module.exports = {
         if (user) {
           res(user)
         } else {
-          console.log(Userdata)
           await User.insertMany([Userdata])
           res()
         }
@@ -114,7 +113,7 @@ module.exports = {
     let response = {}
     return new Promise(async (res, rej) => {
       try {
-        let signupUser = await User.updateOne({ Mobilenumber: userSession.userData.Mobilenumber }, { Isverified: true })
+        let signupUser = await User.findOneAndUpdate({ Mobilenumber: userSession.userData.Mobilenumber }, { Isverified: true }, { new: true })
         response.user = signupUser
         res(response)
       }
@@ -235,12 +234,6 @@ module.exports = {
   },
 
   addToCart: async (userId, productId) => {
-    // const productData = await Product.findOne({ _id: productId }).lean()
-    // console.log(productData)
-
-    // if (productData.Stock_quantity < 1) {
-    //       reject()
-    // }else{
     return new Promise(async (resolve, reject) => {
       try {
         const existUserCart = await cart.findOne({ userId: userId })
@@ -268,7 +261,6 @@ module.exports = {
       catch (err) {
         reject(err)
       }
-      // }
     })
   },
 
@@ -288,6 +280,7 @@ module.exports = {
         {
           $unwind: '$productDetails'
         },
+
         { $sort: { 'productDetails.Name': 1 } }
           ,
         {
@@ -302,9 +295,19 @@ module.exports = {
             productName: { $first: "$productDetails.Name" },
             productFeatures: { $first: "$productDetails.Features" },
             productPrice: { $first: "$productDetails.Price" },
-            productImage: { $first: "$productDetails.Images" }
+            productImage: { $first: "$productDetails.Images" },
+            productCategory: { $first: '$productDetails.Category' }
           }
         },
+        {
+          $lookup: {
+            from: 'categories',
+            localField: 'productCategory',
+            foreignField: '_id',
+            as: 'productCategory'
+          }
+        }
+          ,
         {
           $group: {
             _id: null,
@@ -318,12 +321,40 @@ module.exports = {
                 productPrice: "$productPrice",
                 productImage: "$productImage",
                 count: "$totalcount",
-                price: "$totalPrice"
+                price: "$totalPrice",
+                category: '$productCategory'
               },
             },
           },
         },
         ])
+        const currentDate = new Date();
+        if (cartData.length !== 0) {
+          cartData[0].totalDiscountPrice = 0;
+          for (x of cartData) {
+            for (y of x.products) {
+              if (y && y.category) {
+                for (z of y.category) {
+                  if (z && z.offers) {
+                    for (a of z.offers) {
+                      if (a.startDate <= currentDate && a.endDate >= currentDate) {
+                        y.offerPercentage = a.discount
+                        let offerPrice = y.productPrice - (y.productPrice * a.discount) / 100;
+                        let offerAmout = y.count * offerPrice
+                        y.priceAfterDiscount = offerAmout
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        for (x of cartData) {
+          for (y of x.products) {
+            x.totalDiscountPrice += y.priceAfterDiscount !== undefined ? y.priceAfterDiscount : y.price
+          }
+        }
         resolve(cartData)
       }
       catch (err) {
@@ -516,7 +547,6 @@ module.exports = {
       orderStatus: orderData.orderStatus,
       couponId: orderData.couponId
     }
-    console.log(orderDetails)
     if (orderDetails.couponId) {
       coupon.updateOne({ _id: orderDetails.couponId }, { $inc: { usedUsersCount: 1 } })
         .then((response) => console.log(response))
@@ -526,10 +556,8 @@ module.exports = {
     return new Promise(async (resolve, reject) => {
       try {
         const orderStatus = await order.create(orderDetails)
-        console.log(orderStatus)
         // Update the product stock quantities
         if (orderStatus.paymentMethod === 'cod') {
-          console.log('cod')
           const productUpdates = orderDetails.products.map((product) => ({
             updateOne: {
               filter: { _id: product.productId },
@@ -733,28 +761,21 @@ module.exports = {
 
         }
         cancelledOrder.orderStatus = 'cancelled';
-        // cancelledOrder.totalPrice = 0;
         cancelledOrder.cancelDate = new Date();
         cancelledOrder.cancelReason = reason
         for (const product of cancelledOrder.products) {
           product.itemStatus = 'cancelled';
         }
         cancelledOrder.save()
-
-        // await order.updateOne({_id:orderId},{$set:{orderStatus:'cancelled',totalPrice:0,'products.$[].itemStatus':'cancelled'}});
         resolve()
       }
       catch (err) {
-        console.log(err)
         reject(err)
       }
     })
   },
 
   paymentVerification: (orderData) => {
-    console.log(orderData)
-    console.log(orderData.response.razorpay_order_id,orderData.response.razorpay_payment_id)
-    console.log(process.env.RAZORPAY_KEY_SECRET)
     return new Promise(async (resolve, reject) => {
       try {
         let hmac = crypto.createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
@@ -778,7 +799,6 @@ module.exports = {
     const orderId = orderData.status.receipt
     return new Promise(async (resolve, reject) => {
       try {
-        // const orderData= await order.findOne({_id:orderId})
         const updatedOrder = await order.findOneAndUpdate(
           { _id: orderId },
           { $set: { orderStatus: 'placed' } },
@@ -801,64 +821,93 @@ module.exports = {
   },
   getCoupons: () => {
     return new Promise(async (resolve, reject) => {
-      const couponData = await coupon.aggregate([{
-        $match: {
-          startDate: { $lte: new Date() },
-          endDate: { $gt: new Date() },
-          $expr: {
-            $lt: ["$usedUsersCount", "$usersLimit"]
+      try {
+        const couponData = await coupon.aggregate([{
+          $match: {
+            startDate: { $lte: new Date() },
+            endDate: { $gt: new Date() },
+            $expr: {
+              $lt: ["$usedUsersCount", "$usersLimit"]
+            }
           }
-        }
 
-      }])
-      resolve(couponData)
+        }])
+        resolve(couponData)
+      }
+      catch (err) {
+        reject(err)
+      }
+
     })
   },
   getWallet: (userId) => {
     return new Promise(async (resolve, reject) => {
-      const WalletBalance = await User.find({ _id: userId }, { WalletBalance: 1 }).lean()
-      resolve(WalletBalance)
+      try {
+        const WalletBalance = await User.find({ _id: userId }, { WalletBalance: 1 }).lean()
+        resolve(WalletBalance)
+      }
+      catch (err) {
+        reject(err)
+      }
     })
   },
   getWalletHistory: (userId) => {
     return new Promise(async (resolve, reject) => {
-      const cancelledOrder = await order.find({
-        userId: userId, $and: [
-          { paymentMethod: { $in: ['online', 'wallet'] } },
-          { orderStatus: 'cancelled' }
-        ]
-      }, { cancelDate: 1, orderStatus: 1, totalPrice: 1, paymentMethod: 1 }).lean()
-      const refferedUsers = await User.find({ referencedBy: userId }, { Username: 1, _id: 0, createdAt: 1 }).lean()
-      const topupData=await User.find({_id:userId},{walletTopUp:1,_id:0}).lean()
-      const walletPaidOrders = await order.find({ userId:userId,paymentMethod: 'wallet' }, { orderDate: 1, orderStatus: 1, totalPrice: 1, paymentMethod: 1 }).lean()
-      const combinedData = cancelledOrder.concat(refferedUsers, walletPaidOrders,topupData[0].walletTopUp)
-      const sortedData = combinedData.sort((a, b) => {
-        const aDate = new Date(a.orderDate || a.createdAt || a.cancelDate||a.topUpDate);
-        const bDate = new Date(b.orderDate || b.createdAt || b.cancelDate||b.topUpDate);
-        return aDate - bDate;
-      });
-      resolve(sortedData)
+      try {
+        const cancelledOrder = await order.find({
+          userId: userId, $and: [
+            { paymentMethod: { $in: ['online', 'wallet'] } },
+            { orderStatus: 'cancelled' }
+          ]
+        }, { cancelDate: 1, orderStatus: 1, totalPrice: 1, paymentMethod: 1 }).lean()
+        const refferedUsers = await User.find({ referencedBy: userId }, { Username: 1, _id: 0, createdAt: 1 }).lean()
+        const topupData = await User.find({ _id: userId }, { walletTopUp: 1, _id: 0 }).lean()
+        const walletPaidOrders = await order.find({ userId: userId, paymentMethod: 'wallet' },
+          { orderDate: 1, orderStatus: 1, totalPrice: 1, paymentMethod: 1 }).lean()
+        const combinedData = cancelledOrder.concat(refferedUsers, walletPaidOrders, topupData[0].walletTopUp)
+        const sortedData = combinedData.sort((a, b) => {
+          const aDate = new Date(a.orderDate || a.createdAt || a.cancelDate || a.topUpDate);
+          const bDate = new Date(b.orderDate || b.createdAt || b.cancelDate || b.topUpDate);
+          return aDate - bDate;
+        });
+        resolve(sortedData)
+      }
+      catch (err) {
+        reject(err)
+      }
+
     })
   },
-  topupWallet:(amount)=>{
-    const receiptID='ID'+Date.now()
-    return new Promise(async(resolve,reject)=>{
-      var options = {
-        amount: amount * 100,  // amount in the smallest currency unit
-        currency: "INR",
-        receipt:receiptID
-      };
-      instance.orders.create(options, function (err, order) {
-        resolve(order)
-      });
+  topupWallet: (amount) => {
+    const receiptID = 'ID' + Date.now()
+    return new Promise(async (resolve, reject) => {
+      try {
+        var options = {
+          amount: amount * 100,  // amount in the smallest currency unit
+          currency: "INR",
+          receipt: receiptID
+        };
+        instance.orders.create(options, function (err, order) {
+          resolve(order)
+        });
+      }
+      catch (err) {
+        reject(err)
+      }
     })
   },
-  updateWallet:(userId,amount)=>{
-    const topUpAmount=parseInt(amount)
-    return new Promise(async(resolve,reject)=>{
-      await User.updateOne({_id:userId},{
-        $inc:{WalletBalance:topUpAmount},$push:{walletTopUp:{amount:topUpAmount}}})
-      resolve()
+  updateWallet: (userId, amount) => {
+    const topUpAmount = parseInt(amount)
+    return new Promise(async (resolve, reject) => {
+      try {
+        await User.updateOne({ _id: userId }, {
+          $inc: { WalletBalance: topUpAmount }, $push: { walletTopUp: { amount: topUpAmount } }
+        })
+        resolve()
+      }
+      catch (err) {
+        reject(err)
+      }
     })
   }
 } 

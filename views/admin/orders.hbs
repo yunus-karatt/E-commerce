@@ -7,7 +7,7 @@
         <thead>
           <tr>
             <th scope="col">Order ID</th>
-            <th scope="col">user ID</th>
+            {{!-- <th scope="col">user ID</th> --}}
             <th scope="col">Address</th>
             <th scope="col">Items</th>
             <th scope="col">Amount</th>
@@ -22,7 +22,7 @@
           {{#each orderData}}
           <tr>
             <td>{{_id}}</td>
-            <td>{{userId}}</td>
+            {{!-- <td>{{userId}}</td> --}}
             <td><span class="fw-bold">{{address.firstName}} {{address.lastName}}</span>
               {{address.state}},<br>{{address.city}},{{address.pincode}},{{address.address}}
             </td>
